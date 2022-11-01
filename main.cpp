@@ -15,7 +15,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
+	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f, false);
+	Player enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f, true);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -32,7 +33,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Key::Update();
 
-		player.Update();
+		player.Update(enemy);
+		enemy.Update(player);
 
 		///
 		/// ↑更新処理ここまで
@@ -43,6 +45,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		player.Draw();
+		enemy.Draw();
 
 		///
 		/// ↑描画処理ここまで

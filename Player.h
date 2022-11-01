@@ -32,13 +32,20 @@ public:
 	/// <param name="mPosition">初期座標</param>
 	/// <param name="mVelocity">速度</param>
 	/// <param name="mRadius">半径</param>
-	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
+	/// /// <param name="mIsEnemy">敵かどうか</param>
+	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius, bool mIsEnemy);
 
 	//更新処理
-	void Update();
+	void Update(Player &player);
 
 	//描画処理
 	void Draw();
+
+	//敵かどうかの取得
+	inline bool IsEnemy() { return mIsEnemy; }
+
+	//プレイヤー情報の取得
+	inline Player PlayerState(Player player) { return player; }
 
 private:
 
@@ -46,7 +53,7 @@ private:
 	void Move();
 
 	//当たり判定
-	void Collision();
+	void Collision(Player player);
 
 
 	
@@ -59,6 +66,9 @@ private:
 
 	//半径
 	float mRadius;
+
+	//色
+	int mColor;
 
 	//地面についているか
 	bool mIsGround;
@@ -83,6 +93,9 @@ private:
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
+
+	//敵かどうかのタグ
+	bool mIsEnemy;
 
 };
 

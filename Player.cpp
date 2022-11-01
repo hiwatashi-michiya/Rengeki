@@ -3,16 +3,23 @@
 #include <Novice.h>
 #include "Stage.h"
 #include "Key.h"
+#include <math.h>
 
 Player::Player()
 {
 }
 
-Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
-	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
+Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius, bool mIsEnemy)
+	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius), mIsEnemy(mIsEnemy)
 {
 
 	//基礎ステータスの初期化
+	if (mIsEnemy == false) {
+		mColor = 0xFFFFFFFF;
+	}
+	else {
+		mColor = 0x0000FFFF;
+	}
 	mAttackCount = kMaxAttack;
 	mJumpCount = 0;
 	mIsGround = false;
@@ -34,17 +41,17 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 //--------------------public------------------------
 
-void Player::Update() {
+void Player::Update(Player &player) {
 
 	Move();
 
-	Collision();
+	Collision(player);
 
 }
 
 void Player::Draw() {
 
-	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, 0xFFFFFFFF, kFillModeSolid);
+	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
 
 	if (mIsAttack[0] == true) {
 		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF0000FF, kFillModeSolid);
@@ -77,63 +84,73 @@ void Player::Move() {
 		mAttackTimer -= 1;
 	}
 
-	//攻撃していない場合のみ行動できる
-	if (mIsAttack[0] == false) {
+	//プレイヤーの場合の操作
+	if (mIsEnemy == false) {
 
-		//右移動
-		if (Key::IsPress(DIK_RIGHT)) {
-			mPosition.x += mVelocity.x;
-			mDirection = RIGHT;
+		//攻撃していない場合のみ行動できる
+		if (mIsAttack[0] == false) {
+
+			//右移動
+			if (Key::IsPress(DIK_RIGHT)) {
+				mPosition.x += mVelocity.x;
+				mDirection = RIGHT;
+			}
+
+			//左移動
+			if (Key::IsPress(DIK_LEFT)) {
+				mPosition.x -= mVelocity.x;
+				mDirection = LEFT;
+			}
+
+			//ジャンプ
+			if (Key::IsTrigger(DIK_C)) {
+
+				//ジャンプ回数が残っている場合ジャンプできる
+				if (mJumpCount > 0) {
+					mVelocity.y = 0;
+					mVelocity.y -= 20.0f;
+					mJumpCount -= 1;
+				}
+
+			}
+
 		}
 
-		//左移動
-		if (Key::IsPress(DIK_LEFT)) {
-			mPosition.x -= mVelocity.x;
-			mDirection = LEFT;
-		}
+		//攻撃
+		if (Key::IsTrigger(DIK_X)) {
 
-		//ジャンプ
-		if (Key::IsTrigger(DIK_C)) {
+			if (mIsGround == true) {
 
-			//ジャンプ回数が残っている場合ジャンプできる
-			if (mJumpCount > 0) {
-				mVelocity.y = 0;
-				mVelocity.y -= 20.0f;
-				mJumpCount -= 1;
+				//一撃目
+				if (mAttackCount == 3 && mIsAttack[0] == false) {
+					mAttackTimer = 30;
+					mIsAttack[0] = true;
+					mAttackCount -= 1;
+				}
+
+				//二撃目
+				else if (mAttackCount == 2 && mIsAttack[1] == false) {
+					mAttackTimer = 30;
+					mIsAttack[1] = true;
+					mAttackCount -= 1;
+				}
+
+				//三撃目
+				else if (mAttackCount == 1 && mIsAttack[2] == false) {
+					mAttackTimer = 30;
+					mIsAttack[2] = true;
+					mAttackCount -= 1;
+				}
+
 			}
 
 		}
 
 	}
 
-	//攻撃
-	if (Key::IsTrigger(DIK_X)) {
-
-		if (mIsGround == true) {
-
-			//一撃目
-			if (mAttackCount == 3 && mIsAttack[0] == false) {
-				mAttackTimer = 30;
-				mIsAttack[0] = true;
-				mAttackCount -= 1;
-			}
-
-			//二撃目
-			else if (mAttackCount == 2 && mIsAttack[1] == false) {
-				mAttackTimer = 30;
-				mIsAttack[1] = true;
-				mAttackCount -= 1;
-			}
-
-			//三撃目
-			else if (mAttackCount == 1 && mIsAttack[2] == false) {
-				mAttackTimer = 30;
-				mIsAttack[2] = true;
-				mAttackCount -= 1;
-			}
-
-		}
-
+	//敵の場合の動き
+	if (mIsEnemy == true) {
+		/*mPosition.x += mVelocity.x;*/
 	}
 
 	//タイマーが0になったらフラグを戻す
@@ -169,7 +186,7 @@ void Player::Move() {
 }
 
 //当たり判定
-void Player::Collision() {
+void Player::Collision(Player player) {
 
 	//左判定
 	if (mPosition.x - mRadius < 0) {
@@ -189,6 +206,38 @@ void Player::Collision() {
 	}
 	else {
 		mIsGround = false;
+	}
+
+	//敵の場合の判定
+	if (mIsEnemy == true) {
+
+		//攻撃がプレイヤーによるものだった場合
+		if (player.IsEnemy() == false) {
+			
+			//一撃目に当たった場合
+			if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[0].x) * (mPosition.x - PlayerState(player).mAttackPosition[0].x) +
+				(mPosition.y - PlayerState(player).mAttackPosition[0].y) * (mPosition.y - PlayerState(player).mAttackPosition[0].y)) <=
+				(mRadius + PlayerState(player).mAttackRadius[0])) && PlayerState(player).mIsAttack[0] == true) {
+				mColor = 0xFFFF00FF;
+			}
+			//二撃目に当たった場合
+			else if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[1].x) * (mPosition.x - PlayerState(player).mAttackPosition[1].x) +
+					(mPosition.y - PlayerState(player).mAttackPosition[1].y) * (mPosition.y - PlayerState(player).mAttackPosition[1].y)) <=
+					(mRadius + PlayerState(player).mAttackRadius[1])) && PlayerState(player).mIsAttack[1] == true) {
+				mColor = 0xFF00FFFF;
+			}
+			//三撃目に当たった場合
+			else if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[2].x) * (mPosition.x - PlayerState(player).mAttackPosition[2].x) +
+					(mPosition.y - PlayerState(player).mAttackPosition[2].y) * (mPosition.y - PlayerState(player).mAttackPosition[2].y)) <=
+					(mRadius + PlayerState(player).mAttackRadius[2])) && PlayerState(player).mIsAttack[2] == true) {
+				mColor = 0x00FFFFFF;
+			}
+			else {
+				mColor = 0x0000FFFF;
+			}
+
+		}
+
 	}
 
 }
