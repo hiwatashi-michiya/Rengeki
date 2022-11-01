@@ -41,9 +41,6 @@ public:
 	//描画処理
 	void Draw();
 
-	//敵かどうかの取得
-	inline bool IsEnemy() { return mIsEnemy; }
-
 	//プレイヤー情報の取得
 	inline Player PlayerState(Player player) { return player; }
 
@@ -90,6 +87,9 @@ private:
 
 	//攻撃の当たり判定の半径
 	float mAttackRadius[kMaxAttack];
+
+	//当たったかどうかの判定
+	bool mIsHit[kMaxAttack];
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
