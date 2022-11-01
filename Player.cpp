@@ -12,6 +12,24 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
 
+	//基礎ステータスの初期化
+	mAttackCount = kMaxAttack;
+	mJumpCount = 0;
+	mIsGround = false;
+	mDirection = RIGHT;
+	mAttackTimer = 0;
+	mIsAttack[0] = false;
+	mIsAttack[1] = false;
+	mIsAttack[2] = false;
+	mAttackPosition[0].x = mPosition.x + 32;
+	mAttackPosition[0].x = mPosition.x + 64;
+	mAttackPosition[0].x = mPosition.x + 96;
+	mAttackPosition[0].y = mPosition.y;
+	mAttackPosition[1].y = mPosition.y;
+	mAttackPosition[2].y = mPosition.y;
+	mAttackRadius[0] = 16;
+	mAttackRadius[1] = 16;
+	mAttackRadius[2] = 16;
 }
 
 //--------------------public------------------------
@@ -28,34 +46,149 @@ void Player::Draw() {
 
 	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, 0xFFFFFFFF, kFillModeSolid);
 
+	if (mIsAttack[0] == true) {
+		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF0000FF, kFillModeSolid);
+	}
+
+	if (mIsAttack[1] == true) {
+		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF0000FF, kFillModeSolid);
+	}
+
+	if (mIsAttack[2] == true) {
+		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF0000FF, kFillModeSolid);
+	}
+
 }
 
 //---------------------private----------------------
 
 void Player::Move() {
 
-	if (Key::IsPress(DIK_RIGHT)) {
-		mPosition.x += mVelocity.x;
+	//重力を加算
+	mVelocity.y += kGravity;
+
+	//地面にいる場合重力加算を無効
+	if (mIsGround == true) {
+		mVelocity.y = 0;
 	}
 
-	if (Key::IsPress(DIK_LEFT)) {
-		mPosition.x -= mVelocity.x;
+	//攻撃フラグが立っている場合、一定時間でフラグを戻す
+	if (mAttackTimer > 0) {
+		mAttackTimer -= 1;
 	}
+
+	//攻撃していない場合のみ行動できる
+	if (mIsAttack[0] == false) {
+
+		//右移動
+		if (Key::IsPress(DIK_RIGHT)) {
+			mPosition.x += mVelocity.x;
+			mDirection = RIGHT;
+		}
+
+		//左移動
+		if (Key::IsPress(DIK_LEFT)) {
+			mPosition.x -= mVelocity.x;
+			mDirection = LEFT;
+		}
+
+		//ジャンプ
+		if (Key::IsTrigger(DIK_C)) {
+
+			//ジャンプ回数が残っている場合ジャンプできる
+			if (mJumpCount > 0) {
+				mVelocity.y = 0;
+				mVelocity.y -= 20.0f;
+				mJumpCount -= 1;
+			}
+
+		}
+
+	}
+
+	//攻撃
+	if (Key::IsTrigger(DIK_X)) {
+
+		if (mIsGround == true) {
+
+			//一撃目
+			if (mAttackCount == 3 && mIsAttack[0] == false) {
+				mAttackTimer = 30;
+				mIsAttack[0] = true;
+				mAttackCount -= 1;
+			}
+
+			//二撃目
+			else if (mAttackCount == 2 && mIsAttack[1] == false) {
+				mAttackTimer = 30;
+				mIsAttack[1] = true;
+				mAttackCount -= 1;
+			}
+
+			//三撃目
+			else if (mAttackCount == 1 && mIsAttack[2] == false) {
+				mAttackTimer = 30;
+				mIsAttack[2] = true;
+				mAttackCount -= 1;
+			}
+
+		}
+
+	}
+
+	//タイマーが0になったらフラグを戻す
+	if (mAttackTimer == 0) {
+		mIsAttack[0] = false;
+		mIsAttack[1] = false;
+		mIsAttack[2] = false;
+		mAttackCount = kMaxAttack;
+	}
+
+	//攻撃座標を設定
+	if (mDirection == LEFT) {
+		mAttackPosition[0].x = mPosition.x - 32;
+		mAttackPosition[1].x = mPosition.x - 64;
+		mAttackPosition[2].x = mPosition.x - 96;
+	}
+
+	if (mDirection == RIGHT) {
+		mAttackPosition[0].x = mPosition.x + 32;
+		mAttackPosition[1].x = mPosition.x + 64;
+		mAttackPosition[2].x = mPosition.x + 96;
+	}
+
+	mAttackPosition[0].y = mPosition.y;
+	mAttackPosition[1].y = mPosition.y;
+	mAttackPosition[2].y = mPosition.y;
+
+	//
+
+	//速度を加算
+	mPosition.y += mVelocity.y;
 
 }
 
+//当たり判定
 void Player::Collision() {
 
+	//左判定
 	if (mPosition.x - mRadius < 0) {
 		mPosition.x = 0 + mRadius;
 	}
 
+	//右判定
 	if (mPosition.x + mRadius > kWindowWidth) {
 		mPosition.x = kWindowWidth - mRadius;
 	}
 
-	if (mPosition.y + mRadius > kWindowHeight) {
+	//下判定
+	if (mPosition.y + mRadius >= kWindowHeight) {
 		mPosition.y = kWindowHeight - mRadius;
+		mIsGround = true;
+		mJumpCount = kMaxJump;
+	}
+	else {
+		mIsGround = false;
 	}
 
 }
