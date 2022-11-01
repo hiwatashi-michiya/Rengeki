@@ -154,6 +154,10 @@ void Player::Move() {
 	//敵の場合の動き
 	if (mIsEnemy == true) {
 		/*mPosition.x += mVelocity.x;*/
+		mAttackTimer = 30;
+		mIsAttack[0] = true;
+		mIsAttack[1] = true;
+		mIsAttack[2] = true;
 	}
 
 	//タイマーが0になったらフラグを戻す
@@ -267,6 +271,71 @@ void Player::Collision(Player player) {
 			}
 			else {
 				mColor = 0x0000FFFF;
+				mIsHit[0] = false;
+				mIsHit[1] = false;
+				mIsHit[2] = false;
+			}
+
+		}
+
+	}
+
+	//プレイヤーの場合の判定
+	if (mIsEnemy == false) {
+
+		//敵の攻撃だった場合
+		if (PlayerState(player).mIsEnemy == true) {
+
+			//一撃目に当たった場合
+			if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[0].x) * (mPosition.x - PlayerState(player).mAttackPosition[0].x) +
+				(mPosition.y - PlayerState(player).mAttackPosition[0].y) * (mPosition.y - PlayerState(player).mAttackPosition[0].y)) <=
+				(mRadius + PlayerState(player).mAttackRadius[0])) && PlayerState(player).mIsAttack[0] == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[0] = true;
+
+				//更に二撃目に当たった場合
+				if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[1].x) * (mPosition.x - PlayerState(player).mAttackPosition[1].x) +
+					(mPosition.y - PlayerState(player).mAttackPosition[1].y) * (mPosition.y - PlayerState(player).mAttackPosition[1].y)) <=
+					(mRadius + PlayerState(player).mAttackRadius[1])) && PlayerState(player).mIsAttack[1] == true) {
+					mColor = 0xFF00FFFF;
+					mIsHit[1] = true;
+
+					//更に三撃目に当たった場合
+					if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[2].x) * (mPosition.x - PlayerState(player).mAttackPosition[2].x) +
+						(mPosition.y - PlayerState(player).mAttackPosition[2].y) * (mPosition.y - PlayerState(player).mAttackPosition[2].y)) <=
+						(mRadius + PlayerState(player).mAttackRadius[2])) && PlayerState(player).mIsAttack[2] == true) {
+						mColor = 0x00FFFFFF;
+						mIsHit[2] = true;
+					}
+
+				}
+
+			}
+			//二撃目に当たった場合
+			else if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[1].x) * (mPosition.x - PlayerState(player).mAttackPosition[1].x) +
+				(mPosition.y - PlayerState(player).mAttackPosition[1].y) * (mPosition.y - PlayerState(player).mAttackPosition[1].y)) <=
+				(mRadius + PlayerState(player).mAttackRadius[1])) && PlayerState(player).mIsAttack[1] == true) {
+				mColor = 0xFF00FFFF;
+				mIsHit[1] = true;
+
+				//更に三撃目に当たった場合
+				if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[2].x) * (mPosition.x - PlayerState(player).mAttackPosition[2].x) +
+					(mPosition.y - PlayerState(player).mAttackPosition[2].y) * (mPosition.y - PlayerState(player).mAttackPosition[2].y)) <=
+					(mRadius + PlayerState(player).mAttackRadius[2])) && PlayerState(player).mIsAttack[2] == true) {
+					mColor = 0x00FFFFFF;
+					mIsHit[2] = true;
+				}
+
+			}
+			//三撃目に当たった場合
+			else if ((sqrtf((mPosition.x - PlayerState(player).mAttackPosition[2].x) * (mPosition.x - PlayerState(player).mAttackPosition[2].x) +
+				(mPosition.y - PlayerState(player).mAttackPosition[2].y) * (mPosition.y - PlayerState(player).mAttackPosition[2].y)) <=
+				(mRadius + PlayerState(player).mAttackRadius[2])) && PlayerState(player).mIsAttack[2] == true) {
+				mColor = 0x00FFFFFF;
+				mIsHit[2] = true;
+			}
+			else {
+				mColor = 0xFFFFFFFF;
 				mIsHit[0] = false;
 				mIsHit[1] = false;
 				mIsHit[2] = false;
