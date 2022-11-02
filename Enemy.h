@@ -2,47 +2,34 @@
 #include "Vec2.h"
 
 //重力の値
-const float kGravity = 1.5f;
+const float kEnemyGravity = 1.5f;
 
 //ジャンプ最大回数
-const int kMaxJump = 2;
+const int kEnemyMaxJump = 2;
 
 //最大攻撃回数
-const int kMaxAttack = 3;
+const int kEnemyMaxAttack = 3;
 
 //プレイヤーの向き
-enum DIRECTION {
-	LEFT,
-	RIGHT
+enum ENEMYDIRECTION {
+	ENEMYLEFT,
+	ENEMYRIGHT
 };
 
-class Enemy;
+class Player;
 
-class Player
+class Enemy
 {
 public:
-	/// <summary>
-	/// プレイヤーの初期化
-	/// </summary>
-	/// <param name="mPosition">初期座標</param>
-	/// <param name="mVelocity">速度</param>
-	/// <param name="mRadius">半径</param>
-	Player();
-	/// <summary>
-	/// プレイヤーの初期化
-	/// </summary>
-	/// <param name="mPosition">初期座標</param>
-	/// <param name="mVelocity">速度</param>
-	/// <param name="mRadius">半径</param>
-	/// /// <param name="mIsEnemy">敵かどうか</param>
-	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
+
+	Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Enemy &enemy);
+	void Update(Player& player);
 
 	//描画処理
 	void Draw();
-
+	
 	//攻撃の当たり判定の取得
 	inline float GetAttackPositionX0() { return mAttackPosition[0].x; }
 	inline float GetAttackPositionX1() { return mAttackPosition[1].x; }
@@ -65,14 +52,13 @@ public:
 
 private:
 
+	
+
 	//動き
 	void Move();
 
 	//当たり判定
-	void Collision(Enemy enemy);
-
-
-	
+	void Collision(Player player);
 
 	//座標
 	Vec2 mPosition;
@@ -96,24 +82,23 @@ private:
 	int mAttackCount;
 
 	//攻撃しているかどうかの判定
-	bool mIsAttack[kMaxAttack];
+	bool mIsAttack[kEnemyMaxAttack];
 
 	//攻撃の描画時間
 	int mAttackTimer;
 
 	//攻撃の当たり判定の座標
-	Vec2 mAttackPosition[kMaxAttack];
+	Vec2 mAttackPosition[kEnemyMaxAttack];
 
 	//攻撃の当たり判定の半径
-	float mAttackRadius[kMaxAttack];
+	float mAttackRadius[kEnemyMaxAttack];
 
 	//当たったかどうかの判定
-	bool mIsHit[kMaxAttack];
+	bool mIsHit[kEnemyMaxAttack];
 
 	//プレイヤーの向いている方向
-	DIRECTION mDirection;
+	ENEMYDIRECTION mDirection;
 
 };
-
 
 
