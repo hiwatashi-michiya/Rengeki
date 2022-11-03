@@ -198,7 +198,60 @@ void Player::Collision(Enemy enemy) {
 		mIsGround = false;
 	}
 
-	
+	//ˆêŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+	if ((sqrtf((mPosition.x - enemy.GetAttackPositionX0()) * (mPosition.x - enemy.GetAttackPositionX0()) +
+		(mPosition.y - enemy.GetAttackPositionY0()) * (mPosition.y - enemy.GetAttackPositionY0())) <=
+		(mRadius + enemy.GetAttackRadius0())) && enemy.GetIsAttack0() == true) {
+		mColor = 0xFFFF00FF;
+		mIsHit[0] = true;
+
+		//“ñŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+		if ((sqrtf((mPosition.x - enemy.GetAttackPositionX1()) * (mPosition.x - enemy.GetAttackPositionX1()) +
+			(mPosition.y - enemy.GetAttackPositionY1()) * (mPosition.y - enemy.GetAttackPositionY1())) <=
+			(mRadius + enemy.GetAttackRadius1())) && enemy.GetIsAttack1() == true) {
+			mColor = 0xFF00FFFF;
+			mIsHit[1] = true;
+
+			//OŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+			if ((sqrtf((mPosition.x - enemy.GetAttackPositionX2()) * (mPosition.x - enemy.GetAttackPositionX2()) +
+				(mPosition.y - enemy.GetAttackPositionY2()) * (mPosition.y - enemy.GetAttackPositionY2())) <=
+				(mRadius + enemy.GetAttackRadius2())) && enemy.GetIsAttack2() == true) {
+				mColor = 0x00FFFFFF;
+				mIsHit[2] = true;
+			}
+
+		}
+
+	}
+	//“ñŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+	else if ((sqrtf((mPosition.x - enemy.GetAttackPositionX1()) * (mPosition.x - enemy.GetAttackPositionX1()) +
+		(mPosition.y - enemy.GetAttackPositionY1()) * (mPosition.y - enemy.GetAttackPositionY1())) <=
+		(mRadius + enemy.GetAttackRadius1())) && enemy.GetIsAttack1() == true) {
+		mColor = 0xFF00FFFF;
+		mIsHit[1] = true;
+
+		//OŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+		if ((sqrtf((mPosition.x - enemy.GetAttackPositionX2()) * (mPosition.x - enemy.GetAttackPositionX2()) +
+			(mPosition.y - enemy.GetAttackPositionY2()) * (mPosition.y - enemy.GetAttackPositionY2())) <=
+			(mRadius + enemy.GetAttackRadius2())) && enemy.GetIsAttack2() == true) {
+			mColor = 0x00FFFFFF;
+			mIsHit[2] = true;
+		}
+
+	}
+	//OŒ‚–Ú‚É“–‚½‚Á‚½ê‡
+	else if ((sqrtf((mPosition.x - enemy.GetAttackPositionX2()) * (mPosition.x - enemy.GetAttackPositionX2()) +
+		(mPosition.y - enemy.GetAttackPositionY2()) * (mPosition.y - enemy.GetAttackPositionY2())) <=
+		(mRadius + enemy.GetAttackRadius2())) && enemy.GetIsAttack2() == true) {
+		mColor = 0x00FFFFFF;
+		mIsHit[2] = true;
+	}
+	else {
+		mColor = 0xFFFFFFFF;
+		mIsHit[0] = false;
+		mIsHit[1] = false;
+		mIsHit[2] = false;
+	}
 
 	
 
