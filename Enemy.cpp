@@ -30,6 +30,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsHit[0] = false;
 	mIsHit[1] = false;
 	mIsHit[2] = false;
+	mKnockBack[0] = false;
+	mKnockBack[1] = false;
+	mKnockBack[2] = false;
+	mInvincible = 0;
 }
 
 void Enemy::Update(Player &player) {
@@ -66,6 +70,37 @@ void Enemy::Move() {
 	//地面にいる場合重力加算を無効
 	if (mIsGround == true) {
 		mVelocity.y = 0;
+	}
+
+	//速度減衰
+	if (mVelocity.x > 0) {
+		mVelocity.x -= kDecay;
+
+		if (mVelocity.x <= 0) {
+			mVelocity.x = 0;
+		}
+
+	}
+	else if (mVelocity.x < 0) {
+		mVelocity.x += kDecay;
+
+		if (mVelocity.x >= 0) {
+			mVelocity.x = 0;
+		}
+
+	}
+
+	//無敵時間
+	if (mInvincible > 0) {
+
+		mInvincible -= 1;
+
+		if (mInvincible == 0) {
+			mKnockBack[0] = false;
+			mKnockBack[1] = false;
+			mKnockBack[2] = false;
+		}
+
 	}
 
 	//攻撃フラグが立っている場合、一定時間でフラグを戻す
@@ -106,6 +141,7 @@ void Enemy::Move() {
 	//
 
 	//速度を加算
+	mPosition.x += mVelocity.x;
 	mPosition.y += mVelocity.y;
 
 }
@@ -118,15 +154,25 @@ void Enemy::Collision(Player player) {
 		(mPosition.y - player.GetAttackPositionY0()) * (mPosition.y - player.GetAttackPositionY0())) <=
 		(mRadius + player.GetAttackRadius0())) && player.GetIsAttack0() == true) {
 		mColor = 0xFFFF00FF;
+		//ヒットフラグを立てる
 		mIsHit[0] = true;
-
+		//無敵時間の設定
+		if (mInvincible == 0) {
+			mInvincible = kInvincibleTimer;
+		}
+		
+		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[0] == false) {
-			mPosition.x += kKnockBackLength[0];
+			mVelocity.x = kKnockBackLength[0].x;
+			mVelocity.y = -kKnockBackLength[0].y;
+			mPosition.y -= kKnockBackLength[0].y;
 			mKnockBack[0] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[0] == false) {
-			mPosition.x -= kKnockBackLength[0];
+			mVelocity.x = -kKnockBackLength[0].x;
+			mVelocity.y = -kKnockBackLength[0].y;
+			mPosition.y -= kKnockBackLength[0].y;
 			mKnockBack[0] = true;
 		}
 
@@ -135,15 +181,23 @@ void Enemy::Collision(Player player) {
 			(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
 			(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
 			mColor = 0xFF00FFFF;
+			//ヒットフラグを立てる
 			mIsHit[1] = true;
+			//無敵時間の設定
+			mInvincible = kInvincibleTimer;
 
+			//プレイヤーの向きによってノックバックする方向を変える
 			if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-				mPosition.x += kKnockBackLength[1];
+				mVelocity.x = kKnockBackLength[1].x;
+				mVelocity.y = -kKnockBackLength[1].y;
+				mPosition.y -= kKnockBackLength[1].y;
 				mKnockBack[1] = true;
 			}
 
 			if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-				mPosition.x -= kKnockBackLength[1];
+				mVelocity.x = -kKnockBackLength[1].x;
+				mVelocity.y = -kKnockBackLength[1].y;
+				mPosition.y -= kKnockBackLength[1].y;
 				mKnockBack[1] = true;
 			}
 
@@ -152,15 +206,23 @@ void Enemy::Collision(Player player) {
 				(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
 				(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 				mColor = 0x00FFFFFF;
+				//ヒットフラグを立てる
 				mIsHit[2] = true;
+				//無敵時間の設定
+				mInvincible = kInvincibleTimer;
 
+				//プレイヤーの向きによってノックバックする方向を変える
 				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-					mPosition.x += kKnockBackLength[2];
+					mVelocity.x = kKnockBackLength[2].x;
+					mVelocity.y = -kKnockBackLength[2].y;
+					mPosition.y -= kKnockBackLength[2].y;
 					mKnockBack[2] = true;
 				}
 
 				if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-					mPosition.x -= kKnockBackLength[2];
+					mVelocity.x = -kKnockBackLength[2].x;
+					mVelocity.y = -kKnockBackLength[2].y;
+					mPosition.y -= kKnockBackLength[2].y;
 					mKnockBack[2] = true;
 				}
 
@@ -174,15 +236,25 @@ void Enemy::Collision(Player player) {
 		(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
 		(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
 		mColor = 0xFF00FFFF;
+		//ヒットフラグを立てる
 		mIsHit[1] = true;
+		//無敵時間の設定
+		if (mInvincible == 0) {
+			mInvincible = kInvincibleTimer;
+		}
 
+		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-			mPosition.x += kKnockBackLength[1];
+			mVelocity.x = kKnockBackLength[1].x;
+			mVelocity.y = -kKnockBackLength[1].y;
+			mPosition.y -= kKnockBackLength[1].y;
 			mKnockBack[1] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-			mPosition.x -= kKnockBackLength[1];
+			mVelocity.x = -kKnockBackLength[1].x;
+			mVelocity.y = -kKnockBackLength[1].y;
+			mPosition.y -= kKnockBackLength[1].y;
 			mKnockBack[1] = true;
 		}
 
@@ -191,15 +263,23 @@ void Enemy::Collision(Player player) {
 			(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
 			(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 			mColor = 0x00FFFFFF;
+			//ヒットフラグを立てる
 			mIsHit[2] = true;
+			//無敵時間の設定
+			mInvincible = kInvincibleTimer;
 
+			//プレイヤーの向きによってノックバックする方向を変える
 			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-				mPosition.x += kKnockBackLength[2];
+				mVelocity.x = kKnockBackLength[2].x;
+				mVelocity.y = -kKnockBackLength[2].y;
+				mPosition.y -= kKnockBackLength[2].y;
 				mKnockBack[2] = true;
 			}
 
 			if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-				mPosition.x -= kKnockBackLength[2];
+				mVelocity.x = -kKnockBackLength[2].x;
+				mVelocity.y = -kKnockBackLength[2].y;
+				mPosition.y -= kKnockBackLength[2].y;
 				mKnockBack[2] = true;
 			}
 
@@ -211,15 +291,25 @@ void Enemy::Collision(Player player) {
 		(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
 		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 		mColor = 0x00FFFFFF;
+		//ヒットフラグを立てる
 		mIsHit[2] = true;
+		//無敵時間の設定
+		if (mInvincible == 0) {
+			mInvincible = kInvincibleTimer;
+		}
 
+		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-			mPosition.x += kKnockBackLength[2];
+			mVelocity.x = kKnockBackLength[2].x;
+			mVelocity.y = -kKnockBackLength[2].y;
+			mPosition.y -= kKnockBackLength[2].y;
 			mKnockBack[2] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-			mPosition.x -= kKnockBackLength[2];
+			mVelocity.x = -kKnockBackLength[2].x;
+			mVelocity.y = -kKnockBackLength[2].y;
+			mPosition.y -= kKnockBackLength[2].y;
 			mKnockBack[2] = true;
 		}
 
@@ -229,9 +319,6 @@ void Enemy::Collision(Player player) {
 		mIsHit[0] = false;
 		mIsHit[1] = false;
 		mIsHit[2] = false;
-		mKnockBack[0] = false;
-		mKnockBack[1] = false;
-		mKnockBack[2] = false;
 	}
 
 	//左判定

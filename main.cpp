@@ -29,6 +29,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//キー入力の更新
 		Key::Update();
 
+		if (Key::IsTrigger(DIK_R)) {
+			enemy.ResetPosition();
+		}
+
 		player.Update(enemy);
 		enemy.Update(player);
 		floor.Update(player, enemy);

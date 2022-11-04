@@ -120,21 +120,21 @@ void Player::Move() {
 
 				//ˆêŒ‚–Ú
 				if (mAttackCount == 3 && mIsAttack[0] == false) {
-					mAttackTimer = 30;
+					mAttackTimer = kAttackPersistence;
 					mIsAttack[0] = true;
 					mAttackCount -= 1;
 				}
 
 				//“ñŒ‚–Ú
 				else if (mAttackCount == 2 && mIsAttack[1] == false) {
-					mAttackTimer = 30;
+					mAttackTimer = kAttackPersistence;
 					mIsAttack[1] = true;
 					mAttackCount -= 1;
 				}
 
 				//ŽOŒ‚–Ú
 				else if (mAttackCount == 1 && mIsAttack[2] == false) {
-					mAttackTimer = 30;
+					mAttackTimer = kAttackPersistence;
 					mIsAttack[2] = true;
 					mAttackCount -= 1;
 				}

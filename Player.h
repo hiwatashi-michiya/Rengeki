@@ -10,6 +10,9 @@ const int kMaxJump = 2;
 //Å‘åUŒ‚‰ñ”
 const int kMaxAttack = 3;
 
+//UŒ‚‚Ì‘±ŠÔ
+const int kAttackPersistence = 30;
+
 //ƒvƒŒƒCƒ„[‚ÌŒü‚«
 enum DIRECTION {
 	LEFT,

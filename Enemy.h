@@ -4,6 +4,9 @@
 //重力の値
 const float kEnemyGravity = 1.5f;
 
+//速度減衰の値
+const float kDecay = 1.0f;
+
 //ジャンプ最大回数
 const int kEnemyMaxJump = 2;
 
@@ -11,7 +14,14 @@ const int kEnemyMaxJump = 2;
 const int kEnemyMaxAttack = 3;
 
 //ノックバックの距離
-const int kKnockBackLength[3] = { 20,40,70 };
+const Vec2 kKnockBackLength[3] = {
+	{5,10},
+	{10,20},
+	{20,30}
+};
+
+//無敵時間の最大値
+const int kInvincibleTimer = 30;
 
 //プレイヤーの向き
 enum ENEMYDIRECTION {
@@ -33,6 +43,9 @@ public:
 	//描画処理
 	void Draw();
 	
+	//ポジションリセット
+	inline Vec2 ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; return mPosition; }
+
 	//向きの取得
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
 
@@ -107,6 +120,9 @@ private:
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kEnemyMaxAttack];
+
+	//無敵時間
+	int mInvincible;
 
 };
 
