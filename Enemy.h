@@ -10,6 +10,9 @@ const int kEnemyMaxJump = 2;
 //最大攻撃回数
 const int kEnemyMaxAttack = 3;
 
+//ノックバックの距離
+const int kKnockBackLength[3] = { 20,40,70 };
+
 //プレイヤーの向き
 enum ENEMYDIRECTION {
 	ENEMYLEFT,
@@ -30,6 +33,9 @@ public:
 	//描画処理
 	void Draw();
 	
+	//向きの取得
+	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
+
 	//攻撃の当たり判定の取得
 	inline float GetAttackPositionX0() { return mAttackPosition[0].x; }
 	inline float GetAttackPositionX1() { return mAttackPosition[1].x; }
@@ -98,6 +104,9 @@ private:
 
 	//プレイヤーの向いている方向
 	ENEMYDIRECTION mDirection;
+
+	//ノックバックしたかどうか
+	bool mKnockBack[kEnemyMaxAttack];
 
 };
 

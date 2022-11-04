@@ -43,6 +43,9 @@ public:
 	//•`‰æˆ—
 	void Draw();
 
+	//Œü‚«‚Ìæ“¾
+	inline DIRECTION GetPlayerDirection() { return mDirection; }
+
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
 	inline float GetAttackPositionX0() { return mAttackPosition[0].x; }
 	inline float GetAttackPositionX1() { return mAttackPosition[1].x; }

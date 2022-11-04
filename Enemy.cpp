@@ -45,15 +45,15 @@ void Enemy::Draw() {
 	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
 
 	if (mIsAttack[0] == true) {
-		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF0000FF, kFillModeSolid);
+		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
 	if (mIsAttack[1] == true) {
-		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF0000FF, kFillModeSolid);
+		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
 	if (mIsAttack[2] == true) {
-		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF0000FF, kFillModeSolid);
+		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
 }
@@ -113,6 +113,127 @@ void Enemy::Move() {
 
 void Enemy::Collision(Player player) {
 
+	//一撃目に当たった場合
+	if ((sqrtf((mPosition.x - player.GetAttackPositionX0()) * (mPosition.x - player.GetAttackPositionX0()) +
+		(mPosition.y - player.GetAttackPositionY0()) * (mPosition.y - player.GetAttackPositionY0())) <=
+		(mRadius + player.GetAttackRadius0())) && player.GetIsAttack0() == true) {
+		mColor = 0xFFFF00FF;
+		mIsHit[0] = true;
+
+		if (player.GetPlayerDirection() == RIGHT && mKnockBack[0] == false) {
+			mPosition.x += kKnockBackLength[0];
+			mKnockBack[0] = true;
+		}
+
+		if (player.GetPlayerDirection() == LEFT && mKnockBack[0] == false) {
+			mPosition.x -= kKnockBackLength[0];
+			mKnockBack[0] = true;
+		}
+
+		//二撃目に当たった場合
+		if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
+			(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
+			(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
+			mColor = 0xFF00FFFF;
+			mIsHit[1] = true;
+
+			if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
+				mPosition.x += kKnockBackLength[1];
+				mKnockBack[1] = true;
+			}
+
+			if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
+				mPosition.x -= kKnockBackLength[1];
+				mKnockBack[1] = true;
+			}
+
+			//三撃目に当たった場合
+			if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
+				(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
+				(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
+				mColor = 0x00FFFFFF;
+				mIsHit[2] = true;
+
+				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
+					mPosition.x += kKnockBackLength[2];
+					mKnockBack[2] = true;
+				}
+
+				if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
+					mPosition.x -= kKnockBackLength[2];
+					mKnockBack[2] = true;
+				}
+
+			}
+
+		}
+
+	}
+	//二撃目に当たった場合
+	else if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
+		(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
+		(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
+		mColor = 0xFF00FFFF;
+		mIsHit[1] = true;
+
+		if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
+			mPosition.x += kKnockBackLength[1];
+			mKnockBack[1] = true;
+		}
+
+		if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
+			mPosition.x -= kKnockBackLength[1];
+			mKnockBack[1] = true;
+		}
+
+		//三撃目に当たった場合
+		if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
+			(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
+			(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
+			mColor = 0x00FFFFFF;
+			mIsHit[2] = true;
+
+			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
+				mPosition.x += kKnockBackLength[2];
+				mKnockBack[2] = true;
+			}
+
+			if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
+				mPosition.x -= kKnockBackLength[2];
+				mKnockBack[2] = true;
+			}
+
+		}
+
+	}
+	//三撃目に当たった場合
+	else if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
+		(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
+		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
+		mColor = 0x00FFFFFF;
+		mIsHit[2] = true;
+
+		if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
+			mPosition.x += kKnockBackLength[2];
+			mKnockBack[2] = true;
+		}
+
+		if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
+			mPosition.x -= kKnockBackLength[2];
+			mKnockBack[2] = true;
+		}
+
+	}
+	else {
+		mColor = 0x0000FFFF;
+		mIsHit[0] = false;
+		mIsHit[1] = false;
+		mIsHit[2] = false;
+		mKnockBack[0] = false;
+		mKnockBack[1] = false;
+		mKnockBack[2] = false;
+	}
+
 	//左判定
 	if (mPosition.x - mRadius < 0) {
 		mPosition.x = 0 + mRadius;
@@ -132,62 +253,5 @@ void Enemy::Collision(Player player) {
 	else {
 		mIsGround = false;
 	}
-
-	//一撃目に当たった場合
-	if ((sqrtf((mPosition.x - player.GetAttackPositionX0()) * (mPosition.x - player.GetAttackPositionX0()) +
-		(mPosition.y - player.GetAttackPositionY0()) * (mPosition.y - player.GetAttackPositionY0())) <=
-		(mRadius + player.GetAttackRadius0())) && player.GetIsAttack0() == true) {
-		mColor = 0xFFFF00FF;
-		mIsHit[0] = true;
-
-		//二撃目に当たった場合
-		if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
-			(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
-			(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
-			mColor = 0xFF00FFFF;
-			mIsHit[1] = true;
-
-			//三撃目に当たった場合
-			if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-				(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-				(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-				mColor = 0x00FFFFFF;
-				mIsHit[2] = true;
-			}
-
-		}
-
-	}
-	//二撃目に当たった場合
-	else if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
-		(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
-		(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
-		mColor = 0xFF00FFFF;
-		mIsHit[1] = true;
-
-		//三撃目に当たった場合
-		if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-			(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-			(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-			mColor = 0x00FFFFFF;
-			mIsHit[2] = true;
-		}
-
-	}
-	//三撃目に当たった場合
-	else if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-		(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-		mColor = 0x00FFFFFF;
-		mIsHit[2] = true;
-	}
-	else {
-		mColor = 0x0000FFFF;
-		mIsHit[0] = false;
-		mIsHit[1] = false;
-		mIsHit[2] = false;
-	}
-
-
 
 }
