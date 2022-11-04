@@ -1,4 +1,5 @@
 ﻿#include <Novice.h>
+#include <time.h>
 #include "Player.h"
 #include "Stage.h"
 #include "Key.h"
@@ -6,6 +7,8 @@
 #include "Enemy.h"
 
 const char kWindowTitle[] = "LC1A_21_ヒワタシミチヤ";
+
+clock_t oldTime;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -21,6 +24,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
 		Novice::BeginFrame();
+
+		while (!((oldTime + 16) - clock() <= 0));
 
 		///
 		/// ↓更新処理ここから
@@ -55,6 +60,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// フレームの終了
 		Novice::EndFrame();
+
+		oldTime = clock();
 
 		// ESCキーが押されたらループを抜ける
 		if (Key::IsTrigger(DIK_ESCAPE)) {
