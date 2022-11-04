@@ -54,4 +54,18 @@ public:
 	/// <returns>ベクトルのラジアンを算出し、 y 値を返す</returns>
 	float SINF();
 
+	/// <summary>
+	/// 引数のベクトルとの内積
+	/// </summary>
+	/// <param name="other"> Vec2</param>
+	/// <returns>float型</returns>
+	float Dot(const Vec2& other) const;
+
+	/// <summary>
+	/// 引数のベクトルとの外積
+	/// </summary>
+	/// <param name="other"> Vec2</param>
+	/// <returns>float型</returns>
+	float Cross(const Vec2& other) const;
+
 };

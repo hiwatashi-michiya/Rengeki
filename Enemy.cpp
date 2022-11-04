@@ -9,6 +9,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition({mPosition.x,mPosition.y}),mVelocity({mVelocity.x,mVelocity.y}),mRadius(mRadius)
 {
 
+	mKnockBackVelocity = { 0.0f, 0.0f };
 	mColor = 0x0000FFFF;
 	mAttackCount = kEnemyMaxAttack;
 	mJumpCount = 0;
@@ -34,11 +35,12 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
 	mInvincible = 0;
+	mCross = 0.0f;
 }
 
 void Enemy::Update(Player &player) {
 
-	Move();
+	Move(player);
 
 	Collision(player);
 
@@ -62,7 +64,7 @@ void Enemy::Draw() {
 
 }
 
-void Enemy::Move() {
+void Enemy::Move(Player player) {
 
 	//重力を加算
 	mVelocity.y += kEnemyGravity;
@@ -70,22 +72,34 @@ void Enemy::Move() {
 	//地面にいる場合重力加算を無効
 	if (mIsGround == true) {
 		mVelocity.y = 0;
+		mKnockBackVelocity.y = 0;
+	}
+
+	//敵の移動
+	mCross = player.GetPlayerPosition().Cross(mPosition);
+	if (mCross < 0){
+		mVelocity.x = -2.0f;
+		mDirection = ENEMYLEFT;
+	}
+	else{
+		mVelocity.x = 2.0f;
+		mDirection = ENEMYRIGHT;
 	}
 
 	//速度減衰
-	if (mVelocity.x > 0) {
-		mVelocity.x -= kDecay;
+	if (mKnockBackVelocity.x > 0) {
+		mKnockBackVelocity.x -= kDecay;
 
-		if (mVelocity.x <= 0) {
-			mVelocity.x = 0;
+		if (mKnockBackVelocity.x <= 0) {
+			mKnockBackVelocity.x = 0;
 		}
 
 	}
-	else if (mVelocity.x < 0) {
-		mVelocity.x += kDecay;
+	else if (mKnockBackVelocity.x < 0) {
+		mKnockBackVelocity.x += kDecay;
 
-		if (mVelocity.x >= 0) {
-			mVelocity.x = 0;
+		if (mKnockBackVelocity.x >= 0) {
+			mKnockBackVelocity.x = 0;
 		}
 
 	}
@@ -144,6 +158,10 @@ void Enemy::Move() {
 	mPosition.x += mVelocity.x;
 	mPosition.y += mVelocity.y;
 
+	//ノックバック時の速度を加算
+	mPosition.x += mKnockBackVelocity.x;
+	mPosition.y += mKnockBackVelocity.y;
+
 }
 
 
@@ -163,15 +181,15 @@ void Enemy::Collision(Player player) {
 		
 		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[0] == false) {
-			mVelocity.x = kKnockBackLength[0].x;
-			mVelocity.y = -kKnockBackLength[0].y;
+			mKnockBackVelocity.x = kKnockBackLength[0].x;
+			mKnockBackVelocity.y = -kKnockBackLength[0].y;
 			mPosition.y -= kKnockBackLength[0].y;
 			mKnockBack[0] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[0] == false) {
-			mVelocity.x = -kKnockBackLength[0].x;
-			mVelocity.y = -kKnockBackLength[0].y;
+			mKnockBackVelocity.x = -kKnockBackLength[0].x;
+			mKnockBackVelocity.y = -kKnockBackLength[0].y;
 			mPosition.y -= kKnockBackLength[0].y;
 			mKnockBack[0] = true;
 		}
@@ -188,15 +206,15 @@ void Enemy::Collision(Player player) {
 
 			//プレイヤーの向きによってノックバックする方向を変える
 			if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-				mVelocity.x = kKnockBackLength[1].x;
-				mVelocity.y = -kKnockBackLength[1].y;
+				mKnockBackVelocity.x = kKnockBackLength[1].x;
+				mKnockBackVelocity.y = -kKnockBackLength[1].y;
 				mPosition.y -= kKnockBackLength[1].y;
 				mKnockBack[1] = true;
 			}
 
 			if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-				mVelocity.x = -kKnockBackLength[1].x;
-				mVelocity.y = -kKnockBackLength[1].y;
+				mKnockBackVelocity.x = -kKnockBackLength[1].x;
+				mKnockBackVelocity.y = -kKnockBackLength[1].y;
 				mPosition.y -= kKnockBackLength[1].y;
 				mKnockBack[1] = true;
 			}
@@ -213,15 +231,15 @@ void Enemy::Collision(Player player) {
 
 				//プレイヤーの向きによってノックバックする方向を変える
 				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-					mVelocity.x = kKnockBackLength[2].x;
-					mVelocity.y = -kKnockBackLength[2].y;
+					mKnockBackVelocity.x = kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
 					mPosition.y -= kKnockBackLength[2].y;
 					mKnockBack[2] = true;
 				}
 
 				if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-					mVelocity.x = -kKnockBackLength[2].x;
-					mVelocity.y = -kKnockBackLength[2].y;
+					mKnockBackVelocity.x = -kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
 					mPosition.y -= kKnockBackLength[2].y;
 					mKnockBack[2] = true;
 				}
@@ -245,15 +263,15 @@ void Enemy::Collision(Player player) {
 
 		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-			mVelocity.x = kKnockBackLength[1].x;
-			mVelocity.y = -kKnockBackLength[1].y;
+			mKnockBackVelocity.x = kKnockBackLength[1].x;
+			mKnockBackVelocity.y = -kKnockBackLength[1].y;
 			mPosition.y -= kKnockBackLength[1].y;
 			mKnockBack[1] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-			mVelocity.x = -kKnockBackLength[1].x;
-			mVelocity.y = -kKnockBackLength[1].y;
+			mKnockBackVelocity.x = -kKnockBackLength[1].x;
+			mKnockBackVelocity.y = -kKnockBackLength[1].y;
 			mPosition.y -= kKnockBackLength[1].y;
 			mKnockBack[1] = true;
 		}
@@ -270,15 +288,15 @@ void Enemy::Collision(Player player) {
 
 			//プレイヤーの向きによってノックバックする方向を変える
 			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-				mVelocity.x = kKnockBackLength[2].x;
-				mVelocity.y = -kKnockBackLength[2].y;
+				mKnockBackVelocity.x = kKnockBackLength[2].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2].y;
 				mPosition.y -= kKnockBackLength[2].y;
 				mKnockBack[2] = true;
 			}
 
 			if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-				mVelocity.x = -kKnockBackLength[2].x;
-				mVelocity.y = -kKnockBackLength[2].y;
+				mKnockBackVelocity.x = -kKnockBackLength[2].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2].y;
 				mPosition.y -= kKnockBackLength[2].y;
 				mKnockBack[2] = true;
 			}
@@ -300,15 +318,15 @@ void Enemy::Collision(Player player) {
 
 		//プレイヤーの向きによってノックバックする方向を変える
 		if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-			mVelocity.x = kKnockBackLength[2].x;
-			mVelocity.y = -kKnockBackLength[2].y;
+			mKnockBackVelocity.x = kKnockBackLength[2].x;
+			mKnockBackVelocity.y = -kKnockBackLength[2].y;
 			mPosition.y -= kKnockBackLength[2].y;
 			mKnockBack[2] = true;
 		}
 
 		if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-			mVelocity.x = -kKnockBackLength[2].x;
-			mVelocity.y = -kKnockBackLength[2].y;
+			mKnockBackVelocity.x = -kKnockBackLength[2].x;
+			mKnockBackVelocity.y = -kKnockBackLength[2].y;
 			mPosition.y -= kKnockBackLength[2].y;
 			mKnockBack[2] = true;
 		}

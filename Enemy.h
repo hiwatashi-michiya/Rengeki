@@ -74,7 +74,7 @@ private:
 	
 
 	//動き
-	void Move();
+	void Move(Player player);
 
 	//当たり判定
 	void Collision(Player player);
@@ -84,6 +84,9 @@ private:
 
 	//速度
 	Vec2 mVelocity;
+
+	//ノックバック時の速度
+	Vec2 mKnockBackVelocity;
 
 	//半径
 	float mRadius;
@@ -123,6 +126,9 @@ private:
 
 	//無敵時間
 	int mInvincible;
+
+	//外積の値
+	float mCross;
 
 };
 

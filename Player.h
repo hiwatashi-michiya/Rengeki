@@ -69,6 +69,9 @@ public:
 	inline bool GetIsHit1() { return mIsHit[1]; }
 	inline bool GetIsHit2() { return mIsHit[2]; }
 
+	//プレイヤーの座標取得（外積に使用する）
+	inline Vec2 GetPlayerPosition() { return mPosition; }
+
 private:
 
 	//動き
