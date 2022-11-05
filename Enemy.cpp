@@ -3,7 +3,6 @@
 #include <Novice.h>
 #include "Player.h"
 #include <math.h>
-#include "Stage.h"
 
 Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition({mPosition.x,mPosition.y}),mVelocity({mVelocity.x,mVelocity.y}),mRadius(mRadius)
@@ -31,6 +30,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsHit[0] = false;
 	mIsHit[1] = false;
 	mIsHit[2] = false;
+	mHitPoint = mHitPointMax[0];
+	mIsHitPointAssign[0] = false;
+	mIsHitPointAssign[1] = false;
 	mKnockBack[0] = false;
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
@@ -43,6 +45,8 @@ void Enemy::Update(Player &player) {
 	Move(player);
 
 	Collision(player);
+
+	HitPoint();
 
 }
 
@@ -62,6 +66,7 @@ void Enemy::Draw() {
 		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
+	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
 }
 
 void Enemy::Move(Player player) {
@@ -167,13 +172,17 @@ void Enemy::Move(Player player) {
 
 void Enemy::Collision(Player player) {
 
+
 	//一撃目に当たった場合
 	if ((sqrtf((mPosition.x - player.GetAttackPositionX0()) * (mPosition.x - player.GetAttackPositionX0()) +
 		(mPosition.y - player.GetAttackPositionY0()) * (mPosition.y - player.GetAttackPositionY0())) <=
 		(mRadius + player.GetAttackRadius0())) && player.GetIsAttack0() == true) {
 		mColor = 0xFFFF00FF;
 		//ヒットフラグを立てる
-		mIsHit[0] = true;
+		if (mIsHit[0] == false) {
+			mHitPoint -= kAttackValue[0];
+			mIsHit[0] = true;
+		}
 		//無敵時間の設定
 		if (mInvincible == 0) {
 			mInvincible = kInvincibleTimer;
@@ -200,7 +209,10 @@ void Enemy::Collision(Player player) {
 			(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
 			mColor = 0xFF00FFFF;
 			//ヒットフラグを立てる
-			mIsHit[1] = true;
+			if (mIsHit[1] == false) {
+				mHitPoint -= kAttackValue[1];
+				mIsHit[1] = true;
+			}
 			//無敵時間の設定
 			mInvincible = kInvincibleTimer;
 
@@ -225,7 +237,10 @@ void Enemy::Collision(Player player) {
 				(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 				mColor = 0x00FFFFFF;
 				//ヒットフラグを立てる
-				mIsHit[2] = true;
+				if (mIsHit[2] == false) {
+					mHitPoint -= kAttackValue[2];
+					mIsHit[2] = true;
+				}
 				//無敵時間の設定
 				mInvincible = kInvincibleTimer;
 
@@ -255,7 +270,10 @@ void Enemy::Collision(Player player) {
 		(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
 		mColor = 0xFF00FFFF;
 		//ヒットフラグを立てる
-		mIsHit[1] = true;
+		if (mIsHit[1] == false) {
+			mHitPoint -= kAttackValue[1];
+			mIsHit[1] = true;
+		}
 		//無敵時間の設定
 		if (mInvincible == 0) {
 			mInvincible = kInvincibleTimer;
@@ -282,7 +300,10 @@ void Enemy::Collision(Player player) {
 			(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 			mColor = 0x00FFFFFF;
 			//ヒットフラグを立てる
-			mIsHit[2] = true;
+			if (mIsHit[2] == false) {
+				mHitPoint -= kAttackValue[2];
+				mIsHit[2] = true;
+			}
 			//無敵時間の設定
 			mInvincible = kInvincibleTimer;
 
@@ -310,7 +331,10 @@ void Enemy::Collision(Player player) {
 		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
 		mColor = 0x00FFFFFF;
 		//ヒットフラグを立てる
-		mIsHit[2] = true;
+		if (mIsHit[2] == false) {
+			mHitPoint -= kAttackValue[2];
+			mIsHit[2] = true;
+		}
 		//無敵時間の設定
 		if (mInvincible == 0) {
 			mInvincible = kInvincibleTimer;
@@ -334,24 +358,26 @@ void Enemy::Collision(Player player) {
 	}
 	else {
 		mColor = 0x0000FFFF;
+	}
+	if (player.GetAttackTimer() == 0){
 		mIsHit[0] = false;
 		mIsHit[1] = false;
 		mIsHit[2] = false;
 	}
 
 	//左判定
-	if (mPosition.x - mRadius < kStageLeft) {
-		mPosition.x = kStageLeft + mRadius;
+	if (mPosition.x - mRadius < Stage::kStageLeft) {
+		mPosition.x = Stage::kStageLeft + mRadius;
 	}
 
 	//右判定
-	if (mPosition.x + mRadius > kStageRight) {
-		mPosition.x = kStageRight - mRadius;
+	if (mPosition.x + mRadius > Stage::kStageRight) {
+		mPosition.x = Stage::kStageRight - mRadius;
 	}
 
 	//下判定
-	if (mPosition.y + mRadius >= kStageBottom) {
-		mPosition.y = kStageBottom - mRadius;
+	if (mPosition.y + mRadius >= Stage::kStageBottom) {
+		mPosition.y = Stage::kStageBottom - mRadius;
 		mIsGround = true;
 		mJumpCount = kEnemyMaxJump;
 	}
@@ -359,4 +385,21 @@ void Enemy::Collision(Player player) {
 		mIsGround = false;
 	}
 
+}
+
+void Enemy::HitPoint() {
+
+	//体力の代入
+	if (Stage::Round == Stage::Round1 && mIsHitPointAssign[0] == false) {
+		mHitPoint = mHitPointMax[0];
+		mTmpHitPointMax = mHitPoint;
+		mIsHitPointAssign[0] = true;
+	}
+	else if (Stage::Round == Stage::Round2 && mIsHitPointAssign[1] == false) {
+		mHitPoint = mHitPointMax[1];
+		mTmpHitPointMax = mHitPoint;
+		mIsHitPointAssign[1] = true;
+	}
+
+	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
 }

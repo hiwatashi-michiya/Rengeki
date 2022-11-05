@@ -10,6 +10,9 @@ const int kMaxJump = 2;
 //最大攻撃回数
 const int kMaxAttack = 3;
 
+//攻撃力
+const int kAttackValue[kMaxAttack] = { 5, 10, 20 };
+
 //攻撃の持続時間
 const int kAttackPersistence = 30;
 
@@ -68,6 +71,8 @@ public:
 	inline bool GetIsHit0() { return mIsHit[0]; }
 	inline bool GetIsHit1() { return mIsHit[1]; }
 	inline bool GetIsHit2() { return mIsHit[2]; }
+
+	inline int GetAttackTimer() { return mAttackTimer; }
 
 	//プレイヤーの座標取得（外積に使用する）
 	inline Vec2 GetPlayerPosition() { return mPosition; }

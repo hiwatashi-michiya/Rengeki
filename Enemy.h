@@ -1,5 +1,7 @@
 #pragma once
 #include "Vec2.h"
+#include "Stage.h"
+#include "Function.h"
 
 //重力の値
 const float kEnemyGravity = 1.5f;
@@ -16,14 +18,14 @@ const int kEnemyMaxAttack = 3;
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
 	{5,10},
-	{10,20},
-	{20,30}
+	{10,15},
+	{50,20}
 };
 
 //無敵時間の最大値
 const int kInvincibleTimer = 30;
 
-//プレイヤーの向き
+//敵の向き
 enum ENEMYDIRECTION {
 	ENEMYLEFT,
 	ENEMYRIGHT
@@ -44,7 +46,7 @@ public:
 	void Draw();
 	
 	//ポジションリセット
-	inline Vec2 ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; return mPosition; }
+	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
 
 	//向きの取得
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
@@ -78,6 +80,9 @@ private:
 
 	//当たり判定
 	void Collision(Player player);
+
+	//体力処理
+	void HitPoint();
 
 	//座標
 	Vec2 mPosition;
@@ -118,8 +123,18 @@ private:
 	//当たったかどうかの判定
 	bool mIsHit[kEnemyMaxAttack];
 
-	//プレイヤーの向いている方向
+	//敵の向いている方向
 	ENEMYDIRECTION mDirection;
+
+	//体力
+	int mHitPoint;
+
+	//体力の最大値
+	int mHitPointMax[Stage::kStageMax] = { 100, 150 };
+	int mTmpHitPointMax;	//一時保存変数
+
+	//体力を代入したか
+	bool mIsHitPointAssign[Stage::kStageMax];
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kEnemyMaxAttack];

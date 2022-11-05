@@ -179,18 +179,18 @@ void Player::Move() {
 void Player::Collision(Enemy enemy) {
 
 	//ç∂îªíË
-	if (mPosition.x - mRadius < kStageLeft) {
-		mPosition.x = kStageLeft + mRadius;
+	if (mPosition.x - mRadius < Stage::kStageLeft) {
+		mPosition.x = Stage::kStageLeft + mRadius;
 	}
 
 	//âEîªíË
-	if (mPosition.x + mRadius > kStageRight) {
-		mPosition.x = kStageRight - mRadius;
+	if (mPosition.x + mRadius > Stage::kStageRight) {
+		mPosition.x = Stage::kStageRight - mRadius;
 	}
 
 	//â∫îªíË
-	if (mPosition.y + mRadius >= kStageBottom) {
-		mPosition.y = kStageBottom - mRadius;
+	if (mPosition.y + mRadius >= Stage::kStageBottom) {
+		mPosition.y = Stage::kStageBottom - mRadius;
 		mIsGround = true;
 		mJumpCount = kMaxJump;
 	}

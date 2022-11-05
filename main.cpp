@@ -22,6 +22,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Object floor({ 400,400 }, { 100,20 });
+	Stage stage;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -53,8 +54,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		StageDraw(Flame);
-
+		stage.Draw(Flame);
 		player.Draw();
 		enemy.Draw();
 		floor.Draw();
