@@ -16,6 +16,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
+	//リソース読み込み
+	int Flame = Novice::LoadTexture("./Resources/Stage/Flame.png");
+
 	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Object floor({ 400,400 }, { 100,20 });
@@ -49,6 +52,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+
+		StageDraw(Flame);
 
 		player.Draw();
 		enemy.Draw();

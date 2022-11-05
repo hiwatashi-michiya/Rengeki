@@ -77,7 +77,7 @@ void Enemy::Move(Player player) {
 
 	//“G‚ÌˆÚ“®
 	mCross = player.GetPlayerPosition().Cross(mPosition);
-	if (mCross < 0){
+	if (mCross <= 0.0f){
 		mVelocity.x = -2.0f;
 		mDirection = ENEMYLEFT;
 	}
@@ -340,18 +340,18 @@ void Enemy::Collision(Player player) {
 	}
 
 	//¶”»’è
-	if (mPosition.x - mRadius < 0) {
-		mPosition.x = 0 + mRadius;
+	if (mPosition.x - mRadius < kStageLeft) {
+		mPosition.x = kStageLeft + mRadius;
 	}
 
 	//‰E”»’è
-	if (mPosition.x + mRadius > kWindowWidth) {
-		mPosition.x = kWindowWidth - mRadius;
+	if (mPosition.x + mRadius > kStageRight) {
+		mPosition.x = kStageRight - mRadius;
 	}
 
 	//‰º”»’è
-	if (mPosition.y + mRadius >= kWindowHeight) {
-		mPosition.y = kWindowHeight - mRadius;
+	if (mPosition.y + mRadius >= kStageBottom) {
+		mPosition.y = kStageBottom - mRadius;
 		mIsGround = true;
 		mJumpCount = kEnemyMaxJump;
 	}
