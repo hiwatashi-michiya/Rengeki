@@ -11,7 +11,7 @@ const int kMaxJump = 2;
 const int kMaxAttack = 3;
 
 //攻撃力
-const int kAttackValue[kMaxAttack] = { 5, 10, 20 };
+const int kAttackValue[kMaxAttack] = { 2, 5, 20 };
 
 //攻撃の持続時間
 const int kAttackPersistence = 30;
@@ -94,6 +94,9 @@ private:
 	//速度
 	Vec2 mVelocity;
 
+	//ノックバック時の速度
+	Vec2 mKnockBackVelocity;
+
 	//半径
 	float mRadius;
 
@@ -105,6 +108,12 @@ private:
 
 	//ジャンプ回数
 	int mJumpCount;
+
+	//バックステップしているかどうか
+	bool mIsBackStep;
+
+	//バックステップ中のフレーム
+	int mBackStepFrame;
 
 	//攻撃回数
 	int mAttackCount;
@@ -123,6 +132,9 @@ private:
 
 	//当たったかどうかの判定
 	bool mIsHit[kMaxAttack];
+
+	//ノックバックしたかどうか
+	bool mKnockBack[kMaxAttack];
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;

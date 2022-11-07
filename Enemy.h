@@ -108,6 +108,9 @@ private:
 	//UŒ‚‰ñ”
 	int mAttackCount;
 
+	//UŒ‚ŠJn‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
+	bool mIsAttackStart;
+
 	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ì”»’è
 	bool mIsAttack[kEnemyMaxAttack];
 
@@ -131,7 +134,7 @@ private:
 
 	//‘Ì—Í‚ÌÅ‘å’l
 	int mHitPointMax[Stage::kStageMax] = { 100, 150 };
-	int mTmpHitPointMax;	//ˆê•Û‘¶•Ï”
+	int mTmpHitPointMax;								//ˆê•Û‘¶•Ï”
 
 	//‘Ì—Í‚ğ‘ã“ü‚µ‚½‚©
 	bool mIsHitPointAssign[Stage::kStageMax];
