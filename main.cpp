@@ -60,9 +60,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		enemy.Draw();
 		floor.Draw();
 
-		Novice::ScreenPrintf(0, 0, "Move : ArrowKey");
-		Novice::ScreenPrintf(0, 20, "Jump : SpaceKey");
-		Novice::ScreenPrintf(0, 40, "Rolling : XKey");
+		Novice::ScreenPrintf(70, 40, "Move : Arrow Key");
+		Novice::ScreenPrintf(70, 60, "Jump : Space Key");
+		Novice::ScreenPrintf(70, 80, "Rolling : X Key");
 
 		///
 		/// ↑描画処理ここまで
