@@ -32,7 +32,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Object floor({ 400,400 }, { 100,20 });
 	Stage stage;
 
-	Particle stageParticle(BOTTOMTOTOP);
+	Particle stageParticle(BOTTOMTOTOP,0xFFFFFF00);
+
+	Particle enemyParticle(DIFFUSION, 0xFF00FF00);
 
 	Vec2 stageParticlePosition = { 0,800 };
 
@@ -58,6 +60,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		enemy.Update(player);
 		floor.Update(player, enemy);
 		stageParticle.Update(stageParticlePosition);
+		enemyParticle.Update(enemy.GetEnemyPosition());
 
 		///
 		/// ↑更新処理ここまで
@@ -70,6 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(Flame);
 		stageParticle.Draw();
+		enemyParticle.Draw();
 		player.Draw();
 		enemy.Draw();
 		floor.Draw();

@@ -6,7 +6,8 @@
 #include "Rand.h"
 
 
-Particle::Particle(PARTICLETYPE mParticleType) : mParticleType(mParticleType) {
+Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor)
+	: mParticleType(mParticleType),mParticleColor(mParticleColor) {
 
 	for (int i = 0; i < kMaxParticle; i++) {
 
@@ -26,7 +27,7 @@ Particle::Particle(PARTICLETYPE mParticleType) : mParticleType(mParticleType) {
 
 }
 
-void Particle::Update(Vec2 &position) {
+void Particle::Update(Vec2 position) {
 
 	Move(position);
 
@@ -65,10 +66,10 @@ void Particle::Move(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(1, 3, OFF);
-				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(3, 5, OFF);
-				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(3, 5, OFF);
-				mColor[i] = 0xFFFFFF00 + RandNum(0x00000000, 0x000000FF, OFF);
+				mRadius[i] = RandNum(32, 33, OFF);
+				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
+				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
+				mColor[i] = mParticleColor + RandNum(0x00000000, 0x00000066, OFF);
 
 				if (mVelocity[i].x == 0) {
 					mVelocity[i].x = 1;
@@ -83,11 +84,11 @@ void Particle::Move(Vec2 position) {
 			if (mParticleType == BOTTOMTOTOP) {
 
 				mPosition[i].x = RandNum(0, 1280, OFF);
-				mPosition[i].y = 800;
+				mPosition[i].y = position.y;
 				mRadius[i] = RandNum(1, 3, OFF);
 				mVelocity[i].x = cosf(mTheta + ((i * M_PI) / 120)) * 3;
 				mVelocity[i].y = RandNum(-4, -2, OFF);
-				mColor[i] = 0xFFFFFF00 + RandNum(0x00000000, 0x000000FF, OFF);
+				mColor[i] = mParticleColor + RandNum(0x00000000, 0x000000FF, OFF);
 
 			}
 
@@ -113,7 +114,7 @@ void Particle::Move(Vec2 position) {
 			if (mParticleType == DIFFUSION) {
 
 				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
-					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 100) {
+					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 10) {
 					mIsAlive[i] = false;
 				}
 

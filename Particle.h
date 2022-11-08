@@ -19,9 +19,14 @@ const int kMaxParticle = 500;
 class Particle
 {
 public:
-	Particle(PARTICLETYPE mParticleType);
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="mParticleType">パーティクルのタイプ</param>
+	/// <param name="mParticleColor">透明度抜きのパーティクルの色</param>
+	Particle(PARTICLETYPE mParticleType, int mParticleColor);
 	
-	void Update(Vec2 &position);
+	void Update(Vec2 position);
 
 	void Draw();
 
@@ -38,6 +43,9 @@ private:
 
 	//色
 	int mColor[kMaxParticle];
+
+	//パーティクルの色
+	int mParticleColor;
 
 	//半径
 	int mRadius[kMaxParticle];
