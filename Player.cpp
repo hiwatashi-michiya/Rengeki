@@ -106,7 +106,7 @@ void Player::Move() {
 			}
 
 			//ジャンプ
-			if (Key::IsTrigger(DIK_Z) && mIsBackStep == false) {
+			if (Key::IsTrigger(DIK_C) && mIsBackStep == false) {
 
 				//ジャンプ回数が残っている場合ジャンプできる
 				if (mJumpCount > 0) {
@@ -118,7 +118,7 @@ void Player::Move() {
 			}
 
 			//バックステップフラグを立てる
-			if (Key::IsTrigger(DIK_X) && mIsGround == true){
+			if (Key::IsTrigger(DIK_Z) && mIsGround == true){
 				mIsBackStep = true;
 			}
 
@@ -143,7 +143,7 @@ void Player::Move() {
 		}
 
 		//攻撃
-		if (Key::IsTrigger(DIK_C) && mIsBackStep == false) {
+		if (Key::IsTrigger(DIK_X) && mIsBackStep == false) {
 
 			if (mIsGround == true) {
 

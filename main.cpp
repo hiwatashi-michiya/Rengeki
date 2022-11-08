@@ -3,13 +3,12 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Key.h"
-#include "Object.h"
 #include "Enemy.h"
 #include "Particle.h"
 #include "Rand.h"
 #include <time.h>
 
-const char kWindowTitle[] = "Rengeki";
+const char kWindowTitle[] = "1203_Rengeki";
 
 clock_t oldTime;
 
@@ -29,7 +28,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
-	Object floor({ 400,400 }, { 100,20 });
 	Stage stage;
 
 	Particle stageParticle(BOTTOMTOTOP,0xFFFFFF00);
@@ -60,7 +58,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		player.Update(enemy);
 		enemy.Update(player);
-		floor.Update(player, enemy);
 		stageParticle.Update(stageParticlePosition);
 		enemyParticle.Update(enemy.GetEnemyPosition());
 		playerParticle.Update(player.GetPlayerPosition());
@@ -79,13 +76,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		enemyParticle.Draw();
 		playerParticle.Draw();
 		player.Draw();
-		enemy.Draw();
-		floor.Draw();
+		enemy.Draw(player);
 
 		Novice::ScreenPrintf(70, 40, "Move : Arrow Key");
-		Novice::ScreenPrintf(70, 60, "Jump : Z Key");
-		Novice::ScreenPrintf(70, 80, "Rolling : X Key");
-		Novice::ScreenPrintf(70, 100, "Attack : C Key");
+		Novice::ScreenPrintf(70, 60, "Jump : C Key");
+		Novice::ScreenPrintf(70, 80, "Rolling : Z Key");
+		Novice::ScreenPrintf(70, 100, "Attack : X Key");
 
 		///
 		/// ↑描画処理ここまで
