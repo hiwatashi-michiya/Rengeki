@@ -14,7 +14,7 @@ Particle::Particle(PARTICLETYPE mParticleType) : mParticleType(mParticleType) {
 		mVelocity[i] = { 0,0 };
 		mColor[i] = 0xFFFFFFFF;
 		mIsAlive[i] = false;
-		mRadius = 2;
+		mRadius[i] = 2;
 
 	}
 
@@ -37,8 +37,8 @@ void Particle::Draw() {
 	for (int i = 0; i < kMaxParticle; i++) {
 
 		if (mIsAlive[i] == true) {
-			Novice::DrawQuad(mPosition[i].x - mRadius, mPosition[i].y - mRadius, mPosition[i].x + mRadius, mPosition[i].y - mRadius,
-				mPosition[i].x - mRadius, mPosition[i].y + mRadius, mPosition[i].x + mRadius, mPosition[i].y + mRadius,
+			Novice::DrawQuad(mPosition[i].x - mRadius[i], mPosition[i].y - mRadius[i], mPosition[i].x + mRadius[i], mPosition[i].y - mRadius[i],
+				mPosition[i].x - mRadius[i], mPosition[i].y + mRadius[i], mPosition[i].x + mRadius[i], mPosition[i].y + mRadius[i],
 				0, 0, 32, 32, mTextureHandle, mColor[i]);
 		}
 
@@ -65,12 +65,10 @@ void Particle::Move(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
+				mRadius[i] = RandNum(1, 3, OFF);
 				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(3, 5, OFF);
 				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(3, 5, OFF);
-				mColor[i] = (RandNum(0x00000000, 0x000000FF, OFF) << 24) +
-					(RandNum(0x00000000, 0x000000FF, OFF) << 16) +
-					(RandNum(0x00000000, 0x000000FF, OFF) << 8) +
-					RandNum(0x00000000, 0x000000FF, OFF);
+				mColor[i] = 0xFFFFFF00 + RandNum(0x00000000, 0x000000FF, OFF);
 
 				if (mVelocity[i].x == 0) {
 					mVelocity[i].x = 1;
@@ -86,12 +84,10 @@ void Particle::Move(Vec2 position) {
 
 				mPosition[i].x = RandNum(0, 1280, OFF);
 				mPosition[i].y = 800;
+				mRadius[i] = RandNum(1, 3, OFF);
 				mVelocity[i].x = cosf(mTheta + ((i * M_PI) / 120)) * 3;
 				mVelocity[i].y = RandNum(-4, -2, OFF);
-				mColor[i] = (RandNum(0x00000000, 0x000000FF, OFF) << 24) +
-					(RandNum(0x00000000, 0x000000FF, OFF) << 16) +
-					(RandNum(0x00000000, 0x000000FF, OFF) << 8) +
-					RandNum(0x00000000, 0x000000FF, OFF);
+				mColor[i] = 0xFFFFFF00 + RandNum(0x00000000, 0x000000FF, OFF);
 
 			}
 
@@ -125,7 +121,7 @@ void Particle::Move(Vec2 position) {
 
 			if (mParticleType == BOTTOMTOTOP) {
 
-				if (mPosition[i].y < 0 - mRadius) {
+				if (mPosition[i].y < 0 - mRadius[i]) {
 					mIsAlive[i] = false;
 				}
 

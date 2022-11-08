@@ -40,7 +40,7 @@ private:
 	int mColor[kMaxParticle];
 
 	//”¼Œa
-	int mRadius;
+	int mRadius[kMaxParticle];
 
 	//ƒtƒ‰ƒO‚ÌŠÇ—
 	bool mIsAlive[kMaxParticle];
