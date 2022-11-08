@@ -160,6 +160,15 @@ private:
 	
 	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool mIsSpecialAttack;
+	//“G‚ÌŒü‚«
+	enum SPECIALDIRECTION {
+		LEFT,
+		RIGHT
+	};
+	SPECIALDIRECTION mSpecialAttackDirection = LEFT;
+	//UŒ‚‚Ì‘¬“x
+	Vec2 mSpecialAttackVelocity;
+	float mSpecialAttackVelocityValue;	//‰ÁZ‚·‚é‘¬“x
 	//UŒ‚ŠÔ
 	int mSpecialAttackFrame;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚ÌÀ•W

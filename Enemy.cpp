@@ -40,6 +40,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[2] = false;
 	mInvincible = 0;
 	mCross = 0.0f;
+	////////////////////　ここから強攻撃　////////////////////
+	mIsSpecialAttack = false;
+	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
@@ -50,7 +53,10 @@ void Enemy::Update(Player &player) {
 
 	Move(player);
 
-	/*　必殺技　*/
+	////////////////////　ここから強攻撃　////////////////////
+	SpecialAttack(player);
+
+	////////////////////　ここから必殺技　////////////////////
 	FallingStar(player);
 
 	Collision(player);
@@ -83,8 +89,16 @@ void Enemy::Move(Player player) {
 
 	//敵の移動
 	if (AnyAttack() == false){
-		mCross = player.GetPlayerPosition().Cross(mPosition);
-		if (mCross <= 0.0f) {
+		//mCross = player.GetPlayerPosition().Cross(mPosition);
+		//if (mCross <= 0.0f) {
+		//	mVelocity.x = -2.0f;
+		//	mDirection = ENEMYLEFT;
+		//}
+		//else {
+		//	mVelocity.x = 2.0f;
+		//	mDirection = ENEMYRIGHT;
+		//}
+		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -2.0f;
 			mDirection = ENEMYLEFT;
 		}
@@ -130,7 +144,7 @@ void Enemy::Move(Player player) {
 	////////////////////　ここから弱攻撃　////////////////////
 
 	//プレイヤーとの距離が近くなったら攻撃フラグを立てる
-	if ((player.GetPlayerPosition() - mPosition).length() < 100 && mIsAttackStart == false){
+	if ((player.GetPlayerPosition() - mPosition).length() < 100 && mIsAttackStart == false && mIsSpecialAttack == false){
 		mVelocity.x = 0.0f;
 		mAttackTimer = kEnemyMaxAttack * 40;
 		mIsAttackStart = true;
@@ -196,23 +210,40 @@ void Enemy::SpecialAttack(Player& player) {
 
 	//フラグをtrueにする
 	if (Key::IsTrigger(DIK_D) && mIsSpecialAttack == false){
-		if (player.GetPlayerDirection() == LEFT){
-			mPosition.x = player.GetPlayerPosition().x + (mRadius + mSpecialAttackRadius);
-			mPosition.y = player.GetPlayerPosition().y;
-		}
-		if (player.GetPlayerDirection() == RIGHT) {
-			mPosition.x = player.GetPlayerPosition().x - (mRadius + mSpecialAttackRadius);
-			mPosition.y = player.GetPlayerPosition().y;
-		}
 		mIsSpecialAttack = true;
 	}
 
 	//強攻撃開始
 	if (mIsSpecialAttack == true){
 		mSpecialAttackFrame++;
-		//if (){
+		if (mSpecialAttackFrame <= 3000){
 
-		//}
+			//透明中は攻撃を食らわない
+			mColor = 0x0000FF66;
+
+			//プレイヤーとの位置関係で向きを変える
+			if (mPosition.x > player.GetPlayerPosition().x && mSpecialAttackDirection == RIGHT) {
+				mSpecialAttackVelocityValue = 2.0f;
+				mSpecialAttackDirection = LEFT;
+			}
+			if (mPosition.x < player.GetPlayerPosition().x && mSpecialAttackDirection == LEFT) {
+				mSpecialAttackVelocityValue = 2.0f;
+				mSpecialAttackDirection = RIGHT;
+			}
+
+			mSpecialAttackVelocityValue = Clamp(mSpecialAttackVelocityValue, 2.0f, 4.0f);
+			mSpecialAttackVelocityValue += 0.1f;
+
+			//透明中の移動
+			if (mSpecialAttackDirection == LEFT){
+				mSpecialAttackVelocity.x = -mSpecialAttackVelocityValue;
+			}
+			if (mSpecialAttackDirection == RIGHT) {
+				mSpecialAttackVelocity.x = mSpecialAttackVelocityValue;
+			}
+
+			mPosition.x += mSpecialAttackVelocity.x;
+		}
 	}
 
 }
@@ -316,65 +347,58 @@ void Enemy::Collision(Player player) {
 			mKnockBack[0] = true;
 		}
 
-		//二撃目に当たった場合
-		if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
-			(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
-			(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
-			mColor = 0xFF00FFFF;
-			//ヒットフラグを立てる
-			if (mIsHit[1] == false) {
-				mHitPoint -= kAttackValue[1];
-				mIsHit[1] = true;
-			}
-			//無敵時間の設定
-			mInvincible = kInvincibleTimer;
-
-			//プレイヤーの向きによってノックバックする方向を変える
-			if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-				mKnockBackVelocity.x = kKnockBackLength[1].x;
-				mKnockBackVelocity.y = -kKnockBackLength[1].y;
-				mPosition.y -= kKnockBackLength[1].y;
-				mKnockBack[1] = true;
-			}
-
-			if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-				mKnockBackVelocity.x = -kKnockBackLength[1].x;
-				mKnockBackVelocity.y = -kKnockBackLength[1].y;
-				mPosition.y -= kKnockBackLength[1].y;
-				mKnockBack[1] = true;
-			}
-
-			//三撃目に当たった場合
-			if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-				(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-				(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-				mColor = 0x00FFFFFF;
-				//ヒットフラグを立てる
-				if (mIsHit[2] == false) {
-					mHitPoint -= kAttackValue[2];
-					mIsHit[2] = true;
-				}
-				//無敵時間の設定
-				mInvincible = kInvincibleTimer;
-
-				//プレイヤーの向きによってノックバックする方向を変える
-				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[2].x;
-					mKnockBackVelocity.y = -kKnockBackLength[2].y;
-					mPosition.y -= kKnockBackLength[2].y;
-					mKnockBack[2] = true;
-				}
-
-				if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-					mKnockBackVelocity.x = -kKnockBackLength[2].x;
-					mKnockBackVelocity.y = -kKnockBackLength[2].y;
-					mPosition.y -= kKnockBackLength[2].y;
-					mKnockBack[2] = true;
-				}
-
-			}
-
-		}
+		////二撃目に当たった場合
+		//if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
+		//	(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
+		//	(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
+		//	mColor = 0xFF00FFFF;
+		//	//ヒットフラグを立てる
+		//	if (mIsHit[1] == false) {
+		//		mHitPoint -= kAttackValue[1];
+		//		mIsHit[1] = true;
+		//	}
+		//	//無敵時間の設定
+		//	mInvincible = kInvincibleTimer;
+		//	//プレイヤーの向きによってノックバックする方向を変える
+		//	if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
+		//		mKnockBackVelocity.x = kKnockBackLength[1].x;
+		//		mKnockBackVelocity.y = -kKnockBackLength[1].y;
+		//		mPosition.y -= kKnockBackLength[1].y;
+		//		mKnockBack[1] = true;
+		//	}
+		//	if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
+		//		mKnockBackVelocity.x = -kKnockBackLength[1].x;
+		//		mKnockBackVelocity.y = -kKnockBackLength[1].y;
+		//		mPosition.y -= kKnockBackLength[1].y;
+		//		mKnockBack[1] = true;
+		//	}
+		//	//三撃目に当たった場合
+		//	if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
+		//		(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
+		//		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
+		//		mColor = 0x00FFFFFF;
+		//		//ヒットフラグを立てる
+		//		if (mIsHit[2] == false) {
+		//			mHitPoint -= kAttackValue[2];
+		//			mIsHit[2] = true;
+		//		}
+		//		//無敵時間の設定
+		//		mInvincible = kInvincibleTimer;
+		//		//プレイヤーの向きによってノックバックする方向を変える
+		//		if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
+		//			mKnockBackVelocity.x = kKnockBackLength[2].x;
+		//			mKnockBackVelocity.y = -kKnockBackLength[2].y;
+		//			mPosition.y -= kKnockBackLength[2].y;
+		//			mKnockBack[2] = true;
+		//		}
+		//		if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
+		//			mKnockBackVelocity.x = -kKnockBackLength[2].x;
+		//			mKnockBackVelocity.y = -kKnockBackLength[2].y;
+		//			mPosition.y -= kKnockBackLength[2].y;
+		//			mKnockBack[2] = true;
+		//		}
+		//	}
+		//}
 
 	}
 	//二撃目に当たった場合
@@ -407,35 +431,32 @@ void Enemy::Collision(Player player) {
 			mKnockBack[1] = true;
 		}
 
-		//三撃目に当たった場合
-		if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-			(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-			(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-			mColor = 0x00FFFFFF;
-			//ヒットフラグを立てる
-			if (mIsHit[2] == false) {
-				mHitPoint -= kAttackValue[2];
-				mIsHit[2] = true;
-			}
-			//無敵時間の設定
-			mInvincible = kInvincibleTimer;
-
-			//プレイヤーの向きによってノックバックする方向を変える
-			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-				mKnockBackVelocity.x = kKnockBackLength[2].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2].y;
-				mPosition.y -= kKnockBackLength[2].y;
-				mKnockBack[2] = true;
-			}
-
-			if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-				mKnockBackVelocity.x = -kKnockBackLength[2].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2].y;
-				mPosition.y -= kKnockBackLength[2].y;
-				mKnockBack[2] = true;
-			}
-
-		}
+		////三撃目に当たった場合
+		//if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
+		//	(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
+		//	(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
+		//	mColor = 0x00FFFFFF;
+		//	//ヒットフラグを立てる
+		//	if (mIsHit[2] == false) {
+		//		mHitPoint -= kAttackValue[2];
+		//		mIsHit[2] = true;
+		//	}
+		//	//無敵時間の設定
+		//	mInvincible = kInvincibleTimer;
+		//	//プレイヤーの向きによってノックバックする方向を変える
+		//	if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
+		//		mKnockBackVelocity.x = kKnockBackLength[2].x;
+		//		mKnockBackVelocity.y = -kKnockBackLength[2].y;
+		//		mPosition.y -= kKnockBackLength[2].y;
+		//		mKnockBack[2] = true;
+		//	}
+		//	if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
+		//		mKnockBackVelocity.x = -kKnockBackLength[2].x;
+		//		mKnockBackVelocity.y = -kKnockBackLength[2].y;
+		//		mPosition.y -= kKnockBackLength[2].y;
+		//		mKnockBack[2] = true;
+		//	}
+		//}
 
 	}
 	//三撃目に当たった場合
@@ -469,7 +490,7 @@ void Enemy::Collision(Player player) {
 		}
 
 	}
-	else {
+	else if(mIsSpecialAttack == false) {
 		mColor = 0x0000FFFF;
 	}
 
@@ -542,7 +563,7 @@ void Enemy::Draw(Player& player) {
 	////////////////////　ここから強攻撃　////////////////////
 
 	if (mIsSpecialAttack == true){
-		Novice::DrawEllipse(mSpecialAttackPosition.x, mSpecialAttackPosition.y, mSpecialAttackRadius, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+		//Novice::DrawEllipse(mSpecialAttackPosition.x, mSpecialAttackPosition.y, mSpecialAttackRadius, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
 	}
 
 	////////////////////　ここから必殺技　////////////////////
