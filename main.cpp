@@ -5,6 +5,9 @@
 #include "Key.h"
 #include "Object.h"
 #include "Enemy.h"
+#include "Particle.h"
+#include "Rand.h"
+#include <time.h>
 
 const char kWindowTitle[] = "LC1A_21_ヒワタシミチヤ";
 
@@ -19,10 +22,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//リソース読み込み
 	int Flame = Novice::LoadTexture("./Resources/Stage/Flame.png");
 
+	//乱数生成
+	unsigned int kCurrentTime = time(nullptr);
+
+	srand(kCurrentTime);
+
 	Player player({ 100.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Object floor({ 400,400 }, { 100,20 });
 	Stage stage;
+
+	Particle stageParticle(BOTTOMTOTOP);
+
+	Vec2 stageParticlePosition = { 0,800 };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -45,6 +57,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Update(enemy);
 		enemy.Update(player);
 		floor.Update(player, enemy);
+		stageParticle.Update(stageParticlePosition);
 
 		///
 		/// ↑更新処理ここまで
@@ -56,6 +69,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(Flame);
+		stageParticle.Draw();
 		player.Draw();
 		enemy.Draw();
 		floor.Draw();
