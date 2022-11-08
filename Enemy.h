@@ -2,6 +2,7 @@
 #include "Vec2.h"
 #include "Stage.h"
 #include "Function.h"
+#include "Easing.hpp"
 
 //重力の値
 const float kEnemyGravity = 1.5f;
@@ -108,6 +109,9 @@ private:
 	//攻撃回数
 	int mAttackCount;
 
+	//攻撃開始しているかどうか
+	bool mIsAttackStart;
+
 	//攻撃しているかどうかの判定
 	bool mIsAttack[kEnemyMaxAttack];
 
@@ -131,7 +135,7 @@ private:
 
 	//体力の最大値
 	int mHitPointMax[Stage::kStageMax] = { 100, 150 };
-	int mTmpHitPointMax;	//一時保存変数
+	int mTmpHitPointMax;								//一時保存変数
 
 	//体力を代入したか
 	bool mIsHitPointAssign[Stage::kStageMax];
@@ -144,6 +148,20 @@ private:
 
 	//外積の値
 	float mCross;
+
+
+
+	///////////////　ここから必殺技　///////////////
+
+	/*　必殺技１　星砕流・落下星　*/
+	//フラグ
+	bool mIsFallingStar;
+	//イージングの増加値
+	float mFallingStarEasingt;
+	//フレーム値
+	int mFallingStarFrame;
+	//関数
+	void FallingStar(Player& player);
 
 };
 

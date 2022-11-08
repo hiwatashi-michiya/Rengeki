@@ -3,6 +3,7 @@
 #include <Novice.h>
 #include "Player.h"
 #include <math.h>
+#include "Key.h"
 
 Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition({mPosition.x,mPosition.y}),mVelocity({mVelocity.x,mVelocity.y}),mRadius(mRadius)
@@ -15,6 +16,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsGround = false;
 	mDirection = ENEMYRIGHT;
 	mAttackTimer = 0;
+	mIsAttackStart = false;
 	mIsAttack[0] = false;
 	mIsAttack[1] = false;
 	mIsAttack[2] = false;
@@ -38,6 +40,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[2] = false;
 	mInvincible = 0;
 	mCross = 0.0f;
+	mIsFallingStar = false;
+	mFallingStarEasingt = 0.0f;
+	mFallingStarFrame = 0;
 }
 
 void Enemy::Update(Player &player) {
@@ -81,14 +86,16 @@ void Enemy::Move(Player player) {
 	}
 
 	//敵の移動
-	mCross = player.GetPlayerPosition().Cross(mPosition);
-	if (mCross <= 0.0f){
-		mVelocity.x = -2.0f;
-		mDirection = ENEMYLEFT;
-	}
-	else{
-		mVelocity.x = 2.0f;
-		mDirection = ENEMYRIGHT;
+	if (mIsAttackStart == false){
+		mCross = player.GetPlayerPosition().Cross(mPosition);
+		if (mCross <= 0.0f) {
+			mVelocity.x = -2.0f;
+			mDirection = ENEMYLEFT;
+		}
+		else {
+			mVelocity.x = 2.0f;
+			mDirection = ENEMYRIGHT;
+		}
 	}
 
 	//速度減衰
@@ -122,22 +129,34 @@ void Enemy::Move(Player player) {
 
 	}
 
-	//攻撃フラグが立っている場合、一定時間でフラグを戻す
-	if (mAttackTimer > 0) {
-		mAttackTimer -= 1;
+	//プレイヤーとの距離が近くなったら攻撃フラグを立てる
+	if ((player.GetPlayerPosition() - mPosition).length() < 100 && mIsAttackStart == false){
+		mVelocity.x = 0.0f;
+		mAttackTimer = kEnemyMaxAttack * 40;
+		mIsAttackStart = true;
 	}
 
-	mAttackTimer = 30;
-	mIsAttack[0] = true;
-	mIsAttack[1] = true;
-	mIsAttack[2] = true;
+	//時間経過で攻撃を進める
+	if (mIsAttackStart == true){
+		if (mAttackTimer % 40 == 0){
+			mIsAttack[mAttackCount] = true;
+			mAttackCount++;
+		}
+		mAttackTimer--;
+	}
+
+	//ダメージを受けたら攻撃フラグをfalseにする
+	if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true){
+		mAttackTimer = 0;
+	}
 
 	//タイマーが0になったらフラグを戻す
 	if (mAttackTimer == 0) {
+		mIsAttackStart = false;
 		mIsAttack[0] = false;
 		mIsAttack[1] = false;
 		mIsAttack[2] = false;
-		mAttackCount = kEnemyMaxAttack;
+		mAttackCount = 0;
 	}
 
 	//攻撃座標を設定
@@ -359,6 +378,8 @@ void Enemy::Collision(Player player) {
 	else {
 		mColor = 0x0000FFFF;
 	}
+
+	//プレイヤーの攻撃が終了したらフラグをfalseにする（一回の攻撃で２ヒットしてしまっていたので）
 	if (player.GetAttackTimer() == 0){
 		mIsHit[0] = false;
 		mIsHit[1] = false;
@@ -401,5 +422,30 @@ void Enemy::HitPoint() {
 		mIsHitPointAssign[1] = true;
 	}
 
+	//体力を0に収める
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
+}
+
+void Enemy::FallingStar(Player& player) {
+
+	//移動開始位置と移動終了位置を保存
+	Vec2 StartPosition;
+	Vec2 EndPosition;
+	
+	//フラグをtrueにする
+	if (Key::IsTrigger(DIK_A)){
+		StartPosition = mPosition;
+		EndPosition = { player.GetPlayerPosition().x , player.GetPlayerPosition().y - 500 };
+		mIsFallingStar = true;
+	}
+
+	//落下星開始
+	if (mIsFallingStar == true){
+
+		//移動
+		mFallingStarEasingt += 0.01f;
+		mFallingStarEasingt = Clamp(mFallingStarEasingt, 0.0f, 1.0f);
+		//mPosition = EasingMove(StartPosition, EndPosition, )
+		
+	}
 }
