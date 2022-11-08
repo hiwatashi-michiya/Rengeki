@@ -141,7 +141,7 @@ void Enemy::Move(Player player) {
 	}
 
 	//攻撃していない時に速度を加算する
-	if (mIsSpecialAttackStart == false){
+	if (mIsSpecialAttackStart == false || (mIsSpecialAttackStart == true && mSpecialAttackFrame <= 300)){
 
 		//速度を加算
 		mPosition.x += mVelocity.x;
@@ -268,6 +268,12 @@ void Enemy::SpecialAttack(Player& player) {
 					mSpecialAttackPosition.y = mPosition.y;
 				}
 				mIsSpecialAttack = true;
+			}
+
+			//ダメージを受けたら攻撃フラグをfalseにする
+			if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true) {
+				mIsSpecialAttackStart = false;
+				mIsSpecialAttack = false;
 			}
 
 			if (mSpecialAttackFrame >= 420){
