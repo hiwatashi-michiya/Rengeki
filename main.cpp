@@ -9,7 +9,7 @@
 #include "Rand.h"
 #include <time.h>
 
-const char kWindowTitle[] = "LC1A_21_ヒワタシミチヤ";
+const char kWindowTitle[] = "Rengeki";
 
 clock_t oldTime;
 
