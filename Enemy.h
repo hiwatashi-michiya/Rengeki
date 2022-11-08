@@ -2,6 +2,7 @@
 #include "Vec2.h"
 #include "Stage.h"
 #include "Function.h"
+#include "Rand.h"
 #include "Easing.hpp"
 
 //重力の値
@@ -139,6 +140,13 @@ private:
 
 
 
+	//攻撃関数
+	void AttackPattern(Player& player);
+	//攻撃を開始できるか
+	bool mIsStart;
+	//開始するまでのフレーム
+	int mStartFrame;
+
 	////////////////////　ここから弱攻撃　////////////////////
 	
 	//攻撃回数
@@ -153,11 +161,15 @@ private:
 	Vec2 mAttackPosition[kEnemyMaxAttack];
 	//攻撃の当たり判定の半径
 	float mAttackRadius[kEnemyMaxAttack];
+	//関数
+	void Attack(Player& player);
 
 
 
 	////////////////////　ここから強攻撃　////////////////////
 	
+	//攻撃が始まったかどうか
+	bool mIsSpecialAttackStart;
 	//攻撃しているかどうか
 	bool mIsSpecialAttack;
 	//敵の向き
@@ -206,7 +218,7 @@ private:
 	void FallingStar(Player& player);
 
 
-
+	int RandAttack;
 };
 
 

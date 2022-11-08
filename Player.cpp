@@ -128,13 +128,13 @@ void Player::Move() {
 				mColor = 0xFFFFFF77;
 
 				if (mDirection == RIGHT) {
-					mPosition.x += 10.0f;
+					mPosition.x += 18.0f;
 				}
 				if (mDirection == LEFT) {
-					mPosition.x -= 10.0f;
+					mPosition.x -= 18.0f;
 				}
 
-				if (mBackStepFrame >= 20){
+				if (mBackStepFrame >= 15){
 					mBackStepFrame = 0;
 					mIsBackStep = false;
 				}
