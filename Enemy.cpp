@@ -33,7 +33,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mInvincible = 0;
 	mCross = 0.0f;
 	mIsStart = false;
-	mStartFrame = 0;
+	mStartFrame = -30;
 	////////////////////@‚±‚±‚©‚ç‹­UŒ‚@////////////////////
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
@@ -341,9 +341,9 @@ void Enemy::FallingStar(Player& player) {
 void Enemy::AttackPattern(Player& player) {
 
 	//UŒ‚ŠJŽn‚Ü‚Å‚ÌƒtƒŒ[ƒ€
-	if (mIsStart == false){
+	if (AnyAttack() == false && mIsStart == false){
 		mStartFrame++;
-		if (mStartFrame >= 120){
+		if (mStartFrame >= 30){
 			mIsStart = true;
 		}
 	}
@@ -358,11 +358,15 @@ void Enemy::AttackPattern(Player& player) {
 			mAttackTimer = kEnemyMaxAttack * 40;
 			mFallingStarStartPosition = mPosition;
 			mIsAttackStart = true;
+			mStartFrame = 0;
+			mIsStart = false;
 		}
 		else if (RandAttack <= 70){
 
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
+			mStartFrame = 0;
+			mIsStart = false;
 		}
 		else if (RandAttack <= 100){
 
@@ -374,6 +378,8 @@ void Enemy::AttackPattern(Player& player) {
 				mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
 			}
 			mIsFallingStar = true;
+			mStartFrame = 0;
+			mIsStart = false;
 		}
 	}
 }
@@ -648,5 +654,6 @@ void Enemy::Draw(Player& player) {
 	//‘Ì—Í•`‰æ
 	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
 
-	Novice::ScreenPrintf(100, 300, "RandAttack : %d", RandAttack);
+	Novice::ScreenPrintf(100, 300, "mIsStart : %d", mIsStart);
+	Novice::ScreenPrintf(100, 320, "mStartFrame : %d", mStartFrame);
 }
