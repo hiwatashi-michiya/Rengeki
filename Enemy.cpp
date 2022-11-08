@@ -41,6 +41,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mInvincible = 0;
 	mCross = 0.0f;
 	mIsFallingStar = false;
+	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
 }
@@ -49,35 +50,30 @@ void Enemy::Update(Player &player) {
 
 	Move(player);
 
+	/*　必殺技　*/
+	FallingStar(player);
+
 	Collision(player);
 
 	HitPoint();
 
 }
 
-void Enemy::Draw() {
-
-	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
-
-	if (mIsAttack[0] == true) {
-		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF000055, kFillModeSolid);
+bool Enemy::AnyAttack() {
+	if (mIsAttackStart == true ||
+		mIsSpecialAttack == true ||
+		mIsFallingStar == true ){
+		return true;
 	}
-
-	if (mIsAttack[1] == true) {
-		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF000055, kFillModeSolid);
-	}
-
-	if (mIsAttack[2] == true) {
-		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
-	}
-
-	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
+	return false;
 }
 
 void Enemy::Move(Player player) {
 
-	//重力を加算
-	mVelocity.y += kEnemyGravity;
+	//重力を加算（攻撃していない）
+	if (AnyAttack() == false) {
+		mVelocity.y += kEnemyGravity;
+	}
 
 	//地面にいる場合重力加算を無効
 	if (mIsGround == true) {
@@ -86,7 +82,7 @@ void Enemy::Move(Player player) {
 	}
 
 	//敵の移動
-	if (mIsAttackStart == false){
+	if (AnyAttack() == false){
 		mCross = player.GetPlayerPosition().Cross(mPosition);
 		if (mCross <= 0.0f) {
 			mVelocity.x = -2.0f;
@@ -128,6 +124,10 @@ void Enemy::Move(Player player) {
 		}
 
 	}
+
+
+
+	////////////////////　ここから弱攻撃　////////////////////
 
 	//プレイヤーとの距離が近くなったら攻撃フラグを立てる
 	if ((player.GetPlayerPosition() - mPosition).length() < 100 && mIsAttackStart == false){
@@ -187,6 +187,100 @@ void Enemy::Move(Player player) {
 	mPosition.y += mKnockBackVelocity.y;
 
 }
+
+
+
+////////////////////　ここから強攻撃　////////////////////
+
+void Enemy::SpecialAttack(Player& player) {
+
+	//フラグをtrueにする
+	if (Key::IsTrigger(DIK_D) && mIsSpecialAttack == false){
+		if (player.GetPlayerDirection() == LEFT){
+			mPosition.x = player.GetPlayerPosition().x + (mRadius + mSpecialAttackRadius);
+			mPosition.y = player.GetPlayerPosition().y;
+		}
+		if (player.GetPlayerDirection() == RIGHT) {
+			mPosition.x = player.GetPlayerPosition().x - (mRadius + mSpecialAttackRadius);
+			mPosition.y = player.GetPlayerPosition().y;
+		}
+		mIsSpecialAttack = true;
+	}
+
+	//強攻撃開始
+	if (mIsSpecialAttack == true){
+		mSpecialAttackFrame++;
+		//if (){
+
+		//}
+	}
+
+}
+
+
+
+////////////////////　ここから必殺技　////////////////////
+
+/*　必殺技１　星砕流・落下星　*/
+void Enemy::FallingStar(Player& player) {
+	
+	//フラグをtrueにする
+	if (Key::IsTrigger(DIK_A) && mIsFallingStar == false){
+		mVelocity.x = 0.0f;
+		mFallingStarStartPosition = mPosition;
+		mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+		for (int i = 0; i < 10; i++){
+			mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - ( i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+			mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + ( i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+		}
+		mIsFallingStar = true;
+	}
+
+	//落下星開始
+	if (mIsFallingStar == true){
+
+		//移動
+		if (mFallingStarEasingt < 1.0f){
+			mFallingStarEasingt += 0.015f;
+			mFallingStarEasingt = Clamp(mFallingStarEasingt, 0.0f, 1.0f);
+			mPosition = EasingMove(mFallingStarStartPosition, mFallingStarEndPosition, easeOutExpo(mFallingStarEasingt));
+		}
+
+		//上空に移動が完了したら
+		if (mFallingStarEasingt >= 1.0f){
+			mVelocity.y += 12.0f;
+
+			//地面に到達したら
+			if (mIsGround == true) {
+				mFallingStarFrame++;
+				mIsFallingStarAttack[mFallingStarStartValue] = true;
+				if (mFallingStarFrame % 5 == 0) {
+					mFallingStarStartValue++;
+					mFallingStarStartValue = Clamp(mFallingStarStartValue, 0, 9);
+				}
+				if ((mFallingStarFrame - 20) >= 0 && (mFallingStarFrame - 20) % 5 == 0){
+					mIsFallingStarAttack[mFallingStarEndValue] = false;
+					mFallingStarEndValue++;
+				}
+				if (mFallingStarFrame >= 65) {
+					mIsFallingStar = false;
+				}
+			}
+		}
+	}
+
+	//落下星終了（初期化）
+	if (mIsFallingStar == false){
+		mFallingStarEasingt = 0.0f;
+		mFallingStarFrame = 0;
+		mFallingStarStartValue = 0;
+		mFallingStarEndValue = 0;
+		for (int i = 0; i < 3; i++) {
+			mIsFallingStarAttack[i] = false;
+		}
+	}
+}
+
 
 
 void Enemy::Collision(Player player) {
@@ -426,26 +520,41 @@ void Enemy::HitPoint() {
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
 }
 
-void Enemy::FallingStar(Player& player) {
+void Enemy::Draw(Player& player) {
 
-	//移動開始位置と移動終了位置を保存
-	Vec2 StartPosition;
-	Vec2 EndPosition;
-	
-	//フラグをtrueにする
-	if (Key::IsTrigger(DIK_A)){
-		StartPosition = mPosition;
-		EndPosition = { player.GetPlayerPosition().x , player.GetPlayerPosition().y - 500 };
-		mIsFallingStar = true;
+	//敵描画
+	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
+
+	////////////////////　ここから弱攻撃　////////////////////
+
+	if (mIsAttack[0] == true) {
+		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
-	//落下星開始
-	if (mIsFallingStar == true){
-
-		//移動
-		mFallingStarEasingt += 0.01f;
-		mFallingStarEasingt = Clamp(mFallingStarEasingt, 0.0f, 1.0f);
-		//mPosition = EasingMove(StartPosition, EndPosition, )
-		
+	if (mIsAttack[1] == true) {
+		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF000055, kFillModeSolid);
 	}
+
+	if (mIsAttack[2] == true) {
+		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
+	}
+
+	////////////////////　ここから強攻撃　////////////////////
+
+	if (mIsSpecialAttack == true){
+		Novice::DrawEllipse(mSpecialAttackPosition.x, mSpecialAttackPosition.y, mSpecialAttackRadius, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+	}
+
+	////////////////////　ここから必殺技　////////////////////
+
+	/*　必殺技１　星砕流・落下星　*/
+	for (int i = 0; i < 10; i++) {
+		if (mIsFallingStarAttack[i] == true) {
+			Novice::DrawEllipse(mLeftFallingStarPosition[i].x, mLeftFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			Novice::DrawEllipse(mRightFallingStarPosition[i].x, mRightFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+		}
+	}
+
+	//体力描画
+	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
 }

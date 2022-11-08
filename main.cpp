@@ -57,13 +57,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(Flame);
 		player.Draw();
-		enemy.Draw();
+		enemy.Draw(player);
 		floor.Draw();
 
 		Novice::ScreenPrintf(70, 40, "Move : Arrow Key");
-		Novice::ScreenPrintf(70, 60, "Jump : Z Key");
-		Novice::ScreenPrintf(70, 80, "Rolling : X Key");
-		Novice::ScreenPrintf(70, 100, "Attack : C Key");
+		Novice::ScreenPrintf(70, 60, "Jump : C Key");
+		Novice::ScreenPrintf(70, 80, "Rolling : Z Key");
+		Novice::ScreenPrintf(70, 100, "Attack : X Key");
 
 		///
 		/// ↑描画処理ここまで
