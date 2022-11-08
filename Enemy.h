@@ -52,6 +52,7 @@ public:
 	//Œü‚«‚Ìæ“¾
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
 
+	//À•Wæ“¾
 	inline Vec2 GetEnemyPosition() { return mPosition; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾

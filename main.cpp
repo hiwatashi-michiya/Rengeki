@@ -36,6 +36,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Particle enemyParticle(DIFFUSION, 0xFF00FF00);
 
+	Particle playerParticle(DIFFUSION, 0x00FFFF00);
+
 	Vec2 stageParticlePosition = { 0,800 };
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -61,6 +63,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		floor.Update(player, enemy);
 		stageParticle.Update(stageParticlePosition);
 		enemyParticle.Update(enemy.GetEnemyPosition());
+		playerParticle.Update(player.GetPlayerPosition());
 
 		///
 		/// ↑更新処理ここまで
@@ -74,6 +77,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stage.Draw(Flame);
 		stageParticle.Draw();
 		enemyParticle.Draw();
+		playerParticle.Draw();
 		player.Draw();
 		enemy.Draw();
 		floor.Draw();
