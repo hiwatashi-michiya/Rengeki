@@ -1,7 +1,6 @@
 #pragma once
 #include "Vec2.h"
 
-
 //パーティクルの種類
 enum PARTICLETYPE {
 	//拡散
@@ -9,12 +8,16 @@ enum PARTICLETYPE {
 	//上から下へ
 	TOPTOBOTTOM,
 	//下から上へ
-	BOTTOMTOTOP
+	BOTTOMTOTOP,
+	//横飛沫
+	WIDESPLASH,
+	//半円
+	HALFCIRCLE
 
 };
 
 //最大数
-const int kMaxParticle = 500;
+const int kMaxParticle = 1000;
 
 class Particle
 {
