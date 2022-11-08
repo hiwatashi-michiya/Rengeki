@@ -2,6 +2,7 @@
 #include "Vec2.h"
 #include "Stage.h"
 #include "Function.h"
+#include "Easing.hpp"
 
 //重力の値
 const float kEnemyGravity = 1.5f;
@@ -147,6 +148,20 @@ private:
 
 	//外積の値
 	float mCross;
+
+
+
+	///////////////　ここから必殺技　///////////////
+
+	/*　必殺技１　星砕流・落下星　*/
+	//フラグ
+	bool mIsFallingStar;
+	//イージングの増加値
+	float mFallingStarEasingt;
+	//フレーム値
+	int mFallingStarFrame;
+	//関数
+	void FallingStar(Player& player);
 
 };
 

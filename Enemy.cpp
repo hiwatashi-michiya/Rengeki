@@ -40,6 +40,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[2] = false;
 	mInvincible = 0;
 	mCross = 0.0f;
+	mIsFallingStar = false;
+	mFallingStarEasingt = 0.0f;
+	mFallingStarFrame = 0;
 }
 
 void Enemy::Update(Player &player) {
@@ -140,6 +143,11 @@ void Enemy::Move(Player player) {
 			mAttackCount++;
 		}
 		mAttackTimer--;
+	}
+
+	//ダメージを受けたら攻撃フラグをfalseにする
+	if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true){
+		mAttackTimer = 0;
 	}
 
 	//タイマーが0になったらフラグを戻す
@@ -414,5 +422,30 @@ void Enemy::HitPoint() {
 		mIsHitPointAssign[1] = true;
 	}
 
+	//体力を0に収める
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
+}
+
+void Enemy::FallingStar(Player& player) {
+
+	//移動開始位置と移動終了位置を保存
+	Vec2 StartPosition;
+	Vec2 EndPosition;
+	
+	//フラグをtrueにする
+	if (Key::IsTrigger(DIK_A)){
+		StartPosition = mPosition;
+		EndPosition = { player.GetPlayerPosition().x , player.GetPlayerPosition().y - 500 };
+		mIsFallingStar = true;
+	}
+
+	//落下星開始
+	if (mIsFallingStar == true){
+
+		//移動
+		mFallingStarEasingt += 0.01f;
+		mFallingStarEasingt = Clamp(mFallingStarEasingt, 0.0f, 1.0f);
+		//mPosition = EasingMove(StartPosition, EndPosition, )
+		
+	}
 }

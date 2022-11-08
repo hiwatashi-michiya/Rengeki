@@ -11,11 +11,11 @@ Vec2::Vec2(float x, float y) : x(x), y(y) {
 
 //------------パブリック----------
 
-Vec2 Vec2::operator+(const Vec2& other) {
+Vec2 Vec2::operator+(const Vec2& other) const {
 	return { x + other.x, y + other.y };
 }
 
-Vec2 Vec2::operator-(const Vec2& other) {
+Vec2 Vec2::operator-(const Vec2& other) const {
 	return { x - other.x, y - other.y };
 }
 
@@ -29,6 +29,10 @@ const Vec2 Vec2::operator-=(const Vec2& other) {
 	x -= other.x;
 	y -= other.y;
 	return *this;
+}
+
+Vec2 Vec2::operator*(const float& other) const {
+	return { (this->x) * (other), (this->y) * (other) };
 }
 
 float Vec2::length() {

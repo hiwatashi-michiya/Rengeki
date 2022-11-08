@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		floor.Draw();
 
 		Novice::ScreenPrintf(70, 40, "Move : Arrow Key");
-		Novice::ScreenPrintf(70, 60, "Jump : Space Key");
+		Novice::ScreenPrintf(70, 60, "Jump : Z Key");
 		Novice::ScreenPrintf(70, 80, "Rolling : X Key");
 		Novice::ScreenPrintf(70, 100, "Attack : C Key");
 

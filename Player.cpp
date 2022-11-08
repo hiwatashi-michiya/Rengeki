@@ -106,7 +106,7 @@ void Player::Move() {
 			}
 
 			//ジャンプ
-			if (Key::IsTrigger(DIK_SPACE) && mIsBackStep == false) {
+			if (Key::IsTrigger(DIK_Z) && mIsBackStep == false) {
 
 				//ジャンプ回数が残っている場合ジャンプできる
 				if (mJumpCount > 0) {
