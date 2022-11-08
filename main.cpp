@@ -78,10 +78,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Draw();
 		enemy.Draw(player);
 
-		Novice::ScreenPrintf(70, 40, "Move : Arrow Key");
-		Novice::ScreenPrintf(70, 60, "Jump : C Key");
-		Novice::ScreenPrintf(70, 80, "Rolling : Z Key");
-		Novice::ScreenPrintf(70, 100, "Attack : X Key");
+		Novice::ScreenPrintf(70, 40, "Move : Arrow Left or Arrow Right Key");
+		Novice::ScreenPrintf(70, 60, "Jump : Arrow Up Key");
+		Novice::ScreenPrintf(70, 80, "Attack : C Key");
+		Novice::ScreenPrintf(70, 100, "Rolling : X Key");
 
 		///
 		/// ↑描画処理ここまで
