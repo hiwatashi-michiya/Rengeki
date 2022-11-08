@@ -53,6 +53,12 @@
     <ClCompile Include="Function.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="..\TD_1_3\Particle.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TD_1_3\Rand.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -140,5 +146,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Function.h" />
+    <ClInclude Include="..\TD_1_3\Particle.h" />
+    <ClInclude Include="..\TD_1_3\Rand.h" />
   </ItemGroup>
 </Project>
