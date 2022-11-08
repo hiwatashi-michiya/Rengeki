@@ -3,7 +3,11 @@
 
 int RandNum(int min, int max,MINUSFLAG minusFlag) {
 
-	int number = (rand() % (max - min)) + min;
+	if ((max + 1 - min) == 0) {
+		return 1;
+	}
+
+	int number = (rand() % (max + 1 - min)) + min;
 
 	if (minusFlag == ON) {
 
