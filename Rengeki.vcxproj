@@ -103,7 +103,9 @@
     <ClCompile Include="Key.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Rand.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
@@ -139,7 +141,9 @@
     <ClInclude Include="Function.h" />
     <ClInclude Include="Key.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Rand.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
