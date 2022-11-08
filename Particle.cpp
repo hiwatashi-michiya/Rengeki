@@ -80,6 +80,53 @@ void Particle::Move(Vec2 position) {
 				}
 			}
 
+			//îÚñóå^
+			if (mParticleType == WIDESPLASH) {
+
+				mPosition[i].x = position.x;
+				mPosition[i].y = position.y;
+				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) + RandNum(3, 5, ON);
+				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) + RandNum(2, 2, ON);
+				mColor[i] = 0xFFFFFFFF;
+
+				if (mVelocity[i].x == 0) {
+					mVelocity[i].x = 1;
+				}
+
+				if (mVelocity[i].y == 0) {
+					mVelocity[i].y = 1;
+				}
+
+			}
+
+			//îºâ~å^
+			if (mParticleType == HALFCIRCLE) {
+
+				mPosition[i].x = position.x;
+				mPosition[i].y = position.y;
+				mVelocity[i].x = cosf(RandNum(60, 120, OFF) * M_PI / 60) * RandNum(13, 15, OFF);
+				mVelocity[i].y = sinf(RandNum(60, 120, OFF) * M_PI / 60) * RandNum(13, 15, OFF) + 10;
+				mColor[i] = RandNum(1, 2, OFF);
+
+				if (mColor[i] == 0) {
+					mColor[i] = 0xFF000000 + RandNum(0x00000000, 0x000000FF, OFF);
+				}
+				else if (mColor[i] == 1) {
+					mColor[i] = 0x8888FF00 + RandNum(0x00000000, 0x000000FF, OFF);
+				}
+				else if (mColor[i] == 2) {
+					mColor[i] = 0xFFFFFF00 + RandNum(0x00000000, 0x000000FF, OFF);
+				}
+
+				if (mVelocity[i].x == 0) {
+					mVelocity[i].x = 1;
+				}
+
+				if (mVelocity[i].y == 0) {
+					mVelocity[i].y = 1;
+				}
+			}
+
 			//è„è∏å^
 			if (mParticleType == BOTTOMTOTOP) {
 
@@ -103,18 +150,72 @@ void Particle::Move(Vec2 position) {
 
 		if (mIsAlive[i] == true) {
 
+			//ë¨ìxïœâªèàóù
 			if (mParticleType == BOTTOMTOTOP) {
 				mVelocity[i].x = cosf(mTheta + ((i * M_PI) / 120)) * 3;
+			}
+
+			if (mParticleType == WIDESPLASH) {
+
+				if (mVelocity[i].x < 0) {
+
+					if (mVelocity[i].x < -1) {
+						mVelocity[i].x += 1;
+					}
+
+					if (mVelocity[i].x >= -1) {
+						mVelocity[i].x = -1;
+					}
+
+				}
+
+				if (mVelocity[i].x > 0) {
+
+					if (mVelocity[i].x > 1) {
+						mVelocity[i].x -= 1;
+					}
+
+					if (mVelocity[i].x <= 1) {
+						mVelocity[i].x = 1;
+					}
+
+				}
+
+			}
+
+			if (mParticleType == HALFCIRCLE) {
+				mVelocity[i].x *= 1.05f;
+				mVelocity[i].y *= 1.05f;
 			}
 
 			mPosition[i].x += mVelocity[i].x;
 			mPosition[i].y += mVelocity[i].y;
 
-			//ägéUå^
+			//ÉpÅ[ÉeÉBÉNÉãÇ™ãKíËîÕàÕÇí¥Ç¶ÇƒÇ¢Ç»Ç¢Ç©îªíË
+			//ägéUå^ÅEîºâ~å^
 			if (mParticleType == DIFFUSION) {
 
 				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
 					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 10) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			if (mParticleType == HALFCIRCLE) {
+
+				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
+					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 800) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			//îÚñóå^
+			if (mParticleType == WIDESPLASH) {
+
+				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
+					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 1000) {
 					mIsAlive[i] = false;
 				}
 
