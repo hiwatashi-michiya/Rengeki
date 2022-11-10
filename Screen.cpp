@@ -2,7 +2,7 @@
 
 Screen::Screen(){
 	ScreenShake = { 0.0f, 0.0f };
-	Zoom = { 1.5f, 1.5f };
+	Zoom = { 1.0f, 1.0f };
 };
 
 void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
