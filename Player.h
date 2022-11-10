@@ -60,6 +60,8 @@ public:
 	inline float GetAttackPositionY1() { return mAttackPosition[1].y; }
 	inline float GetAttackPositionY2() { return mAttackPosition[2].y; }
 
+	inline Vec2 GetAttackPositionX(int i) { return mAttackPosition[i]; }
+
 	inline float GetAttackRadius0() { return mAttackRadius[0]; }
 	inline float GetAttackRadius1() { return mAttackRadius[1]; }
 	inline float GetAttackRadius2() { return mAttackRadius[2]; }
@@ -84,6 +86,7 @@ private:
 
 	//“–‚½‚è”»’è
 	void Collision(Enemy enemy);
+	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 
 	

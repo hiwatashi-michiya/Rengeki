@@ -141,7 +141,7 @@ void Enemy::Move(Player player) {
 	}
 
 	//UŒ‚‚µ‚Ä‚¢‚È‚¢‚É‘¬“x‚ğ‰ÁZ‚·‚é
-	if (mIsSpecialAttackStart == false || (mIsSpecialAttackStart == true && mSpecialAttackFrame <= 300)){
+	if (mIsSpecialAttackStart == false || (mIsSpecialAttackStart == true && mSpecialAttackFrame > 300)){
 
 		//‘¬“x‚ğ‰ÁZ
 		mPosition.x += mVelocity.x;
@@ -252,11 +252,11 @@ void Enemy::SpecialAttack(Player& player) {
 			}
 
 			mPosition.x += mSpecialAttackVelocity.x;
+
 		}
 		else{
 			if (mIsSpecialAttack == false){
 
-				//“§–¾’†‚ÍUŒ‚‚ğH‚ç‚í‚È‚¢
 				mColor = 0x0000FFFF;
 
 				if (mSpecialAttackDirection == LEFT) {
