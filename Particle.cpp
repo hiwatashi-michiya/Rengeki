@@ -30,9 +30,9 @@ mRandMin(1), mRandMax(2), mMaxParticle(100) {
 }
 
 Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mParticleExtinction,
-	int mRandMin, int mRandMax, int mMaxParticle)
+	int mRandMin, int mRandMax, int mMaxParticle, bool mParticleAppear)
 	: mParticleType(mParticleType),mParticleColor(mParticleColor), mParticleExtinction(mParticleExtinction),
-	mRandMin(mRandMin),mRandMax(mRandMax), mMaxParticle(mMaxParticle) {
+	mRandMin(mRandMin),mRandMax(mRandMax), mMaxParticle(mMaxParticle), mParticleAppear(false) {
 
 	for (int i = 0; i < mMaxParticle; i++) {
 

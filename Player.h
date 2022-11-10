@@ -45,7 +45,6 @@ public:
 	/// <param name="mPosition">‰ŠúÀ•W</param>
 	/// <param name="mVelocity">‘¬“x</param>
 	/// <param name="mRadius">”¼Œa</param>
-	/// /// <param name="mIsEnemy">“G‚©‚Ç‚¤‚©</param>
 	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//XVˆ—
@@ -56,6 +55,9 @@ public:
 
 	//Œü‚«‚Ìæ“¾
 	inline DIRECTION GetPlayerDirection() { return mDirection; }
+
+	//”¼Œaæ“¾
+	inline float GetPlayerRadius() { return mRadius; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
 	inline float GetAttackPositionX0() { return mAttackPosition[0].x; }
