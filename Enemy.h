@@ -63,6 +63,9 @@ public:
 	//À•Wæ“¾
 	inline Vec2 GetEnemyPosition() { return mPosition; }
 
+	//”¼Œaæ“¾
+	inline float GetEnemyRadius() { return mRadius; }
+
 	////////////////////@‚±‚±‚©‚çUŒ‚‚Ì“–‚½‚è”»’èæ“¾ŠÖ”@////////////////////
 	
 
