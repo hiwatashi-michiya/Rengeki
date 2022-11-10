@@ -162,6 +162,19 @@ void Enemy::Attack(Player& player) {
 			}
 		}
 
+		//çUåÇç¿ïWÇê›íË
+		if (mDirection == ENEMYLEFT) {
+			mAttackPosition[0].x = mPosition.x - 32;
+			mAttackPosition[1].x = mPosition.x - 64;
+			mAttackPosition[2].x = mPosition.x - 96;
+		}
+
+		if (mDirection == ENEMYRIGHT) {
+			mAttackPosition[0].x = mPosition.x + 32;
+			mAttackPosition[1].x = mPosition.x + 64;
+			mAttackPosition[2].x = mPosition.x + 96;
+		}
+
 		if ((player.GetPlayerPosition() - mPosition).length() < 100 || mIsAttack[0] == true) {
 			mVelocity.x = 0.0f;
 			if (mAttackTimer % 40 == 0) {
@@ -183,19 +196,6 @@ void Enemy::Attack(Player& player) {
 			mIsAttack[1] = false;
 			mIsAttack[2] = false;
 			mAttackCount = 0;
-		}
-
-		//çUåÇç¿ïWÇê›íË
-		if (mDirection == ENEMYLEFT) {
-			mAttackPosition[0].x = mPosition.x - 32;
-			mAttackPosition[1].x = mPosition.x - 64;
-			mAttackPosition[2].x = mPosition.x - 96;
-		}
-
-		if (mDirection == ENEMYRIGHT) {
-			mAttackPosition[0].x = mPosition.x + 32;
-			mAttackPosition[1].x = mPosition.x + 64;
-			mAttackPosition[2].x = mPosition.x + 96;
 		}
 
 		mAttackPosition[0].y = mPosition.y;
@@ -563,13 +563,7 @@ void Enemy::Collision(Player player) {
 	//ñ≥ìGéûä‘
 	if (mInvincibleTime > 0) {
 
-		if (mInvincibleTime < 30) {
-			mIsHit[0] = false;
-			mIsHit[1] = false;
-			mIsHit[2] = false;
-		}
-
-		if (mInvincibleTime >= 29) {
+		if (mInvincibleTime <= 29) {
 			mColor = 0x0000FF55;
 		}
 
@@ -667,6 +661,6 @@ void Enemy::Draw(Player& player) {
 	//ëÃóÕï`âÊ
 	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
 
-	Novice::ScreenPrintf(100, 300, "mIsStart : %d", mIsStart);
-	Novice::ScreenPrintf(100, 320, "mStartFrame : %d", mStartFrame);
+	Novice::ScreenPrintf(100, 400, "Enemyisinvincible : %d", mIsInvincible);
+	Novice::ScreenPrintf(100, 420, "Enemyinvincibletime : %d", mInvincibleTime);
 }

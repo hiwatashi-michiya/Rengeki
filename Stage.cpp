@@ -7,8 +7,8 @@
 void Stage::HitStop(Player& player, Enemy& enemy) {
 
 	//攻撃を受けた時ヒットストップフラグをtrueにする
-	if (mIsHitStop == false && ((player.GetIsHit0() == true || player.GetIsHit1() == true || player.GetIsHit2() == true) && (player.GetIsPlayerInvincible() == true && player.GetPlayerInvincibleTime() == 29)) ||
-								((enemy.GetIsHit0() == true || enemy.GetIsHit1() == true || enemy.GetIsHit2() == true) && (enemy.GetIsEnemyInvincible() == true && enemy.GetEnemyInvincibleTime() == 29))){
+	if (mIsHitStop == false && ((player.GetIsPlayerInvincible() == true && player.GetPlayerInvincibleTime() == 29) ||
+								(enemy.GetIsEnemyInvincible() == true && enemy.GetEnemyInvincibleTime() == 29))){
 		mIsHitStop = true;
 
 	}
@@ -18,7 +18,7 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 		//フレームを加算する
 		mHitStopFrame++;
 
-		if (mHitStopFrame >= 10){
+		if (mHitStopFrame >= 4){
 			mIsHitStop = false;
 		}
 

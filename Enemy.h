@@ -107,7 +107,7 @@ public:
 	//–³“G‚©‚Ç‚¤‚©
 	inline bool GetIsEnemyInvincible() { return mIsInvincible; }
 	//–³“GŽžŠÔ‚ÌŽæ“¾
-	inline bool GetEnemyInvincibleTime() { return mInvincibleTime; }
+	inline int GetEnemyInvincibleTime() { return mInvincibleTime; }
 
 private:
 

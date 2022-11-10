@@ -68,7 +68,9 @@ void Player::Draw() {
 	if (mIsAttack[2] == true) {
 		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF0000FF, kFillModeSolid);
 	}
-
+	
+	Novice::ScreenPrintf(100, 500, "Playerisinvincible : %d", mIsInvincible);
+	Novice::ScreenPrintf(100, 520, "Playerinvincibletime : %d", mInvincibleTime);
 }
 
 //---------------------private----------------------
@@ -260,6 +262,11 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 					mColor = 0xFFFF00FF;
 					mIsHit[i] = true;
 
+					if (mIsInvincible == false) {
+						mInvincibleTime = kInvincibleTimer;
+						mIsInvincible = true;
+					}
+
 					//“G‚ÌŒü‚«‚É‚æ‚Á‚ÄƒmƒbƒNƒoƒbƒN‚·‚é•ûŒü‚ð•Ï‚¦‚é
 					if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
 						mKnockBackVelocity.x = kKnockBackLength[i].x;
@@ -274,8 +281,6 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 						mPosition.y -= kKnockBackLength[i].y;
 						mKnockBack[i] = true;
 					}
-
-					mIsInvincible = true;
 
 				}
 				else {
@@ -295,6 +300,11 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
 
+				if (mIsInvincible == false) {
+					mInvincibleTime = kInvincibleTimer;
+					mIsInvincible = true;
+				}
+
 				//“G‚ÌŒü‚«‚É‚æ‚Á‚ÄƒmƒbƒNƒoƒbƒN‚·‚é•ûŒü‚ð•Ï‚¦‚é
 				if (enemy.GetSpecialAttackDirection() == SPECIALRIGHT && mKnockBack[2] == false) {
 					mKnockBackVelocity.x = kKnockBackLength[2].x;
@@ -308,11 +318,6 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 					mKnockBackVelocity.y = -kKnockBackLength[2].y;
 					mPosition.y -= kKnockBackLength[2].y;
 					mKnockBack[2] = true;
-				}
-
-				if (mIsInvincible == false) {
-					mInvincibleTime = kInvincibleTimer;
-					mIsInvincible = true;
 				}
 
 			}
@@ -329,16 +334,16 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
 
+					if (mIsInvincible == false) {
+						mInvincibleTime = kInvincibleTimer;
+						mIsInvincible = true;
+					}
+
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = -kKnockBackLength[2].x;
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
 						mPosition.y -= kKnockBackLength[2].y;
 						mKnockBack[2] = true;
-					}
-
-					if (mIsInvincible == false) {
-						mInvincibleTime = kInvincibleTimer;
-						mIsInvincible = true;
 					}
 
 				}
@@ -348,16 +353,16 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
 
+					if (mIsInvincible == false) {
+						mInvincibleTime = kInvincibleTimer;
+						mIsInvincible = true;
+					}
+
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = kKnockBackLength[2].x;
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
 						mPosition.y -= kKnockBackLength[2].y;
 						mKnockBack[2] = true;
-					}
-
-					if (mIsInvincible == false) {
-						mInvincibleTime = kInvincibleTimer;
-						mIsInvincible = true;
 					}
 
 				}
@@ -383,13 +388,7 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 	//–³“GŽžŠÔ
 	if (mInvincibleTime > 0) {
 
-		if (mInvincibleTime < 30){
-			mIsHit[0] = false;
-			mIsHit[1] = false;
-			mIsHit[2] = false;
-		}
-
-		if (mInvincibleTime >= 29){
+		if (mInvincibleTime <= 29){
 			mColor = 0xFFFFFF55;
 		}
 
