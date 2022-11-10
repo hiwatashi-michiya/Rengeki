@@ -18,7 +18,7 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 		//ƒtƒŒ[ƒ€‚ð‰ÁŽZ‚·‚é
 		mHitStopFrame++;
 
-		if (mHitStopFrame >= 4){
+		if (mHitStopFrame >= 6){
 			mIsHitStop = false;
 		}
 

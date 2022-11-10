@@ -59,14 +59,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				enemy.ResetPosition();
 			}
 
-		player.Update(stage, enemy);
-		enemy.Update(stage, player);
-		stageParticle.SetFlag(stageParticlePosition);
-		stageParticle.Update(stageParticlePosition);
-		enemyParticle.SetFlag(enemy.GetEnemyPosition());
-		enemyParticle.Update(enemy.GetEnemyPosition());
-		playerParticle.SetFlag(player.GetPlayerPosition());
-		playerParticle.Update(player.GetPlayerPosition());
+			player.Update(stage, enemy);
+			enemy.Update(stage, player);
+			stageParticle.SetFlag(stageParticlePosition);
+			stageParticle.Update(stageParticlePosition);
+			enemyParticle.SetFlag(enemy.GetEnemyPosition());
+			enemyParticle.Update(enemy.GetEnemyPosition());
+			playerParticle.SetFlag(player.GetPlayerPosition());
+			playerParticle.Update(player.GetPlayerPosition());
 
 		}
 
