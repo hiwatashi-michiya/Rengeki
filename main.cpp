@@ -26,6 +26,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	srand(kCurrentTime);
 
+	Screen screen;
+
 	Player player({ 100.0f,100.0f }, { 7.0f,7.0f }, 30.0f);
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
@@ -84,11 +86,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(Flame);
-		stageParticle.Draw();
-		enemyParticle.Draw();
-		playerParticle.Draw();
-		player.Draw();
-		enemy.Draw(player);
+		stageParticle.Draw(screen);
+		enemyParticle.Draw(screen);
+		playerParticle.Draw(screen);
+		player.Draw(screen);
+		enemy.Draw(screen, player);
 
 		Novice::ScreenPrintf(70, 40, "Move : Arrow Left or Arrow Right Key");
 		Novice::ScreenPrintf(70, 60, "Jump : Arrow Up Key");

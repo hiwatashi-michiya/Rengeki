@@ -1,4 +1,5 @@
 #pragma once
+#include "Screen.h"
 #include "Vec2.h"
 #include "Stage.h"
 #include "Function.h"
@@ -55,7 +56,7 @@ public:
 	void Update(Stage& stage, Player& player);
 
 	//描画処理
-	void Draw(Player& player);
+	void Draw(Screen& screen, Player& player);
 	
 	//ポジションリセット
 	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
@@ -194,8 +195,19 @@ private:
 	bool mIsBackStep;
 	//イージングの増加値
 	float mBackStepEasingt;
+	//移動の開始地点と終了地点
+	Vec2 mBackStepStartPosition;
+	Vec2 mBackStepEndPosition;
+	//関数
+	void BackStep();
 
 	//-----左右瞬間移動-----//
+	//左右瞬間移動フラグ
+	bool mIsTeleport;
+	//フレーム
+	int mTeleportFrame;
+	//関数
+	void Teleport();
 
 	////////////////////　ここから弱攻撃　////////////////////
 	

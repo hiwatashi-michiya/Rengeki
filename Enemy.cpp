@@ -563,32 +563,25 @@ void Enemy::HitPoint(Stage& stage) {
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
 }
 
-void Enemy::Draw(Player& player) {
+void Enemy::Draw(Screen& screen, Player& player) {
 
 	//ìGï`âÊ
-	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
+	screen.DrawEllipse(mPosition, mRadius, 0.0f, mColor, kFillModeSolid);
 
 	////////////////////Å@Ç±Ç±Ç©ÇÁé„çUåÇÅ@////////////////////
 
-	if (mIsAttack[0] == true) {
-		attack[0].Draw();
-		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF000055, kFillModeSolid);
-	}
+	for (int i = 0; i < kEnemyMaxAttack; i++){
 
-	if (mIsAttack[1] == true) {
-		attack[1].Draw();
-		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF000055, kFillModeSolid);
-	}
-
-	if (mIsAttack[2] == true) {
-		attack[2].Draw();
-		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
+		if (mIsAttack[i] == true) {
+			attack[i].Draw(screen);
+			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF000055, kFillModeSolid);
+		}
 	}
 
 	////////////////////Å@Ç±Ç±Ç©ÇÁã≠çUåÇÅ@////////////////////
 
 	if (mIsSpecialAttack == true){
-		Novice::DrawEllipse(mSpecialAttackPosition.x, mSpecialAttackPosition.y, mSpecialAttackRadius, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+		screen.DrawEllipse(mSpecialAttackPosition, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
 	}
 
 	////////////////////Å@Ç±Ç±Ç©ÇÁïKéEãZÅ@////////////////////
@@ -596,14 +589,11 @@ void Enemy::Draw(Player& player) {
 	/*Å@ïKéEãZÇPÅ@êØç”ó¨ÅEóéâ∫êØÅ@*/
 	for (int i = 0; i < kFallingStarMax; i++) {
 		if (mIsFallingStarAttack[i] == true) {
-			Novice::DrawEllipse(mLeftFallingStarPosition[i].x, mLeftFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
-			Novice::DrawEllipse(mRightFallingStarPosition[i].x, mRightFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			screen.DrawEllipse(mLeftFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
 		}
 	}
 
 	//ëÃóÕï`âÊ
 	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
-
-	Novice::ScreenPrintf(100, 400, "Enemyisinvincible : %d", mIsInvincible);
-	Novice::ScreenPrintf(100, 420, "Enemyinvincibletime : %d", mInvincibleTime);
 }

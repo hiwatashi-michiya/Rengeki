@@ -1,4 +1,6 @@
 #pragma once
+#include "Screen.h"
+#include "Quad.h"
 #include "Vec2.h"
 
 //パーティクルの種類
@@ -43,7 +45,7 @@ public:
 
 	void Update(Vec2 position);
 
-	void Draw();
+	void Draw(Screen& screen);
 
 	void Reset();
 

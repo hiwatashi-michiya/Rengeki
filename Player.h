@@ -1,4 +1,5 @@
 #pragma once
+#include "Screen.h"
 #include "Vec2.h"
 #include "Stage.h"
 
@@ -50,7 +51,7 @@ public:
 	void Update(Stage& stage, Enemy &enemy);
 
 	//•`‰æˆ—
-	void Draw();
+	void Draw(Screen& screen);
 
 	//Œü‚«‚Ìæ“¾
 	inline DIRECTION GetPlayerDirection() { return mDirection; }
@@ -96,7 +97,7 @@ private:
 	void Move();
 
 	//“–‚½‚è”»’è
-	void Collision(Stage& stage, Enemy enemy);
+	void Collision(Stage& stage, Enemy& enemy);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 
