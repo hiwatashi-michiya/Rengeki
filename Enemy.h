@@ -14,9 +14,6 @@ const float kDecay = 1.0f;
 //ƒWƒƒƒ“ƒvÅ‘å‰ñ”
 const int kEnemyMaxJump = 2;
 
-//Å‘åUŒ‚‰ñ”
-const int kEnemyMaxAttack = 3;
-
 //ƒmƒbƒNƒoƒbƒN‚Ì‹——£
 const Vec2 kKnockBackLength[3] = {
 	{5,10},
@@ -24,13 +21,25 @@ const Vec2 kKnockBackLength[3] = {
 	{50,20}
 };
 
+//Å‘åUŒ‚‰ñ”
+const int kEnemyMaxAttack = 3;
+
+//¯Ó—¬E—‰º¯‚ÌUŒ‚”
+static constexpr int kFallingStarMax = 10;
+
 //–³“GŠÔ‚ÌÅ‘å’l
 const int kInvincibleTimer = 30;
 
-//“G‚ÌŒü‚«
+//ãUŒ‚‚ÌŒü‚«
 enum ENEMYDIRECTION {
 	ENEMYLEFT,
 	ENEMYRIGHT
+};
+
+//‹­UŒ‚‚ÌŒü‚«
+enum SPECIALDIRECTION {
+	SPECIALLEFT,
+	SPECIALRIGHT
 };
 
 class Player;
@@ -50,23 +59,48 @@ public:
 	//ƒ|ƒWƒVƒ‡ƒ“ƒŠƒZƒbƒg
 	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
 
-	//Œü‚«‚Ìæ“¾
-	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
-
 	//À•Wæ“¾
 	inline Vec2 GetEnemyPosition() { return mPosition; }
 
-	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
+	////////////////////@‚±‚±‚©‚çUŒ‚‚Ì“–‚½‚è”»’èæ“¾ŠÖ”@////////////////////
+	
+
+	//-----ãUŒ‚-----//
+
 	//UŒ‚‚ÌÀ•W
 	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
 	//UŒ‚‚Ì”¼Œa
 	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 	//UŒ‚‚µ‚Ä‚¢‚é‚©
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
+	//Œü‚«‚Ìæ“¾
+	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
+
+
+	//-----‹­UŒ‚-----//
+
+	//UŒ‚‚ÌÀ•W
+	inline Vec2 GetSpecialAttackPosition() { return mSpecialAttackPosition; }
+	//UŒ‚‚Ì”¼Œa
+	inline float GetSpecialAttackRadius() { return mSpecialAttackRadius; }
+	//UŒ‚‚µ‚Ä‚¢‚é‚©
+	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
+	//Œü‚«‚Ìæ“¾
+	inline SPECIALDIRECTION GetSpecialAttackDirection() { return mSpecialAttackDirection; }
+
+	//-----¯Ó—¬E—‰º¯-----//
+	
+	//¶‘¤UŒ‚‚ÌÀ•W
+	inline Vec2 GetLeftFallingStarPosition(int i) { return mLeftFallingStarPosition[i]; }
+	//‰E‘¤UŒ‚‚ÌÀ•W
+	inline Vec2 GetRightFallingStarPosition(int i) { return mRightFallingStarPosition[i]; }
+	//UŒ‚‚Ì”¼Œa
+	inline float GetFallingStarRadius() { return mFallingStarRadius; }
+	//UŒ‚‚µ‚Ä‚¢‚é‚©
+	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
-
 
 private:
 
@@ -165,11 +199,7 @@ private:
 	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool mIsSpecialAttack;
 	//“G‚ÌŒü‚«
-	enum SPECIALDIRECTION {
-		LEFT,
-		RIGHT
-	};
-	SPECIALDIRECTION mSpecialAttackDirection = LEFT;
+	SPECIALDIRECTION mSpecialAttackDirection = SPECIALLEFT;
 	//UŒ‚‚Ì‘¬“x
 	Vec2 mSpecialAttackVelocity;
 	float mSpecialAttackVelocityValue;	//‰ÁZ‚·‚é‘¬“x
@@ -199,10 +229,10 @@ private:
 	//ƒtƒŒ[ƒ€’l
 	int mFallingStarFrame;
 	//UŒ‚‚ÌÀ•W
-	Vec2 mLeftFallingStarPosition[10];
-	Vec2 mRightFallingStarPosition[10];
+	Vec2 mLeftFallingStarPosition[kFallingStarMax];
+	Vec2 mRightFallingStarPosition[kFallingStarMax];
 	//UŒ‚ƒtƒ‰ƒO
-	bool mIsFallingStarAttack[10];
+	bool mIsFallingStarAttack[kFallingStarMax];
 	//UŒ‚”
 	int mFallingStarStartValue;
 	int mFallingStarEndValue;

@@ -249,7 +249,7 @@ void Player::Collision(Enemy enemy) {
 	//バックステップしてない時のみ攻撃を受ける
 	if (mIsBackStep == false){
 
-		//
+		//-----弱攻撃当たり判定-----//
 		for (int i = 0;  i < kEnemyMaxAttack;  i++) {
 
 			//攻撃を受けた場合
@@ -280,6 +280,75 @@ void Player::Collision(Enemy enemy) {
 
 			//何も攻撃を受けていない時は色を戻す
 			if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
+				mColor = 0xFFFFFFFF;
+			}
+		}
+
+		//-----強攻撃当たり判定-----
+		//攻撃を受けた場合
+		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+			mColor = 0xFFFF00FF;
+			mIsHit[2] = true;
+
+			//敵の向きによってノックバックする方向を変える
+			if (enemy.GetSpecialAttackDirection() == SPECIALRIGHT && mKnockBack[2] == false) {
+				mKnockBackVelocity.x = kKnockBackLength[2].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2].y;
+				mPosition.y -= kKnockBackLength[2].y;
+				mKnockBack[2] = true;
+			}
+
+			if (enemy.GetSpecialAttackDirection() == SPECIALLEFT && mKnockBack[2] == false) {
+				mKnockBackVelocity.x = -kKnockBackLength[2].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2].y;
+				mPosition.y -= kKnockBackLength[2].y;
+				mKnockBack[2] = true;
+			}
+
+		}
+		else {
+			mIsHit[2] = false;
+			mKnockBack[2] = false;
+		}
+
+		//-----星砕流・落下星当たり判定-----//
+		for (int i = 0; i < kFallingStarMax; i++){
+
+			//左側攻撃を受けた場合
+			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[2] = true;
+
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = -kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mPosition.y -= kKnockBackLength[2].y;
+					mKnockBack[2] = true;
+				}
+
+			}
+
+			//右側攻撃を受けた場合
+			if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[2] = true;
+
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mPosition.y -= kKnockBackLength[2].y;
+					mKnockBack[2] = true;
+				}
+
+			}
+
+			else {
+				mIsHit[2] = false;
+				mKnockBack[2] = false;
+			}
+
+			//何も攻撃を受けていない時は色を戻す
+			if (mIsHit[2] == false) {
 				mColor = 0xFFFFFFFF;
 			}
 		}
