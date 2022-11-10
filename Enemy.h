@@ -51,7 +51,7 @@ public:
 	Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//XVˆ—
-	void Update(Player& player);
+	void Update(Stage& stage, Player& player);
 
 	//•`‰æˆ—
 	void Draw(Player& player);
@@ -116,7 +116,7 @@ private:
 	void Collision(Player player);
 
 	//‘Ì—Íˆ—
-	void HitPoint();
+	void HitPoint(Stage& stage);
 
 	//À•W
 	Vec2 mPosition;

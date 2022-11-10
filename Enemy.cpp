@@ -45,7 +45,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarFrame = 0;
 }
 
-void Enemy::Update(Player &player) {
+void Enemy::Update(Stage &stage, Player &player) {
 
 	Move(player);
 
@@ -62,7 +62,7 @@ void Enemy::Update(Player &player) {
 
 	Collision(player);
 
-	HitPoint();
+	HitPoint(stage);
 
 }
 
@@ -598,15 +598,15 @@ void Enemy::Collision(Player player) {
 
 }
 
-void Enemy::HitPoint() {
+void Enemy::HitPoint(Stage& stage) {
 
 	//‘Ì—Í‚Ì‘ã“ü
-	if (Stage::Round == Stage::Round1 && mIsHitPointAssign[0] == false) {
+	if (stage.GetRound() == Round1 && mIsHitPointAssign[0] == false) {
 		mHitPoint = mHitPointMax[0];
 		mTmpHitPointMax = mHitPoint;
 		mIsHitPointAssign[0] = true;
 	}
-	else if (Stage::Round == Stage::Round2 && mIsHitPointAssign[1] == false) {
+	else if (stage.GetRound() == Round2 && mIsHitPointAssign[1] == false) {
 		mHitPoint = mHitPointMax[1];
 		mTmpHitPointMax = mHitPoint;
 		mIsHitPointAssign[1] = true;

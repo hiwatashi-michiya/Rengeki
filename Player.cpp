@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Vec2.h"
 #include <Novice.h>
-#include "Stage.h"
 #include "Key.h"
 #include <math.h>
 #include "Enemy.h"
@@ -44,11 +43,11 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 //--------------------public------------------------
 
-void Player::Update(Enemy &enemy) {
+void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Move();
 
-	Collision(enemy);
+	Collision(stage, enemy);
 
 }
 
@@ -224,7 +223,7 @@ void Player::Move() {
 }
 
 //ìñÇΩÇËîªíË
-void Player::Collision(Enemy enemy) {
+void Player::Collision(Stage& stage, Enemy enemy) {
 
 	//ç∂îªíË
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
@@ -249,77 +248,58 @@ void Player::Collision(Enemy enemy) {
 	//ÉoÉbÉNÉXÉeÉbÉvÇµÇƒÇ»Ç¢éûÇÃÇ›çUåÇÇéÛÇØÇÈ
 	if (mIsBackStep == false){
 
-		//-----é„çUåÇìñÇΩÇËîªíË-----//
-		for (int i = 0;  i < kEnemyMaxAttack;  i++) {
+		if (stage.GetRound() == Round1){
 
+			//-----é„çUåÇìñÇΩÇËîªíË-----//
+			for (int i = 0; i < kEnemyMaxAttack; i++) {
+
+				//çUåÇÇéÛÇØÇΩèÍçá
+				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
+					mColor = 0xFFFF00FF;
+					mIsHit[i] = true;
+
+					//ìGÇÃå¸Ç´Ç…ÇÊÇ¡ÇƒÉmÉbÉNÉoÉbÉNÇ∑ÇÈï˚å¸ÇïœÇ¶ÇÈ
+					if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
+						mKnockBackVelocity.x = kKnockBackLength[i].x;
+						mKnockBackVelocity.y = -kKnockBackLength[i].y;
+						mPosition.y -= kKnockBackLength[i].y;
+						mKnockBack[i] = true;
+					}
+
+					if (enemy.GetEnemyDirection() == LEFT && mKnockBack[i] == false) {
+						mKnockBackVelocity.x = -kKnockBackLength[i].x;
+						mKnockBackVelocity.y = -kKnockBackLength[i].y;
+						mPosition.y -= kKnockBackLength[i].y;
+						mKnockBack[i] = true;
+					}
+
+				}
+				else {
+					mIsHit[i] = false;
+					mKnockBack[i] = false;
+				}
+
+				//âΩÇ‡çUåÇÇéÛÇØÇƒÇ¢Ç»Ç¢éûÇÕêFÇñﬂÇ∑
+				if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
+					mColor = 0xFFFFFFFF;
+				}
+			}
+
+			//-----ã≠çUåÇìñÇΩÇËîªíË-----
 			//çUåÇÇéÛÇØÇΩèÍçá
-			if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
-				mColor = 0xFFFF00FF;
-				mIsHit[i] = true;
-
-				//ìGÇÃå¸Ç´Ç…ÇÊÇ¡ÇƒÉmÉbÉNÉoÉbÉNÇ∑ÇÈï˚å¸ÇïœÇ¶ÇÈ
-				if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
-					mPosition.y -= kKnockBackLength[i].y;
-					mKnockBack[i] = true;
-				}
-
-				if (enemy.GetEnemyDirection() == LEFT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = -kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
-					mPosition.y -= kKnockBackLength[i].y;
-					mKnockBack[i] = true;
-				}
-
-			}
-			else {
-				mIsHit[i] = false;
-				mKnockBack[i] = false;
-			}
-
-			//âΩÇ‡çUåÇÇéÛÇØÇƒÇ¢Ç»Ç¢éûÇÕêFÇñﬂÇ∑
-			if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
-				mColor = 0xFFFFFFFF;
-			}
-		}
-
-		//-----ã≠çUåÇìñÇΩÇËîªíË-----
-		//çUåÇÇéÛÇØÇΩèÍçá
-		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
-			mColor = 0xFFFF00FF;
-			mIsHit[2] = true;
-
-			//ìGÇÃå¸Ç´Ç…ÇÊÇ¡ÇƒÉmÉbÉNÉoÉbÉNÇ∑ÇÈï˚å¸ÇïœÇ¶ÇÈ
-			if (enemy.GetSpecialAttackDirection() == SPECIALRIGHT && mKnockBack[2] == false) {
-				mKnockBackVelocity.x = kKnockBackLength[2].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2].y;
-				mPosition.y -= kKnockBackLength[2].y;
-				mKnockBack[2] = true;
-			}
-
-			if (enemy.GetSpecialAttackDirection() == SPECIALLEFT && mKnockBack[2] == false) {
-				mKnockBackVelocity.x = -kKnockBackLength[2].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2].y;
-				mPosition.y -= kKnockBackLength[2].y;
-				mKnockBack[2] = true;
-			}
-
-		}
-		else {
-			mIsHit[2] = false;
-			mKnockBack[2] = false;
-		}
-
-		//-----êØç”ó¨ÅEóéâ∫êØìñÇΩÇËîªíË-----//
-		for (int i = 0; i < kFallingStarMax; i++){
-
-			//ç∂ë§çUåÇÇéÛÇØÇΩèÍçá
-			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+			if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
 
-				if (mKnockBack[2] == false) {
+				//ìGÇÃå¸Ç´Ç…ÇÊÇ¡ÇƒÉmÉbÉNÉoÉbÉNÇ∑ÇÈï˚å¸ÇïœÇ¶ÇÈ
+				if (enemy.GetSpecialAttackDirection() == SPECIALRIGHT && mKnockBack[2] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mPosition.y -= kKnockBackLength[2].y;
+					mKnockBack[2] = true;
+				}
+
+				if (enemy.GetSpecialAttackDirection() == SPECIALLEFT && mKnockBack[2] == false) {
 					mKnockBackVelocity.x = -kKnockBackLength[2].x;
 					mKnockBackVelocity.y = -kKnockBackLength[2].y;
 					mPosition.y -= kKnockBackLength[2].y;
@@ -327,31 +307,58 @@ void Player::Collision(Enemy enemy) {
 				}
 
 			}
-
-			//âEë§çUåÇÇéÛÇØÇΩèÍçá
-			if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
-				mColor = 0xFFFF00FF;
-				mIsHit[2] = true;
-
-				if (mKnockBack[2] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[2].x;
-					mKnockBackVelocity.y = -kKnockBackLength[2].y;
-					mPosition.y -= kKnockBackLength[2].y;
-					mKnockBack[2] = true;
-				}
-
-			}
-
 			else {
 				mIsHit[2] = false;
 				mKnockBack[2] = false;
 			}
 
-			//âΩÇ‡çUåÇÇéÛÇØÇƒÇ¢Ç»Ç¢éûÇÕêFÇñﬂÇ∑
-			if (mIsHit[2] == false) {
-				mColor = 0xFFFFFFFF;
+			//-----êØç”ó¨ÅEóéâ∫êØìñÇΩÇËîªíË-----//
+			for (int i = 0; i < kFallingStarMax; i++) {
+
+				//ç∂ë§çUåÇÇéÛÇØÇΩèÍçá
+				if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+					mColor = 0xFFFF00FF;
+					mIsHit[2] = true;
+
+					if (mKnockBack[2] == false) {
+						mKnockBackVelocity.x = -kKnockBackLength[2].x;
+						mKnockBackVelocity.y = -kKnockBackLength[2].y;
+						mPosition.y -= kKnockBackLength[2].y;
+						mKnockBack[2] = true;
+					}
+
+				}
+
+				//âEë§çUåÇÇéÛÇØÇΩèÍçá
+				if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+					mColor = 0xFFFF00FF;
+					mIsHit[2] = true;
+
+					if (mKnockBack[2] == false) {
+						mKnockBackVelocity.x = kKnockBackLength[2].x;
+						mKnockBackVelocity.y = -kKnockBackLength[2].y;
+						mPosition.y -= kKnockBackLength[2].y;
+						mKnockBack[2] = true;
+					}
+
+				}
+
+				else {
+					mIsHit[2] = false;
+					mKnockBack[2] = false;
+				}
+
+				//âΩÇ‡çUåÇÇéÛÇØÇƒÇ¢Ç»Ç¢éûÇÕêFÇñﬂÇ∑
+				if (mIsHit[2] == false) {
+					mColor = 0xFFFFFFFF;
+				}
 			}
 		}
+
+		if (stage.GetRound() == Round2) {
+
+		}
+
 	}
 
 	

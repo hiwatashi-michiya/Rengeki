@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec2.h"
+#include "Stage.h"
 
 //重力の値
 const float kGravity = 1.5f;
@@ -44,7 +45,7 @@ public:
 	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Enemy &enemy);
+	void Update(Stage& stage, Enemy &enemy);
 
 	//描画処理
 	void Draw();
@@ -85,7 +86,7 @@ private:
 	void Move();
 
 	//当たり判定
-	void Collision(Enemy enemy);
+	void Collision(Stage& stage, Enemy enemy);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 

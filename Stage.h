@@ -7,6 +7,12 @@ const int kWindowWidth = 1280;
 //画面の縦幅
 const int kWindowHeight = 720;
 
+enum ROUND
+{
+	Round1,
+	Round2
+};
+
 class Stage
 {
 public:
@@ -23,14 +29,14 @@ public:
 	//ステージ数
 	static constexpr int kStageMax = 2;
 
-	enum ROUND
-	{
-		Round1,
-		Round2
-	};
-	static constexpr ROUND Round = Round1;
+	//現在ラウンド取得
+	inline ROUND GetRound() { return Round; }
 
 	void Draw(int Flame);
+
+private:
+
+	ROUND Round = Round1;
 
 };
 
