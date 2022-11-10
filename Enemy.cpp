@@ -9,6 +9,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition({mPosition.x,mPosition.y}),mVelocity({mVelocity.x,mVelocity.y}),mRadius(mRadius)
 {
 
+	for (int i = 0; i < 3; i++) {
+		attack[i] = Particle(DIFFUSION, 0xFFFF0000, 300, 3, 5, 100);
+	}
+
 	mKnockBackVelocity = { 0.0f, 0.0f };
 	mColor = 0x0000FFFF;
 	mAttackCount = kEnemyMaxAttack;
@@ -53,6 +57,15 @@ void Enemy::Update(Stage &stage, Player &player) {
 	AttackPattern(player);
 
 	////////////////////　ここから弱攻撃　////////////////////
+
+	for (int i = 0; i < kEnemyMaxAttack; i++) {
+
+		if (mIsAttack[i] == true) {
+			attack[i].Update(mAttackPosition[i]);
+		}
+
+	}
+
 	Attack(player);
 
 	////////////////////　ここから強攻撃　////////////////////
@@ -175,10 +188,15 @@ void Enemy::Attack(Player& player) {
 			mAttackPosition[2].x = mPosition.x + 96;
 		}
 
+		mAttackPosition[0].y = mPosition.y;
+		mAttackPosition[1].y = mPosition.y;
+		mAttackPosition[2].y = mPosition.y;
+
 		if ((player.GetPlayerPosition() - mPosition).length() < 100 || mIsAttack[0] == true) {
 			mVelocity.x = 0.0f;
 			if (mAttackTimer % 40 == 0) {
 				mIsAttack[mAttackCount] = true;
+				attack[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
 				mAttackCount++;
 			}
 			mAttackTimer--;
@@ -192,15 +210,15 @@ void Enemy::Attack(Player& player) {
 		//タイマーが0になったらフラグを戻す
 		if (mAttackTimer == 0) {
 			mIsAttackStart = false;
-			mIsAttack[0] = false;
-			mIsAttack[1] = false;
-			mIsAttack[2] = false;
+			
+			for (int i = 0; i < kEnemyMaxAttack; i++) {
+				mIsAttack[i] = false;
+				attack[i].Reset();
+			}
+
 			mAttackCount = 0;
 		}
 
-		mAttackPosition[0].y = mPosition.y;
-		mAttackPosition[1].y = mPosition.y;
-		mAttackPosition[2].y = mPosition.y;
 	}
 }
 
@@ -631,14 +649,17 @@ void Enemy::Draw(Player& player) {
 	////////////////////　ここから弱攻撃　////////////////////
 
 	if (mIsAttack[0] == true) {
+		attack[0].Draw();
 		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
 	if (mIsAttack[1] == true) {
+		attack[1].Draw();
 		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 
 	if (mIsAttack[2] == true) {
+		attack[2].Draw();
 		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF000055, kFillModeSolid);
 	}
 

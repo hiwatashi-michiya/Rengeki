@@ -4,6 +4,7 @@
 #include "Function.h"
 #include "Rand.h"
 #include "Easing.hpp"
+#include "Particle.h"
 
 //重力の値
 const float kEnemyGravity = 1.5f;
@@ -199,7 +200,8 @@ private:
 	float mAttackRadius[kEnemyMaxAttack];
 	//関数
 	void Attack(Player& player);
-
+	//パーティクル
+	Particle attack[3];
 
 
 	////////////////////　ここから強攻撃　////////////////////
