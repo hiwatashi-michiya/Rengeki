@@ -34,7 +34,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mHitPoint = mHitPointMax[0];
 	mIsHitPointAssign[0] = false;
 	mIsHitPointAssign[1] = false;
-	mInvincible = 0;
+	mInvincibleTime = 0;
+	mIsInvincible = false;
 	mCross = 0.0f;
 	mIsStart = false;
 	mStartFrame = -30;
@@ -136,19 +137,6 @@ void Enemy::Move(Player player) {
 
 		if (mKnockBackVelocity.x >= 0) {
 			mKnockBackVelocity.x = 0;
-		}
-
-	}
-
-	//無敵時間
-	if (mInvincible > 0) {
-
-		mInvincible -= 1;
-
-		if (mInvincible == 0) {
-			mKnockBack[0] = false;
-			mKnockBack[1] = false;
-			mKnockBack[2] = false;
 		}
 
 	}
@@ -420,8 +408,9 @@ void Enemy::Collision(Player player) {
 				mIsHit[0] = true;
 			}
 			//無敵時間の設定
-			if (mInvincible == 0) {
-				mInvincible = kInvincibleTimer;
+			if (mIsInvincible == false) {
+				mInvincibleTime = kEnemyInvincibleTimer;
+				mIsInvincible = true;
 			}
 
 			//プレイヤーの向きによってノックバックする方向を変える
@@ -504,8 +493,9 @@ void Enemy::Collision(Player player) {
 				mIsHit[1] = true;
 			}
 			//無敵時間の設定
-			if (mInvincible == 0) {
-				mInvincible = kInvincibleTimer;
+			if (mIsInvincible == false) {
+				mInvincibleTime = kEnemyInvincibleTimer;
+				mIsInvincible = true;
 			}
 
 			//プレイヤーの向きによってノックバックする方向を変える
@@ -562,8 +552,9 @@ void Enemy::Collision(Player player) {
 				mIsHit[2] = true;
 			}
 			//無敵時間の設定
-			if (mInvincible == 0) {
-				mInvincible = kInvincibleTimer;
+			if (mIsInvincible == false) {
+				mInvincibleTime = kEnemyInvincibleTimer;
+				mIsInvincible = true;
 			}
 
 			//プレイヤーの向きによってノックバックする方向を変える
@@ -585,6 +576,28 @@ void Enemy::Collision(Player player) {
 		else if (mIsSpecialAttackStart == false) {
 			mColor = 0x0000FFFF;
 		}
+	}
+
+	//無敵時間
+	if (mInvincibleTime > 0) {
+
+		if (mInvincibleTime < 30) {
+			mIsHit[0] = false;
+			mIsHit[1] = false;
+			mIsHit[2] = false;
+		}
+
+		if (mInvincibleTime >= 29) {
+			mColor = 0x0000FF55;
+		}
+
+		mInvincibleTime -= 1;
+		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
+
+		if (mInvincibleTime == 0) {
+			mIsInvincible = false;
+		}
+
 	}
 
 	//プレイヤーの攻撃が終了したらフラグをfalseにする（一回の攻撃で２ヒットしてしまっていた）

@@ -39,6 +39,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[0] = false;
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
+	mInvincibleTime = 0;
+	mIsInvincible = false;
 }
 
 //--------------------public------------------------
@@ -245,8 +247,8 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 		mIsGround = false;
 	}
 
-	//バックステップしてない時のみ攻撃を受ける
-	if (mIsBackStep == false){
+	//バックステップしてない時に攻撃を受ける
+	if (mIsBackStep == false && mIsInvincible == false){
 
 		if (stage.GetRound() == Round1){
 
@@ -272,6 +274,8 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 						mPosition.y -= kKnockBackLength[i].y;
 						mKnockBack[i] = true;
 					}
+
+					mIsInvincible = true;
 
 				}
 				else {
@@ -306,6 +310,11 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 					mKnockBack[2] = true;
 				}
 
+				if (mIsInvincible == false) {
+					mInvincibleTime = kInvincibleTimer;
+					mIsInvincible = true;
+				}
+
 			}
 			else {
 				mIsHit[2] = false;
@@ -327,6 +336,11 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 						mKnockBack[2] = true;
 					}
 
+					if (mIsInvincible == false) {
+						mInvincibleTime = kInvincibleTimer;
+						mIsInvincible = true;
+					}
+
 				}
 
 				//右側攻撃を受けた場合
@@ -339,6 +353,11 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
 						mPosition.y -= kKnockBackLength[2].y;
 						mKnockBack[2] = true;
+					}
+
+					if (mIsInvincible == false) {
+						mInvincibleTime = kInvincibleTimer;
+						mIsInvincible = true;
 					}
 
 				}
@@ -357,6 +376,28 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 
 		if (stage.GetRound() == Round2) {
 
+		}
+
+	}
+
+	//無敵時間
+	if (mInvincibleTime > 0) {
+
+		if (mInvincibleTime < 30){
+			mIsHit[0] = false;
+			mIsHit[1] = false;
+			mIsHit[2] = false;
+		}
+
+		if (mInvincibleTime >= 29){
+			mColor = 0xFFFFFF55;
+		}
+
+		mInvincibleTime -= 1;
+		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
+
+		if (mInvincibleTime == 0) {
+			mIsInvincible = false;
 		}
 
 	}
