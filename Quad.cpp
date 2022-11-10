@@ -41,10 +41,10 @@ Quad Translation(Quad quad, Vec2 position) {
 Quad CenterQuad(Vec2 center, float radius) {
 
 	Quad tmp{
-		{ center.x - radius / 2, center.y - radius / 2 },
-		{ center.x + radius / 2, center.y - radius / 2 },
-		{ center.x - radius / 2, center.y + radius / 2 },
-		{ center.x + radius / 2, center.y + radius / 2 }
+		{ center.x - radius, center.y - radius},
+		{ center.x + radius, center.y - radius},
+		{ center.x - radius, center.y + radius},
+		{ center.x + radius, center.y + radius}
 	};
 
 	return tmp;
