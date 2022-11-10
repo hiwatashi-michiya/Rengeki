@@ -121,11 +121,11 @@ private:
 	//ジャンプ回数
 	int mJumpCount;
 
-	//バックステップしているかどうか
-	bool mIsBackStep;
+	//ローリングしているかどうか
+	bool mIsRolling;
 
-	//バックステップ中のフレーム
-	int mBackStepFrame;
+	//ローリング中のフレーム
+	int mRollingFrame;
 
 	//攻撃回数
 	int mAttackCount;

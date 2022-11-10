@@ -26,8 +26,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	srand(kCurrentTime);
 
-	Player player({ 100.0f,100.0f }, { 7.0f,7.0f }, 20.0f);
-	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
+	Player player({ 100.0f,100.0f }, { 7.0f,7.0f }, 30.0f);
+	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
 
 	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 500);

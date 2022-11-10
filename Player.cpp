@@ -18,8 +18,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackCount = kMaxAttack;
 	mJumpCount = 0;
 	mIsGround = false;
-	mIsBackStep = false;
-	mBackStepFrame = 0;
+	mIsRolling = false;
+	mRollingFrame = 0;
 	mDirection = RIGHT;
 	mAttackTimer = 0;
 	mIsAttack[0] = false;
@@ -104,19 +104,19 @@ void Player::Move() {
 		if (mIsAttack[0] == false) {
 
 			//右移動
-			if (Key::IsPress(DIK_RIGHT) && mIsBackStep == false) {
+			if (Key::IsPress(DIK_RIGHT) && mIsRolling == false) {
 				mPosition.x += mVelocity.x;
 				mDirection = RIGHT;
 			}
 
 			//左移動
-			if (Key::IsPress(DIK_LEFT) && mIsBackStep == false) {
+			if (Key::IsPress(DIK_LEFT) && mIsRolling == false) {
 				mPosition.x -= mVelocity.x;
 				mDirection = LEFT;
 			}
 
 			//ジャンプ
-			if (Key::IsTrigger(DIK_UP) && mIsBackStep == false) {
+			if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
 
 				//ジャンプ回数が残っている場合ジャンプできる
 				if (mJumpCount > 0) {
@@ -127,14 +127,14 @@ void Player::Move() {
 
 			}
 
-			//バックステップフラグを立てる
+			//ローリングフラグを立てる
 			if (Key::IsTrigger(DIK_X) && mIsGround == true){
-				mIsBackStep = true;
+				mIsRolling = true;
 			}
 
-			//一定時間バックステップする
-			if (mIsBackStep == true){
-				mBackStepFrame++;
+			//一定時間ローリングする
+			if (mIsRolling == true){
+				mRollingFrame++;
 				mColor = 0xFFFFFF77;
 
 				if (mDirection == RIGHT) {
@@ -144,16 +144,16 @@ void Player::Move() {
 					mPosition.x -= 18.0f;
 				}
 
-				if (mBackStepFrame >= 15){
-					mBackStepFrame = 0;
-					mIsBackStep = false;
+				if (mRollingFrame >= 15){
+					mRollingFrame = 0;
+					mIsRolling = false;
 				}
 			}
 
 		}
 
 		//攻撃
-		if (Key::IsTrigger(DIK_C) && mIsBackStep == false) {
+		if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
 
 			if (mIsGround == true) {
 
@@ -256,8 +256,8 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 		mIsGround = false;
 	}
 
-	//バックステップしてない時に攻撃を受ける
-	if (mIsBackStep == false && mIsInvincible == false){
+	//ローリングしてない時に攻撃を受ける
+	if (mIsRolling == false && mIsInvincible == false){
 
 		if (stage.GetRound() == Round1){
 
