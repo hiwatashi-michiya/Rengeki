@@ -237,15 +237,11 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = 1;
-				mVelocity[i].x = RandNum(1, 3, ON);
-				mVelocity[i].y = RandNum(-30, -20, OFF);
+				mRadius[i] = RandNum(1, 10, OFF);
+				mVelocity[i].x = RandNum(1, 3, ON) + (RandNum(0, 9, ON) * 0.1f);
+				mVelocity[i].y = RandNum(-30, -15, OFF);
 				mRandColor[i] = RandNum(0x00000088, 0x000000FF, OFF);
 				mColor[i] = mParticleColor;
-
-				if (i % 20 == 0) {
-					break;
-				}
 
 			}
 
