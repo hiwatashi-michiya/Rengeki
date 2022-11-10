@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec2.h"
+#include "Quad.h"
 #include "Stage.h"
 
 //d—Í‚Ì’l
