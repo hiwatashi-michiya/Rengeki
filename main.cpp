@@ -32,9 +32,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 500);
 
-	Particle enemyParticle(DIFFUSION, 0xFF00FF00, 10, 32, 33, 100);
+	Particle enemyParticle(PLAYERDIFFUSION, 0xFF00FF00, 10, 32, 33, 100);
 
-	Particle playerParticle(DIFFUSION, 0x00FFFF00, 10, 32, 33, 100);
+	Particle playerParticle(PLAYERDIFFUSION, 0x00FFFF00, 10, 32, 33, 100);
 
 	Vec2 stageParticlePosition = { 0,800 };
 
@@ -58,8 +58,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		player.Update(stage, enemy);
 		enemy.Update(stage, player);
+		stageParticle.SetFlag(stageParticlePosition);
 		stageParticle.Update(stageParticlePosition);
+		enemyParticle.SetFlag(enemy.GetEnemyPosition());
 		enemyParticle.Update(enemy.GetEnemyPosition());
+		playerParticle.SetFlag(player.GetPlayerPosition());
 		playerParticle.Update(player.GetPlayerPosition());
 
 		///

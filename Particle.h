@@ -3,7 +3,9 @@
 
 //パーティクルの種類
 enum PARTICLETYPE {
-	//拡散
+	//拡散(オーラ型)
+	PLAYERDIFFUSION,
+	//拡散(通常型)
 	DIFFUSION,
 	//上から下へ
 	TOPTOBOTTOM,
@@ -26,17 +28,26 @@ const int kMaxParticle = 500;
 class Particle
 {
 public:
+	Particle();
 	/// <summary>
 	/// パーティクルを出す
 	/// </summary>
 	/// <param name="mParticleType">パーティクルのタイプ</param>
 	/// <param name="mParticleColor">透明度抜きのパーティクルの色</param>
+	/// <param name="mParticleExtinction">消滅する距離</param>
+	/// <param name="mRandMin">ランダムな大きさの最小値</param>
+	/// <param name="mRandMax">ランダムな大きさの最大値</param>
+	/// <param name="mMaxParticle">パーティクルの最大個数</param>
 	Particle(PARTICLETYPE mParticleType, int mParticleColor, float mParticleExtinction,
 		int mRandMin, int mRandMax, int mMaxParticle);
 
 	void Update(Vec2 position);
 
 	void Draw();
+
+	void Reset();
+
+	void SetFlag(Vec2 position);
 
 private:
 

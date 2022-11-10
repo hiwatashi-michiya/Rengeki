@@ -5,6 +5,29 @@
 #include <math.h>
 #include "Rand.h"
 
+Particle::Particle() : mParticleType(PLAYERDIFFUSION), mParticleColor(0xFFFFFF00), mParticleExtinction(100),
+mRandMin(1), mRandMax(2), mMaxParticle(100) {
+
+	for (int i = 0; i < mMaxParticle; i++) {
+
+		mPosition[i] = { -10000,-10000 };
+		mVelocity[i] = { 0,0 };
+		mColor[i] = mParticleColor;
+		mIsAlive[i] = false;
+		mRadius[i] = 2;
+		mRandColor[i] = 0;
+
+	}
+
+	mCoolTime = 0;
+
+	mTextureHandle = Novice::LoadTexture("./Resources/Stage/Particle.png");
+
+	mTheta = 0;
+
+	mShockWaveTimer = 0;
+
+}
 
 Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mParticleExtinction,
 	int mRandMin, int mRandMax, int mMaxParticle)
@@ -28,6 +51,8 @@ Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mPartic
 
 	mTheta = 0;
 
+	mShockWaveTimer = 0;
+
 }
 
 void Particle::Update(Vec2 position) {
@@ -50,13 +75,30 @@ void Particle::Draw() {
 
 }
 
-void Particle::Move(Vec2 position) {
+void Particle::Reset() {
 
-	mTheta += M_PI / 120;
+	for (int i = 0; i < mMaxParticle; i++) {
 
-	if (mTheta >= 2 * M_PI) {
-		mTheta = 0;
+		mPosition[i] = { -10000,-10000 };
+		mVelocity[i] = { 0,0 };
+		mColor[i] = mParticleColor;
+		mIsAlive[i] = false;
+		mRadius[i] = 2;
+		mRandColor[i] = 0;
+
 	}
+
+	mCoolTime = 0;
+
+	mTextureHandle = Novice::LoadTexture("./Resources/Stage/Particle.png");
+
+	mTheta = 0;
+
+	mShockWaveTimer = 0;
+
+}
+
+void Particle::SetFlag(Vec2 position) {
 
 	for (int i = 0; i < mMaxParticle; i++) {
 
@@ -64,8 +106,8 @@ void Particle::Move(Vec2 position) {
 
 			mIsAlive[i] = true;
 
-			//ŠgŽUŒ^
-			if (mParticleType == DIFFUSION) {
+			//ŠgŽU(ƒI[ƒ‰Œ^)
+			if (mParticleType == PLAYERDIFFUSION) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
@@ -84,6 +126,27 @@ void Particle::Move(Vec2 position) {
 				}
 
 				break;
+
+			}
+
+			//ŠgŽU(’ÊíŒ^)
+			if (mParticleType == DIFFUSION) {
+
+				mPosition[i].x = position.x;
+				mPosition[i].y = position.y;
+				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
+				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
+				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
+				mRandColor[i] = RandNum(0x00000044, 0x00000088, OFF);
+				mColor[i] = mParticleColor;
+
+				if (mVelocity[i].x == 0) {
+					mVelocity[i].x = 1;
+				}
+
+				if (mVelocity[i].y == 0) {
+					mVelocity[i].y = 1;
+				}
 
 			}
 
@@ -190,6 +253,16 @@ void Particle::Move(Vec2 position) {
 
 	}
 
+}
+
+void Particle::Move(Vec2 position) {
+
+	mTheta += M_PI / 120;
+
+	if (mTheta >= 2 * M_PI) {
+		mTheta = 0;
+	}
+
 	for (int i = 0; i < mMaxParticle; i++) {
 
 
@@ -197,9 +270,14 @@ void Particle::Move(Vec2 position) {
 
 			//‘¬“xA“§–¾“x•Ï‰»ˆ—
 
-			//ŠgŽUŒ^
-			if (mParticleType == DIFFUSION) {
+			//ŠgŽU(ƒI[ƒ‰Œ^)
+			if (mParticleType == PLAYERDIFFUSION) {
 				mRandColor[i] -= 8;
+			}
+
+			//ŠgŽU(’ÊíŒ^)
+			if (mParticleType == DIFFUSION) {
+				mRandColor[i] -= 4;
 			}
 
 			//ã¸Œ^
@@ -241,7 +319,7 @@ void Particle::Move(Vec2 position) {
 
 			//ƒp[ƒeƒBƒNƒ‹‚ª‹K’è”ÍˆÍ‚ð’´‚¦‚Ä‚¢‚È‚¢‚©”»’è
 			//ŠgŽUŒ^E”¼‰~Œ^
-			if (mParticleType == DIFFUSION) {
+			if (mParticleType == PLAYERDIFFUSION || mParticleType == DIFFUSION) {
 
 				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
 					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > mParticleExtinction) {
