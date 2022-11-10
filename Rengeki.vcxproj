@@ -106,6 +106,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Rand.cpp" />
+    <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Rand.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>

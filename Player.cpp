@@ -18,8 +18,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackCount = kMaxAttack;
 	mJumpCount = 0;
 	mIsGround = false;
-	mIsBackStep = false;
-	mBackStepFrame = 0;
+	mIsRolling = false;
+	mRollingFrame = 0;
 	mDirection = RIGHT;
 	mAttackTimer = 0;
 	mIsAttack[0] = false;
@@ -55,29 +55,22 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 }
 
-void Player::Draw() {
+void Player::Draw(Screen& screen) {
 
 	if (mIsLoad == false) {
 		player = Novice::LoadTexture("./Resources/Player/Player.png");
 		mIsLoad = true;
 	}
 
-	Draw::drawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xffffffff);
+	screen.DrawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xFFFFFFFF);
 
-	if (mIsAttack[0] == true) {
-		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF0000FF, kFillModeSolid);
-	}
+	for (int i = 0; i < kMaxAttack; i++){
 
-	if (mIsAttack[1] == true) {
-		Novice::DrawEllipse(mAttackPosition[1].x, mAttackPosition[1].y, mAttackRadius[1], mAttackRadius[1], 0.0f, 0xFF0000FF, kFillModeSolid);
-	}
-
-	if (mIsAttack[2] == true) {
-		Novice::DrawEllipse(mAttackPosition[2].x, mAttackPosition[2].y, mAttackRadius[2], mAttackRadius[2], 0.0f, 0xFF0000FF, kFillModeSolid);
+		if (mIsAttack[i] == true) {
+			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
+		}
 	}
 	
-	Novice::ScreenPrintf(100, 500, "Playerisinvincible : %d", mIsInvincible);
-	Novice::ScreenPrintf(100, 520, "Playerinvincibletime : %d", mInvincibleTime);
 }
 
 //---------------------private----------------------
@@ -104,19 +97,19 @@ void Player::Move() {
 		if (mIsAttack[0] == false) {
 
 			//右移動
-			if (Key::IsPress(DIK_RIGHT) && mIsBackStep == false) {
+			if (Key::IsPress(DIK_RIGHT) && mIsRolling == false) {
 				mPosition.x += mVelocity.x;
 				mDirection = RIGHT;
 			}
 
 			//左移動
-			if (Key::IsPress(DIK_LEFT) && mIsBackStep == false) {
+			if (Key::IsPress(DIK_LEFT) && mIsRolling == false) {
 				mPosition.x -= mVelocity.x;
 				mDirection = LEFT;
 			}
 
 			//ジャンプ
-			if (Key::IsTrigger(DIK_UP) && mIsBackStep == false) {
+			if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
 
 				//ジャンプ回数が残っている場合ジャンプできる
 				if (mJumpCount > 0) {
@@ -127,14 +120,14 @@ void Player::Move() {
 
 			}
 
-			//バックステップフラグを立てる
+			//ローリングフラグを立てる
 			if (Key::IsTrigger(DIK_X) && mIsGround == true){
-				mIsBackStep = true;
+				mIsRolling = true;
 			}
 
-			//一定時間バックステップする
-			if (mIsBackStep == true){
-				mBackStepFrame++;
+			//一定時間ローリングする
+			if (mIsRolling == true){
+				mRollingFrame++;
 				mColor = 0xFFFFFF77;
 
 				if (mDirection == RIGHT) {
@@ -144,16 +137,16 @@ void Player::Move() {
 					mPosition.x -= 18.0f;
 				}
 
-				if (mBackStepFrame >= 15){
-					mBackStepFrame = 0;
-					mIsBackStep = false;
+				if (mRollingFrame >= 15){
+					mRollingFrame = 0;
+					mIsRolling = false;
 				}
 			}
 
 		}
 
 		//攻撃
-		if (Key::IsTrigger(DIK_C) && mIsBackStep == false) {
+		if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
 
 			if (mIsGround == true) {
 
@@ -234,7 +227,7 @@ void Player::Move() {
 }
 
 //当たり判定
-void Player::Collision(Stage& stage, Enemy enemy) {
+void Player::Collision(Stage& stage, Enemy& enemy) {
 
 	//左判定
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
@@ -256,8 +249,8 @@ void Player::Collision(Stage& stage, Enemy enemy) {
 		mIsGround = false;
 	}
 
-	//バックステップしてない時に攻撃を受ける
-	if (mIsBackStep == false && mIsInvincible == false){
+	//ローリングしてない時に攻撃を受ける
+	if (mIsRolling == false && mIsInvincible == false){
 
 		if (stage.GetRound() == Round1){
 

@@ -61,14 +61,13 @@ void Particle::Update(Vec2 position) {
 
 }
 
-void Particle::Draw() {
+void Particle::Draw(Screen& screen) {
 
 	for (int i = 0; i < mMaxParticle; i++) {
 
 		if (mIsAlive[i] == true) {
-			Novice::DrawQuad(mPosition[i].x - mRadius[i], mPosition[i].y - mRadius[i], mPosition[i].x + mRadius[i], mPosition[i].y - mRadius[i],
-				mPosition[i].x - mRadius[i], mPosition[i].y + mRadius[i], mPosition[i].x + mRadius[i], mPosition[i].y + mRadius[i],
-				0, 0, 32, 32, mTextureHandle, mColor[i] + mRandColor[i]);
+
+			screen.DrawQuad(CenterQuad(mPosition[i], mRadius[i]), 0, 0, 32, 32, mTextureHandle, mColor[i] + mRandColor[i]);
 		}
 
 	}

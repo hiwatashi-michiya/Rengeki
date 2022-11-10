@@ -1,4 +1,5 @@
 #pragma once
+#include "Screen.h"
 #include "Vec2.h"
 #include "Stage.h"
 
@@ -50,7 +51,7 @@ public:
 	void Update(Stage& stage, Enemy &enemy);
 
 	//描画処理
-	void Draw();
+	void Draw(Screen& screen);
 
 	//向きの取得
 	inline DIRECTION GetPlayerDirection() { return mDirection; }
@@ -96,7 +97,7 @@ private:
 	void Move();
 
 	//当たり判定
-	void Collision(Stage& stage, Enemy enemy);
+	void Collision(Stage& stage, Enemy& enemy);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 
@@ -123,11 +124,11 @@ private:
 	//ジャンプ回数
 	int mJumpCount;
 
-	//バックステップしているかどうか
-	bool mIsBackStep;
+	//ローリングしているかどうか
+	bool mIsRolling;
 
-	//バックステップ中のフレーム
-	int mBackStepFrame;
+	//ローリング中のフレーム
+	int mRollingFrame;
 
 	//攻撃回数
 	int mAttackCount;

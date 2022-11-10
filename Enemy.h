@@ -1,4 +1,5 @@
 #pragma once
+#include "Screen.h"
 #include "Vec2.h"
 #include "Stage.h"
 #include "Function.h"
@@ -55,7 +56,7 @@ public:
 	void Update(Stage& stage, Player& player);
 
 	//描画処理
-	void Draw(Player& player);
+	void Draw(Screen& screen, Player& player);
 	
 	//ポジションリセット
 	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
@@ -187,6 +188,27 @@ private:
 	//開始するまでのフレーム
 	int mStartFrame;
 
+	//////////////////// ここから基礎移動 ////////////////////
+
+	//-----バックステップ-----//
+	//バックステップフラグ
+	bool mIsBackStep;
+	//イージングの増加値
+	float mBackStepEasingt;
+	//移動の開始地点と終了地点
+	Vec2 mBackStepStartPosition;
+	Vec2 mBackStepEndPosition;
+	//関数
+	void BackStep();
+
+	//-----左右瞬間移動-----//
+	//左右瞬間移動フラグ
+	bool mIsTeleport;
+	//フレーム
+	int mTeleportFrame;
+	//関数
+	void Teleport();
+
 	////////////////////　ここから弱攻撃　////////////////////
 	
 	//攻撃回数
@@ -231,7 +253,7 @@ private:
 
 	////////////////////　ここから必殺技　////////////////////
 
-	/*　必殺技１　星砕流・落下星　*/
+	//-----必殺技１　星砕流・落下星-----//
 	//半径
 	int mFallingStarRadius;
 	//フラグ
