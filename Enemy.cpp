@@ -78,7 +78,7 @@ bool Enemy::AnyAttack() {
 void Enemy::Move(Player player) {
 
 	//d—Í‚ð‰ÁŽZiUŒ‚‚µ‚Ä‚¢‚È‚¢j
-	if (AnyAttack() == false) {
+	if (AnyAttack() == false || (AnyAttack() == true && mIsSpecialAttackStart == false )) {
 		mVelocity.y += kEnemyGravity;
 	}
 
@@ -141,7 +141,7 @@ void Enemy::Move(Player player) {
 	}
 
 	//UŒ‚‚µ‚Ä‚¢‚È‚¢Žž‚É‘¬“x‚ð‰ÁŽZ‚·‚é
-	if (mIsSpecialAttackStart == false || (mIsSpecialAttackStart == true && mSpecialAttackFrame > 300)){
+	if (mIsSpecialAttackStart == false || (mIsSpecialAttackStart == true && mSpecialAttackFrame <= 300)){
 
 		//‘¬“x‚ð‰ÁŽZ
 		mPosition.x += mVelocity.x;
