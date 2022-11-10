@@ -28,7 +28,7 @@ const int kEnemyMaxAttack = 3;
 static constexpr int kFallingStarMax = 10;
 
 //–³“GŠÔ‚ÌÅ‘å’l
-const int kInvincibleTimer = 30;
+const int kEnemyInvincibleTimer = 30;
 
 //ãUŒ‚‚ÌŒü‚«
 enum ENEMYDIRECTION {
@@ -100,7 +100,14 @@ public:
 	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©
-	inline bool GetIsHit(int i) { return mIsHit[i]; }
+	inline bool GetIsHit0() { return mIsHit[0]; }
+	inline bool GetIsHit1() { return mIsHit[1]; }
+	inline bool GetIsHit2() { return mIsHit[2]; }
+
+	//–³“G‚©‚Ç‚¤‚©
+	inline bool GetIsEnemyInvincible() { return mIsInvincible; }
+	//–³“GŠÔ‚Ìæ“¾
+	inline bool GetEnemyInvincibleTime() { return mInvincibleTime; }
 
 private:
 
@@ -159,7 +166,10 @@ private:
 	bool mKnockBack[kEnemyMaxAttack];
 
 	//–³“GŠÔ
-	int mInvincible;
+	int mInvincibleTime;
+
+	//–³“GŠÔ‚©
+	bool mIsInvincible;
 
 	//ŠOÏ‚Ì’l
 	float mCross;

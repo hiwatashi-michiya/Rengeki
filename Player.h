@@ -17,6 +17,9 @@ const int kAttackValue[kMaxAttack] = { 2, 5, 20 };
 //攻撃の持続時間
 const int kAttackPersistence = 30;
 
+//無敵時間の最大値
+const int kInvincibleTimer = 30;
+
 //プレイヤーの向き
 enum DIRECTION {
 	LEFT,
@@ -80,6 +83,11 @@ public:
 	//プレイヤーの座標取得（外積に使用する）
 	inline Vec2 GetPlayerPosition() { return mPosition; }
 
+	//無敵かどうか
+	inline bool GetIsPlayerInvincible() { return mIsInvincible; }
+	//無敵時間の取得
+	inline bool GetPlayerInvincibleTime() { return mInvincibleTime; }
+
 private:
 
 	//動き
@@ -142,6 +150,12 @@ private:
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
+
+	//無敵時間
+	int mInvincibleTime;
+
+	//無敵時間か
+	bool mIsInvincible;
 
 };
 

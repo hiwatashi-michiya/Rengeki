@@ -13,10 +13,16 @@ enum ROUND
 	Round2
 };
 
+class Player;
+class Enemy;
+
 class Stage
 {
 public:
-	Stage(){}
+	Stage() { 
+		mIsHitStop = false; 
+		mHitStopFrame = 0;
+	}
 
 	//ステージの横幅
 	static constexpr int kStageLeft = 55;		//左端
@@ -31,6 +37,11 @@ public:
 
 	//現在ラウンド取得
 	inline ROUND GetRound() { return Round; }
+
+	//-----ヒットストップ-----//
+	bool mIsHitStop;
+	int mHitStopFrame;
+	void HitStop(Player& player, Enemy& enemy);
 
 	void Draw(int Flame);
 

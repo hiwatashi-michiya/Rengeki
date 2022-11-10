@@ -43,24 +43,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// フレームの開始
 		Novice::BeginFrame();
 
+		//キー入力の更新
+		Key::Update();
+
 		while (!((oldTime + 16) - clock() <= 0));
+
 
 		///
 		/// ↓更新処理ここから
 		///
 
-		//キー入力の更新
-		Key::Update();
+		if (stage.mIsHitStop == false) {
 
-		if (Key::IsTrigger(DIK_R)) {
-			enemy.ResetPosition();
+			if (Key::IsTrigger(DIK_R)) {
+				enemy.ResetPosition();
+			}
+
+			player.Update(stage, enemy);
+			enemy.Update(stage, player);
+			stageParticle.Update(stageParticlePosition);
+			enemyParticle.Update(enemy.GetEnemyPosition());
+			playerParticle.Update(player.GetPlayerPosition());
+
 		}
 
-		player.Update(stage, enemy);
-		enemy.Update(stage, player);
-		stageParticle.Update(stageParticlePosition);
-		enemyParticle.Update(enemy.GetEnemyPosition());
-		playerParticle.Update(player.GetPlayerPosition());
+		stage.HitStop(player, enemy);
 
 		///
 		/// ↑更新処理ここまで
