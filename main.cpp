@@ -30,11 +30,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 20.0f);
 	Stage stage;
 
-	Particle stageParticle(BOTTOMTOTOP,0xFFFFFF00);
+	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 500);
 
-	Particle enemyParticle(DIFFUSION, 0xFF00FF00);
+	Particle enemyParticle(DIFFUSION, 0xFF00FF00, 10, 32, 33, 100);
 
-	Particle playerParticle(DIFFUSION, 0x00FFFF00);
+	Particle playerParticle(DIFFUSION, 0x00FFFF00, 10, 32, 33, 100);
 
 	Vec2 stageParticlePosition = { 0,800 };
 
