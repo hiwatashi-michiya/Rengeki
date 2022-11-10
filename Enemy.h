@@ -14,15 +14,18 @@ const float kDecay = 1.0f;
 //ジャンプ最大回数
 const int kEnemyMaxJump = 2;
 
-//最大攻撃回数
-const int kEnemyMaxAttack = 3;
-
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
 	{5,10},
 	{10,15},
 	{50,20}
 };
+
+//最大攻撃回数
+const int kEnemyMaxAttack = 3;
+
+//星砕流・落下星の攻撃数
+static constexpr int kFallingStarMax = 10;
 
 //無敵時間の最大値
 const int kInvincibleTimer = 30;
@@ -62,7 +65,7 @@ public:
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
 
-	/*　弱攻撃　*/
+	//-----弱攻撃-----//
 
 	//攻撃の座標
 	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
@@ -74,7 +77,7 @@ public:
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
 
 
-	/*　強攻撃　*/
+	//-----強攻撃-----//
 
 	//攻撃の座標
 	inline Vec2 GetSpecialAttackPosition() { return mSpecialAttackPosition; }
@@ -84,6 +87,17 @@ public:
 	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
 	//向きの取得
 	inline SPECIALDIRECTION GetSpecialAttackDirection() { return mSpecialAttackDirection; }
+
+	//-----星砕流・落下星-----//
+	
+	//左側攻撃の座標
+	inline Vec2 GetLeftFallingStarPosition(int i) { return mLeftFallingStarPosition[i]; }
+	//右側攻撃の座標
+	inline Vec2 GetRightFallingStarPosition(int i) { return mRightFallingStarPosition[i]; }
+	//攻撃の半径
+	inline float GetFallingStarRadius() { return mFallingStarRadius; }
+	//攻撃しているか
+	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
 
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
@@ -215,10 +229,10 @@ private:
 	//フレーム値
 	int mFallingStarFrame;
 	//攻撃の座標
-	Vec2 mLeftFallingStarPosition[10];
-	Vec2 mRightFallingStarPosition[10];
+	Vec2 mLeftFallingStarPosition[kFallingStarMax];
+	Vec2 mRightFallingStarPosition[kFallingStarMax];
 	//攻撃フラグ
-	bool mIsFallingStarAttack[10];
+	bool mIsFallingStarAttack[kFallingStarMax];
 	//攻撃数
 	int mFallingStarStartValue;
 	int mFallingStarEndValue;

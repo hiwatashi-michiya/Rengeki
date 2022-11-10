@@ -317,7 +317,7 @@ void Enemy::FallingStar(Player& player) {
 					mIsFallingStarAttack[mFallingStarEndValue] = false;
 					mFallingStarEndValue++;
 				}
-				if (mFallingStarFrame >= 65) {
+				if (mFallingStarFrame >= ( 5 * (kFallingStarMax - 1) + 20 )) {
 					mIsFallingStar = false;
 				}
 			}
@@ -373,7 +373,7 @@ void Enemy::AttackPattern(Player& player) {
 			mVelocity.x = 0.0f;
 			mFallingStarStartPosition = mPosition;
 			mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < kFallingStarMax; i++) {
 				mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
 				mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
 			}
@@ -644,7 +644,7 @@ void Enemy::Draw(Player& player) {
 	////////////////////@‚±‚±‚©‚ç•KŽE‹Z@////////////////////
 
 	/*@•KŽE‹Z‚P@¯Ó—¬E—Ž‰º¯@*/
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < kFallingStarMax; i++) {
 		if (mIsFallingStarAttack[i] == true) {
 			Novice::DrawEllipse(mLeftFallingStarPosition[i].x, mLeftFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
 			Novice::DrawEllipse(mRightFallingStarPosition[i].x, mRightFallingStarPosition[i].y, mFallingStarRadius, mFallingStarRadius, 0.0f, RED, kFillModeSolid);
