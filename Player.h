@@ -1,6 +1,5 @@
 #pragma once
 #include "Vec2.h"
-#include "Quad.h"
 #include "Stage.h"
 
 //重力の値
@@ -159,6 +158,12 @@ private:
 
 	//無敵時間か
 	bool mIsInvincible;
+
+	//描画するフラグ
+	bool mIsLoad;
+	int player;
+
+	//描画
 
 };
 

@@ -4,6 +4,7 @@
 #include "Key.h"
 #include <math.h>
 #include "Enemy.h"
+#include "Quad.h"
 
 Player::Player()
 {
@@ -41,6 +42,7 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[2] = false;
 	mInvincibleTime = 0;
 	mIsInvincible = false;
+	mIsLoad = false;
 }
 
 //--------------------public------------------------
@@ -55,7 +57,12 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 void Player::Draw() {
 
-	Novice::DrawEllipse(mPosition.x, mPosition.y, mRadius, mRadius, 0.0f, mColor, kFillModeSolid);
+	if (mIsLoad == false) {
+		player = Novice::LoadTexture("./Resources/Player/Player.png");
+		mIsLoad = true;
+	}
+
+	Draw::drawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xffffffff);
 
 	if (mIsAttack[0] == true) {
 		Novice::DrawEllipse(mAttackPosition[0].x, mAttackPosition[0].y, mAttackRadius[0], mAttackRadius[0], 0.0f, 0xFF0000FF, kFillModeSolid);
