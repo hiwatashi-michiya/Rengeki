@@ -428,58 +428,6 @@ void Enemy::Collision(Player player) {
 				mKnockBack[0] = true;
 			}
 
-			////二撃目に当たった場合
-			//if ((sqrtf((mPosition.x - player.GetAttackPositionX1()) * (mPosition.x - player.GetAttackPositionX1()) +
-			//	(mPosition.y - player.GetAttackPositionY1()) * (mPosition.y - player.GetAttackPositionY1())) <=
-			//	(mRadius + player.GetAttackRadius1())) && player.GetIsAttack1() == true) {
-			//	mColor = 0xFF00FFFF;
-			//	//ヒットフラグを立てる
-			//	if (mIsHit[1] == false) {
-			//		mHitPoint -= kAttackValue[1];
-			//		mIsHit[1] = true;
-			//	}
-			//	//無敵時間の設定
-			//	mInvincible = kInvincibleTimer;
-			//	//プレイヤーの向きによってノックバックする方向を変える
-			//	if (player.GetPlayerDirection() == RIGHT && mKnockBack[1] == false) {
-			//		mKnockBackVelocity.x = kKnockBackLength[1].x;
-			//		mKnockBackVelocity.y = -kKnockBackLength[1].y;
-			//		mPosition.y -= kKnockBackLength[1].y;
-			//		mKnockBack[1] = true;
-			//	}
-			//	if (player.GetPlayerDirection() == LEFT && mKnockBack[1] == false) {
-			//		mKnockBackVelocity.x = -kKnockBackLength[1].x;
-			//		mKnockBackVelocity.y = -kKnockBackLength[1].y;
-			//		mPosition.y -= kKnockBackLength[1].y;
-			//		mKnockBack[1] = true;
-			//	}
-			//	//三撃目に当たった場合
-			//	if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-			//		(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-			//		(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-			//		mColor = 0x00FFFFFF;
-			//		//ヒットフラグを立てる
-			//		if (mIsHit[2] == false) {
-			//			mHitPoint -= kAttackValue[2];
-			//			mIsHit[2] = true;
-			//		}
-			//		//無敵時間の設定
-			//		mInvincible = kInvincibleTimer;
-			//		//プレイヤーの向きによってノックバックする方向を変える
-			//		if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-			//			mKnockBackVelocity.x = kKnockBackLength[2].x;
-			//			mKnockBackVelocity.y = -kKnockBackLength[2].y;
-			//			mPosition.y -= kKnockBackLength[2].y;
-			//			mKnockBack[2] = true;
-			//		}
-			//		if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-			//			mKnockBackVelocity.x = -kKnockBackLength[2].x;
-			//			mKnockBackVelocity.y = -kKnockBackLength[2].y;
-			//			mPosition.y -= kKnockBackLength[2].y;
-			//			mKnockBack[2] = true;
-			//		}
-			//	}
-			//}
 
 		}
 		//二撃目に当たった場合
@@ -513,32 +461,6 @@ void Enemy::Collision(Player player) {
 				mKnockBack[1] = true;
 			}
 
-			////三撃目に当たった場合
-			//if ((sqrtf((mPosition.x - player.GetAttackPositionX2()) * (mPosition.x - player.GetAttackPositionX2()) +
-			//	(mPosition.y - player.GetAttackPositionY2()) * (mPosition.y - player.GetAttackPositionY2())) <=
-			//	(mRadius + player.GetAttackRadius2())) && player.GetIsAttack2() == true) {
-			//	mColor = 0x00FFFFFF;
-			//	//ヒットフラグを立てる
-			//	if (mIsHit[2] == false) {
-			//		mHitPoint -= kAttackValue[2];
-			//		mIsHit[2] = true;
-			//	}
-			//	//無敵時間の設定
-			//	mInvincible = kInvincibleTimer;
-			//	//プレイヤーの向きによってノックバックする方向を変える
-			//	if (player.GetPlayerDirection() == RIGHT && mKnockBack[2] == false) {
-			//		mKnockBackVelocity.x = kKnockBackLength[2].x;
-			//		mKnockBackVelocity.y = -kKnockBackLength[2].y;
-			//		mPosition.y -= kKnockBackLength[2].y;
-			//		mKnockBack[2] = true;
-			//	}
-			//	if (player.GetPlayerDirection() == LEFT && mKnockBack[2] == false) {
-			//		mKnockBackVelocity.x = -kKnockBackLength[2].x;
-			//		mKnockBackVelocity.y = -kKnockBackLength[2].y;
-			//		mPosition.y -= kKnockBackLength[2].y;
-			//		mKnockBack[2] = true;
-			//	}
-			//}
 
 		}
 		//三撃目に当たった場合
