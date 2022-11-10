@@ -1,6 +1,5 @@
 #pragma once
 #include "Vec2.h"
-#include "Quad.h"
 #include "Stage.h"
 
 //d—Í‚Ì’l
@@ -157,6 +156,9 @@ private:
 
 	//–³“GŠÔ‚©
 	bool mIsInvincible;
+
+	bool mIsLoad;
+	int player;
 
 };
 

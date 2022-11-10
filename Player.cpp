@@ -4,6 +4,7 @@
 #include "Key.h"
 #include <math.h>
 #include "Enemy.h"
+#include "Quad.h"
 
 Player::Player()
 {
