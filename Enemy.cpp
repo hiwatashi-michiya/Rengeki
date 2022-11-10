@@ -231,23 +231,23 @@ void Enemy::SpecialAttack(Player& player) {
 			mColor = 0x0000FF66;
 
 			//プレイヤーとの位置関係で向きを変える
-			if (mPosition.x > player.GetPlayerPosition().x && mSpecialAttackDirection == RIGHT) {
+			if (mPosition.x > player.GetPlayerPosition().x && mSpecialAttackDirection == SPECIALRIGHT) {
 				mSpecialAttackVelocityValue = 2.0f;
-				mSpecialAttackDirection = LEFT;
+				mSpecialAttackDirection = SPECIALLEFT;
 			}
-			if (mPosition.x < player.GetPlayerPosition().x && mSpecialAttackDirection == LEFT) {
+			if (mPosition.x < player.GetPlayerPosition().x && mSpecialAttackDirection == SPECIALLEFT) {
 				mSpecialAttackVelocityValue = 2.0f;
-				mSpecialAttackDirection = RIGHT;
+				mSpecialAttackDirection = SPECIALRIGHT;
 			}
 
 			mSpecialAttackVelocityValue += 0.1f;
 			mSpecialAttackVelocityValue = Clamp(mSpecialAttackVelocityValue, 2.0f, 5.0f);
 
 			//透明中の移動
-			if (mSpecialAttackDirection == LEFT){
+			if (mSpecialAttackDirection == SPECIALLEFT){
 				mSpecialAttackVelocity.x = -mSpecialAttackVelocityValue;
 			}
-			if (mSpecialAttackDirection == RIGHT) {
+			if (mSpecialAttackDirection == SPECIALRIGHT) {
 				mSpecialAttackVelocity.x = mSpecialAttackVelocityValue;
 			}
 
@@ -259,11 +259,11 @@ void Enemy::SpecialAttack(Player& player) {
 
 				mColor = 0x0000FFFF;
 
-				if (mSpecialAttackDirection == LEFT) {
+				if (mSpecialAttackDirection == SPECIALLEFT) {
 					mSpecialAttackPosition.x = mPosition.x - (mSpecialAttackRadius + mRadius);
 					mSpecialAttackPosition.y = mPosition.y;
 				}
-				if (mSpecialAttackDirection == RIGHT) {
+				if (mSpecialAttackDirection == SPECIALRIGHT) {
 					mSpecialAttackPosition.x = mPosition.x + (mSpecialAttackRadius + mRadius);
 					mSpecialAttackPosition.y = mPosition.y;
 				}

@@ -27,10 +27,16 @@ const Vec2 kKnockBackLength[3] = {
 //–³“GŠÔ‚ÌÅ‘å’l
 const int kInvincibleTimer = 30;
 
-//“G‚ÌŒü‚«
+//ãUŒ‚‚ÌŒü‚«
 enum ENEMYDIRECTION {
 	ENEMYLEFT,
 	ENEMYRIGHT
+};
+
+//‹­UŒ‚‚ÌŒü‚«
+enum SPECIALDIRECTION {
+	SPECIALLEFT,
+	SPECIALRIGHT
 };
 
 class Player;
@@ -50,23 +56,37 @@ public:
 	//ƒ|ƒWƒVƒ‡ƒ“ƒŠƒZƒbƒg
 	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
 
-	//Œü‚«‚Ìæ“¾
-	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
-
 	//À•Wæ“¾
 	inline Vec2 GetEnemyPosition() { return mPosition; }
 
-	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
+	////////////////////@‚±‚±‚©‚çUŒ‚‚Ì“–‚½‚è”»’èæ“¾ŠÖ”@////////////////////
+	
+
+	/*@ãUŒ‚@*/
+
 	//UŒ‚‚ÌÀ•W
 	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
 	//UŒ‚‚Ì”¼Œa
 	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 	//UŒ‚‚µ‚Ä‚¢‚é‚©
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
+	//Œü‚«‚Ìæ“¾
+	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
+
+
+	/*@‹­UŒ‚@*/
+
+	//UŒ‚‚ÌÀ•W
+	inline Vec2 GetSpecialAttackPosition() { return mSpecialAttackPosition; }
+	//UŒ‚‚Ì”¼Œa
+	inline float GetSpecialAttackRadius() { return mSpecialAttackRadius; }
+	//UŒ‚‚µ‚Ä‚¢‚é‚©
+	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
+	//Œü‚«‚Ìæ“¾
+	inline SPECIALDIRECTION GetSpecialAttackDirection() { return mSpecialAttackDirection; }
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
-
 
 private:
 
@@ -165,11 +185,7 @@ private:
 	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool mIsSpecialAttack;
 	//“G‚ÌŒü‚«
-	enum SPECIALDIRECTION {
-		LEFT,
-		RIGHT
-	};
-	SPECIALDIRECTION mSpecialAttackDirection = LEFT;
+	SPECIALDIRECTION mSpecialAttackDirection = SPECIALLEFT;
 	//UŒ‚‚Ì‘¬“x
 	Vec2 mSpecialAttackVelocity;
 	float mSpecialAttackVelocityValue;	//‰ÁZ‚·‚é‘¬“x
