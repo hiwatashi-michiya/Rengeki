@@ -39,7 +39,7 @@ public:
 	/// <param name="mRandMax">ランダムな大きさの最大値</param>
 	/// <param name="mMaxParticle">パーティクルの最大個数</param>
 	Particle(PARTICLETYPE mParticleType, int mParticleColor, float mParticleExtinction,
-		int mRandMin, int mRandMax, int mMaxParticle);
+		int mRandMin, int mRandMax, int mMaxParticle, bool mParticleAppear);
 
 	void Update(Vec2 position);
 
@@ -47,7 +47,17 @@ public:
 
 	void Reset();
 
+	//パーティクルフラグのセット
 	void SetFlag(Vec2 position);
+
+	//出現しているかどうかのフラグを取得
+	inline bool GetParticleAppear() { return mParticleAppear; }
+
+	//出現しているフラグに変更
+	inline bool SetParticleAppear() { mParticleAppear = true; return mParticleAppear; }
+
+	//出現フラグを戻す
+	inline bool ResetParticleAppear() { mParticleAppear = false; return mParticleAppear; }
 
 private:
 
@@ -72,6 +82,9 @@ private:
 
 	//パーティクルの最大数
 	int mMaxParticle;
+
+	//パーティクルのオンオフ
+	bool mParticleAppear;
 
 	///////////////////////////////////
 
