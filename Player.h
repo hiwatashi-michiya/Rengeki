@@ -157,8 +157,11 @@ private:
 	//–³“GŽžŠÔ‚©
 	bool mIsInvincible;
 
+	//•`‰æ‚·‚éƒtƒ‰ƒO
 	bool mIsLoad;
 	int player;
+
+	//•`‰æ
 
 };
 
