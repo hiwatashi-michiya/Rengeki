@@ -10,7 +10,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 
 	for (int i = 0; i < 3; i++) {
-		attack[i] = Particle(DIFFUSION, 0xFFFF0000, 300, 3, 5, 100, false);
+		mAttackParticle[i] = Particle(DIFFUSION, 0xFFFF0000, 300, 3, 5, 100, false);
 	}
 
 	mKnockBackVelocity = { 0.0f, 0.0f };
@@ -61,7 +61,7 @@ void Enemy::Update(Stage &stage, Player &player) {
 	for (int i = 0; i < kEnemyMaxAttack; i++) {
 
 		if (mIsAttack[i] == true) {
-			attack[i].Update(mAttackPosition[i]);
+			mAttackParticle[i].Update(mAttackPosition[i]);
 		}
 
 	}
@@ -196,7 +196,7 @@ void Enemy::Attack(Player& player) {
 			mVelocity.x = 0.0f;
 			if (mAttackTimer % 40 == 0) {
 				mIsAttack[mAttackCount] = true;
-				attack[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
+				mAttackParticle[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
 				mAttackCount++;
 			}
 			mAttackTimer--;
@@ -213,7 +213,7 @@ void Enemy::Attack(Player& player) {
 			
 			for (int i = 0; i < kEnemyMaxAttack; i++) {
 				mIsAttack[i] = false;
-				attack[i].Reset();
+				mAttackParticle[i].Reset();
 			}
 
 			mAttackCount = 0;
@@ -585,7 +585,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	for (int i = 0; i < kEnemyMaxAttack; i++){
 
 		if (mIsAttack[i] == true) {
-			attack[i].Draw(screen);
+			mAttackParticle[i].Draw(screen);
 			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF000055, kFillModeSolid);
 		}
 	}

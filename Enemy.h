@@ -230,7 +230,7 @@ private:
 	//関数
 	void Attack(Player& player);
 	//パーティクル
-	Particle attack[3];
+	Particle mAttackParticle[kEnemyMaxAttack];
 
 
 	////////////////////　ここから強攻撃　////////////////////

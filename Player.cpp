@@ -14,6 +14,10 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
 
+	for (int i = 0; i < 3; i++) {
+		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 100, false);
+	}
+
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
 	mJumpCount = 0;
@@ -48,6 +52,15 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 
 void Player::Update(Stage &stage, Enemy &enemy) {
+
+	//攻撃パーティクルの更新
+	for (int i = 0; i < kEnemyMaxAttack; i++) {
+
+		if (mIsAttack[i] == true) {
+			mAttackParticle[i].Update(mAttackPosition[i]);
+		}
+
+	}
 
 	Move();
 
@@ -129,43 +142,6 @@ void Player::Move() {
 }
 void Player::Attack() {
 
-	if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
-
-		if (mIsGround == true) {
-
-			//一撃目
-			if (mAttackCount == 3 && mIsAttack[0] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[0] = true;
-				mAttackCount -= 1;
-			}
-
-			//二撃目
-			else if (mAttackCount == 2 && mIsAttack[1] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[1] = true;
-				mAttackCount -= 1;
-			}
-
-			//三撃目
-			else if (mAttackCount == 1 && mIsAttack[2] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[2] = true;
-				mAttackCount -= 1;
-			}
-
-		}
-
-	}
-
-	//タイマーが0になったらフラグを戻す
-	if (mAttackTimer == 0) {
-		mIsAttack[0] = false;
-		mIsAttack[1] = false;
-		mIsAttack[2] = false;
-		mAttackCount = kMaxAttack;
-	}
-
 	//攻撃座標を設定
 	if (mDirection == LEFT) {
 		mAttackPosition[0].x = mPosition.x - 32;
@@ -182,6 +158,50 @@ void Player::Attack() {
 	mAttackPosition[0].y = mPosition.y;
 	mAttackPosition[1].y = mPosition.y;
 	mAttackPosition[2].y = mPosition.y;
+
+	if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
+
+		if (mIsGround == true) {
+
+			//一撃目
+			if (mAttackCount == 3 && mIsAttack[0] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[0] = true;
+				mAttackParticle[0].SetFlag(mAttackPosition[0]);
+				mAttackCount -= 1;
+			}
+
+			//二撃目
+			else if (mAttackCount == 2 && mIsAttack[1] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[1] = true;
+				mAttackParticle[1].SetFlag(mAttackPosition[1]);
+				mAttackCount -= 1;
+			}
+
+			//三撃目
+			else if (mAttackCount == 1 && mIsAttack[2] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[2] = true;
+				mAttackParticle[2].SetFlag(mAttackPosition[2]);
+				mAttackCount -= 1;
+			}
+
+		}
+
+	}
+
+	//タイマーが0になったらフラグを戻す
+	if (mAttackTimer == 0) {
+
+		for (int i = 0; i < kMaxAttack; i++) {
+			mIsAttack[i] = false;
+			mAttackParticle[i].Reset();
+		}
+
+		mAttackCount = kMaxAttack;
+	}
+
 }
 void Player::Jump() {
 
@@ -445,6 +465,7 @@ void Player::Draw(Screen& screen) {
 	for (int i = 0; i < kMaxAttack; i++) {
 
 		if (mIsAttack[i] == true) {
+			mAttackParticle[i].Draw(screen);
 			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
 		}
 	}

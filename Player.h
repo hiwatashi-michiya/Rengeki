@@ -2,6 +2,7 @@
 #include "Screen.h"
 #include "Vec2.h"
 #include "Stage.h"
+#include "Particle.h"
 
 //重力の値
 const float kGravity = 1.5f;
@@ -144,6 +145,8 @@ private:
 	float mAttackRadius[kMaxAttack];
 	//攻撃関数
 	void Attack();
+	//パーティクル
+	Particle mAttackParticle[kMaxAttack];
 
 	//---ジャンプ---//
 	//ジャンプ回数
