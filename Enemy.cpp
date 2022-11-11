@@ -10,7 +10,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 
 	for (int i = 0; i < 3; i++) {
-		mAttackParticle[i] = Particle(DIFFUSION, 0xFFFF0000, 300, 3, 5, 100, false);
+		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 100, false);
 	}
 
 	mKnockBackVelocity = { 0.0f, 0.0f };
