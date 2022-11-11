@@ -45,7 +45,7 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsLoad = false;
 }
 
-//--------------------public------------------------
+
 
 void Player::Update(Stage &stage, Enemy &enemy) {
 
@@ -55,26 +55,9 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 }
 
-void Player::Draw(Screen& screen) {
 
-	if (mIsLoad == false) {
-		player = Novice::LoadTexture("./Resources/Player/Player.png");
-		mIsLoad = true;
-	}
 
-	screen.DrawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xFFFFFFFF);
-
-	for (int i = 0; i < kMaxAttack; i++){
-
-		if (mIsAttack[i] == true) {
-			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
-		}
-	}
-	
-}
-
-//---------------------private----------------------
-
+//----------ここから動き関係----------//
 void Player::Move() {
 
 	//重力を加算
@@ -93,112 +76,31 @@ void Player::Move() {
 
 	//プレイヤーの場合の操作
 
-		//攻撃していない場合のみ行動できる
-		if (mIsAttack[0] == false) {
+	//攻撃していない場合のみ行動できる
+	if (mIsAttack[0] == false) {
 
-			//右移動
-			if (Key::IsPress(DIK_RIGHT) && mIsRolling == false) {
-				mPosition.x += mVelocity.x;
-				mDirection = RIGHT;
-			}
-
-			//左移動
-			if (Key::IsPress(DIK_LEFT) && mIsRolling == false) {
-				mPosition.x -= mVelocity.x;
-				mDirection = LEFT;
-			}
-
-			//ジャンプ
-			if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
-
-				//ジャンプ回数が残っている場合ジャンプできる
-				if (mJumpCount > 0) {
-					mVelocity.y = 0;
-					mVelocity.y -= 20.0f;
-					mJumpCount -= 1;
-				}
-
-			}
-
-			//ローリングフラグを立てる
-			if (Key::IsTrigger(DIK_X) && mIsGround == true){
-				mIsRolling = true;
-			}
-
-			//一定時間ローリングする
-			if (mIsRolling == true){
-				mRollingFrame++;
-				mColor = 0xFFFFFF77;
-
-				if (mDirection == RIGHT) {
-					mPosition.x += 18.0f;
-				}
-				if (mDirection == LEFT) {
-					mPosition.x -= 18.0f;
-				}
-
-				if (mRollingFrame >= 15){
-					mRollingFrame = 0;
-					mIsRolling = false;
-				}
-			}
-
+		//右移動
+		if (Key::IsPress(DIK_RIGHT) && mIsRolling == false) {
+			mPosition.x += mVelocity.x;
+			mDirection = RIGHT;
 		}
 
-		//攻撃
-		if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
-
-			if (mIsGround == true) {
-
-				//一撃目
-				if (mAttackCount == 3 && mIsAttack[0] == false) {
-					mAttackTimer = kAttackPersistence;
-					mIsAttack[0] = true;
-					mAttackCount -= 1;
-				}
-
-				//二撃目
-				else if (mAttackCount == 2 && mIsAttack[1] == false) {
-					mAttackTimer = kAttackPersistence;
-					mIsAttack[1] = true;
-					mAttackCount -= 1;
-				}
-
-				//三撃目
-				else if (mAttackCount == 1 && mIsAttack[2] == false) {
-					mAttackTimer = kAttackPersistence;
-					mIsAttack[2] = true;
-					mAttackCount -= 1;
-				}
-
-			}
-
+		//左移動
+		if (Key::IsPress(DIK_LEFT) && mIsRolling == false) {
+			mPosition.x -= mVelocity.x;
+			mDirection = LEFT;
 		}
 
-	//タイマーが0になったらフラグを戻す
-	if (mAttackTimer == 0) {
-		mIsAttack[0] = false;
-		mIsAttack[1] = false;
-		mIsAttack[2] = false;
-		mAttackCount = kMaxAttack;
+		//ジャンプ
+		Jump();
+
+		//ローリング
+		Rolling();
+
 	}
 
-	//攻撃座標を設定
-	if (mDirection == LEFT) {
-		mAttackPosition[0].x = mPosition.x - 32;
-		mAttackPosition[1].x = mPosition.x - 64;
-		mAttackPosition[2].x = mPosition.x - 96;
-	}
-
-	if (mDirection == RIGHT) {
-		mAttackPosition[0].x = mPosition.x + 32;
-		mAttackPosition[1].x = mPosition.x + 64;
-		mAttackPosition[2].x = mPosition.x + 96;
-	}
-
-	mAttackPosition[0].y = mPosition.y;
-	mAttackPosition[1].y = mPosition.y;
-	mAttackPosition[2].y = mPosition.y;
+	//攻撃
+	Attack();
 
 	//速度を加算
 	mPosition.y += mVelocity.y;
@@ -225,8 +127,105 @@ void Player::Move() {
 	mPosition.x += mKnockBackVelocity.x;
 	mPosition.y += mKnockBackVelocity.y;
 }
+void Player::Attack() {
 
-//当たり判定
+	if (Key::IsTrigger(DIK_C) && mIsRolling == false) {
+
+		if (mIsGround == true) {
+
+			//一撃目
+			if (mAttackCount == 3 && mIsAttack[0] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[0] = true;
+				mAttackCount -= 1;
+			}
+
+			//二撃目
+			else if (mAttackCount == 2 && mIsAttack[1] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[1] = true;
+				mAttackCount -= 1;
+			}
+
+			//三撃目
+			else if (mAttackCount == 1 && mIsAttack[2] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[2] = true;
+				mAttackCount -= 1;
+			}
+
+		}
+
+	}
+
+	//タイマーが0になったらフラグを戻す
+	if (mAttackTimer == 0) {
+		mIsAttack[0] = false;
+		mIsAttack[1] = false;
+		mIsAttack[2] = false;
+		mAttackCount = kMaxAttack;
+	}
+
+	//攻撃座標を設定
+	if (mDirection == LEFT) {
+		mAttackPosition[0].x = mPosition.x - 32;
+		mAttackPosition[1].x = mPosition.x - 64;
+		mAttackPosition[2].x = mPosition.x - 96;
+	}
+
+	if (mDirection == RIGHT) {
+		mAttackPosition[0].x = mPosition.x + 32;
+		mAttackPosition[1].x = mPosition.x + 64;
+		mAttackPosition[2].x = mPosition.x + 96;
+	}
+
+	mAttackPosition[0].y = mPosition.y;
+	mAttackPosition[1].y = mPosition.y;
+	mAttackPosition[2].y = mPosition.y;
+}
+void Player::Jump() {
+
+	//ジャンプ
+	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
+
+		//ジャンプ回数が残っている場合ジャンプできる
+		if (mJumpCount > 0) {
+			mVelocity.y = 0;
+			mVelocity.y -= 20.0f;
+			mJumpCount -= 1;
+		}
+
+	}
+}
+void Player::Rolling() {
+
+	//ローリングフラグを立てる
+	if (Key::IsTrigger(DIK_X) && mIsGround == true) {
+		mIsRolling = true;
+	}
+
+	//一定時間ローリングする
+	if (mIsRolling == true) {
+		mRollingFrame++;
+		mColor = 0xFFFFFF77;
+
+		if (mDirection == RIGHT) {
+			mPosition.x += 18.0f;
+		}
+		if (mDirection == LEFT) {
+			mPosition.x -= 18.0f;
+		}
+
+		if (mRollingFrame >= 15) {
+			mRollingFrame = 0;
+			mIsRolling = false;
+		}
+	}
+}
+
+
+
+//----------ここから当たり判定----------//
 void Player::Collision(Stage& stage, Enemy& enemy) {
 
 	//左判定
@@ -385,26 +384,36 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 	}
 
-	//無敵時間
-	if (mInvincibleTime > 0) {
+	//無敵
+	if (mIsInvincible == true) {
 
-		if (mInvincibleTime <= 29){
-			mColor = 0xFFFFFF55;
-		}
-
-		mInvincibleTime -= 1;
-		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
-
-		if (mInvincibleTime == 0) {
-			mIsInvincible = false;
-		}
+		Invincible();
 
 	}
 
 	
 
 }
+void Player::Invincible() {
 
+	//無敵時間が0より大きいとき（Hit時に時間の最大値を代入する）
+	if (mInvincibleTime > 0) {
+
+		//1フレーム後
+		if (mInvincibleTime <= 29) {
+			mColor = 0xFFFFFF55;
+		}
+
+		mInvincibleTime -= 1;
+		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
+
+		//時間が0になったらフラグをfalseにする
+		if (mInvincibleTime == 0) {
+			mIsInvincible = false;
+		}
+
+	}
+}
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 
 	int x = mPosition.x - AttackPosition.x;
@@ -414,5 +423,30 @@ bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 		return true;
 	}
 	return false;
+
+}
+
+
+
+//----------ここから描画関係----------//
+
+void Player::Draw(Screen& screen) {
+
+	//リソースの読み込み
+	if (mIsLoad == false) {
+		player = Novice::LoadTexture("./Resources/Player/Player.png");
+		mIsLoad = true;
+	}
+
+	//プレイヤー描画
+	screen.DrawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xFFFFFFFF);
+
+	//攻撃範囲描画
+	for (int i = 0; i < kMaxAttack; i++) {
+
+		if (mIsAttack[i] == true) {
+			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
+		}
+	}
 
 }

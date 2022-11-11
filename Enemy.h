@@ -170,16 +170,20 @@ private:
 	//ƒmƒbƒNƒoƒbƒN‚µ‚½‚©‚Ç‚¤‚©
 	bool mKnockBack[kEnemyMaxAttack];
 
-	//–³“GŠÔ
-	int mInvincibleTime;
-
-	//–³“GŠÔ‚©
-	bool mIsInvincible;
-
 	//ŠOÏ‚Ì’l
 	float mCross;
 
+	//////////////////// ‚±‚±‚©‚ç–³“GŠÖŒW ////////////////////
 
+	//–³“GŠÔ
+	int mInvincibleTime;
+	//–³“GŠÔ‚©
+	bool mIsInvincible;
+	//–³“GŠÖ”
+	void Invincible();
+
+
+	//////////////////// ‚±‚±‚©‚çUŒ‚ŠÖŒW ////////////////////
 
 	//UŒ‚ŠÖ”
 	void AttackPattern(Player& player);

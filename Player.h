@@ -121,30 +121,6 @@ private:
 	//地面についているか
 	bool mIsGround;
 
-	//ジャンプ回数
-	int mJumpCount;
-
-	//ローリングしているかどうか
-	bool mIsRolling;
-
-	//ローリング中のフレーム
-	int mRollingFrame;
-
-	//攻撃回数
-	int mAttackCount;
-
-	//攻撃しているかどうかの判定
-	bool mIsAttack[kMaxAttack];
-
-	//攻撃の描画時間
-	int mAttackTimer;
-
-	//攻撃の当たり判定の座標
-	Vec2 mAttackPosition[kMaxAttack];
-
-	//攻撃の当たり判定の半径
-	float mAttackRadius[kMaxAttack];
-
 	//当たったかどうかの判定
 	bool mIsHit[kMaxAttack];
 
@@ -154,12 +130,46 @@ private:
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
 
+	//----------動き関係----------//
+	//---攻撃---//
+	//攻撃回数
+	int mAttackCount;
+	//攻撃しているかどうかの判定
+	bool mIsAttack[kMaxAttack];
+	//攻撃の描画時間
+	int mAttackTimer;
+	//攻撃の当たり判定の座標
+	Vec2 mAttackPosition[kMaxAttack];
+	//攻撃の当たり判定の半径
+	float mAttackRadius[kMaxAttack];
+	//攻撃関数
+	void Attack();
+
+	//---ジャンプ---//
+	//ジャンプ回数
+	int mJumpCount;
+	//ジャンプ関数
+	void Jump();
+	
+	//---ローリング---//
+	//ローリングしているかどうか
+	bool mIsRolling;
+	//ローリング中のフレーム
+	int mRollingFrame;
+	//ローリング関数
+	void Rolling();
+
+
+	//----------無敵関係----------//
 	//無敵時間
 	int mInvincibleTime;
-
 	//無敵時間か
 	bool mIsInvincible;
+	//無敵関数
+	void Invincible();
 
+
+	//----------描画関係----------//
 	//描画するフラグ
 	bool mIsLoad;
 	int player;

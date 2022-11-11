@@ -500,19 +500,10 @@ void Enemy::Collision(Player player) {
 		}
 	}
 
-	//無敵時間
-	if (mInvincibleTime > 0) {
+	//無敵
+	if (mIsInvincible == true) {
 
-		if (mInvincibleTime <= 29) {
-			mColor = 0x0000FF55;
-		}
-
-		mInvincibleTime -= 1;
-		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
-
-		if (mInvincibleTime == 0) {
-			mIsInvincible = false;
-		}
+		Invincible();
 
 	}
 
@@ -561,6 +552,27 @@ void Enemy::HitPoint(Stage& stage) {
 
 	//体力を0に収める
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
+}
+
+void Enemy::Invincible() {
+
+	//無敵時間が0より大きいとき（Hit時に時間の最大値を代入する）
+	if (mInvincibleTime > 0) {
+
+		//1フレーム後
+		if (mInvincibleTime <= 29) {
+			mColor = 0x0000FF55;
+		}
+
+		mInvincibleTime -= 1;
+		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
+
+		//時間が0になったらフラグをfalseにする
+		if (mInvincibleTime == 0) {
+			mIsInvincible = false;
+		}
+
+	}
 }
 
 void Enemy::Draw(Screen& screen, Player& player) {
