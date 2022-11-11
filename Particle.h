@@ -20,7 +20,9 @@ enum PARTICLETYPE {
 	//è’åÇîg
 	SHOCKWAVE,
 	//ï¨êÖ
-	FOUNTAIN
+	FOUNTAIN,
+	//ëÿç›
+	STAY
 
 };
 

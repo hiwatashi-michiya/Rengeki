@@ -6,7 +6,7 @@
 #include "Rand.h"
 
 Particle::Particle() : mParticleType(PLAYERDIFFUSION), mParticleColor(0xFFFFFF00), mParticleExtinction(100),
-mRandMin(1), mRandMax(2), mMaxParticle(100) {
+mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
 
 	for (int i = 0; i < mMaxParticle; i++) {
 
@@ -244,6 +244,19 @@ void Particle::SetFlag(Vec2 position) {
 
 			}
 
+			//‘ØÝŒ^
+			if (mParticleType == STAY) {
+
+				mPosition[i].x = position.x + RandNum(0, 28, ON);
+				mPosition[i].y = position.y + RandNum(0, 28, ON);
+				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
+				mVelocity[i].x = 0;
+				mVelocity[i].y = 0;
+				mRandColor[i] = RandNum(0x00000088, 0x000000AA, OFF);
+				mColor[i] = mParticleColor;
+
+			}
+
 		}
 
 	}
@@ -302,6 +315,18 @@ void Particle::Move(Vec2 position) {
 			//•¬…Œ^
 			if (mParticleType == FOUNTAIN) {
 				mVelocity[i].y += RandNum(1, 2, OFF);
+			}
+
+			//‘ØÝŒ^
+			if (mParticleType == STAY) {
+
+				mRandColor[i] -= 4;
+				mRadius[i] -= 0.02f;
+
+				if (mRadius[i] <= 0) {
+					mIsAlive[i] = false;
+				}
+
 			}
 
 			mPosition[i].x += mVelocity[i].x;

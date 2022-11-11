@@ -37,8 +37,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Particle enemyParticle(PLAYERDIFFUSION, 0xFF00FF00, 
 		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() + 12, enemy.GetEnemyRadius() + 13, 100, true);
 
-	Particle playerParticle(PLAYERDIFFUSION, 0x00FFFF00, 
+	Particle enemyParticle2(STAY, 0xFF00FF00,
+		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() - 25, enemy.GetEnemyRadius() - 15, 100, true);
+
+	Particle playerParticle(PLAYERDIFFUSION, 0x00FFFF00,
 		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() + 12, player.GetPlayerRadius() + 13, 100, true);
+
+	Particle playerParticle2(STAY, 0x00FFFF00, 
+		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() - 25, player.GetPlayerRadius() - 15, 100, true);
 
 	Vec2 stageParticlePosition = { 0,800 };
 
@@ -69,8 +75,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			stageParticle.Update(stageParticlePosition);
 			enemyParticle.SetFlag(enemy.GetEnemyPosition());
 			enemyParticle.Update(enemy.GetEnemyPosition());
+			enemyParticle2.SetFlag(enemy.GetEnemyPosition());
+			enemyParticle2.Update(enemy.GetEnemyPosition());
 			playerParticle.SetFlag(player.GetPlayerPosition());
 			playerParticle.Update(player.GetPlayerPosition());
+			playerParticle2.SetFlag(player.GetPlayerPosition());
+			playerParticle2.Update(player.GetPlayerPosition());
 
 		}
 
@@ -88,7 +98,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stage.Draw(Flame);
 		stageParticle.Draw(screen);
 		enemyParticle.Draw(screen);
+		enemyParticle2.Draw(screen);
 		playerParticle.Draw(screen);
+		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
 
