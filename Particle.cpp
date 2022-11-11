@@ -321,7 +321,7 @@ void Particle::Move(Vec2 position) {
 			if (mParticleType == STAY) {
 
 				mRandColor[i] -= 4;
-				mRadius[i] -= 0.02f;
+				mRadius[i] -= 0.01f;
 
 				if (mRadius[i] <= 0) {
 					mIsAlive[i] = false;
