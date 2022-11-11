@@ -47,6 +47,10 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mInvincibleTime = 0;
 	mIsInvincible = false;
 	mIsLoad = false;
+	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
+	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
+	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
+
 }
 
 
@@ -168,6 +172,7 @@ void Player::Attack() {
 				mAttackTimer = kAttackPersistence;
 				mIsAttack[0] = true;
 				mAttackParticle[0].SetFlag(mAttackPosition[0]);
+				Novice::PlayAudio(mAttackSE[0], 0, 0.5f);
 				mAttackCount -= 1;
 			}
 
@@ -176,6 +181,7 @@ void Player::Attack() {
 				mAttackTimer = kAttackPersistence;
 				mIsAttack[1] = true;
 				mAttackParticle[1].SetFlag(mAttackPosition[1]);
+				Novice::PlayAudio(mAttackSE[1], 0, 0.5f);
 				mAttackCount -= 1;
 			}
 
@@ -184,6 +190,7 @@ void Player::Attack() {
 				mAttackTimer = kAttackPersistence;
 				mIsAttack[2] = true;
 				mAttackParticle[2].SetFlag(mAttackPosition[2]);
+				Novice::PlayAudio(mAttackSE[2], 0, 0.5f);
 				mAttackCount -= 1;
 			}
 

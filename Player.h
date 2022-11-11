@@ -148,6 +148,9 @@ private:
 	//パーティクル
 	Particle mAttackParticle[kMaxAttack];
 
+	//サウンド
+	int mAttackSE[kMaxAttack];
+
 	//---ジャンプ---//
 	//ジャンプ回数
 	int mJumpCount;
