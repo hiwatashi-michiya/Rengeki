@@ -365,8 +365,8 @@ void Enemy::AttackPattern(Player& player) {
 	//UŒ‚‚µ‚Ä‚¢‚È‚¢ && UŒ‚‚Å‚«‚é
 	if (AnyAttack() == false && mIsStart == true){
 		RandAttack = RandNum(1, 100, OFF);
-		//int a = RandAttack % 10;
-		int a = 2;
+		int a = RandAttack % 10;
+		//int a = 2;
 		if (0 <= a && a <= 1){
 
 			mVelocity.x = 0.0f;
