@@ -42,6 +42,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsBackStep = false;
 	mIsBackStepNoGravity = false;
 	mBackStepEasingt = 0.0f;
+	mIsGuard = false;
+	mGuardFrame = 0;
 	mIsTeleport = false;
 	mIsApper = false;
 	mTeleportFrame = 0;
@@ -365,13 +367,13 @@ void Enemy::AttackPattern(Player& player) {
 	//UŒ‚‚µ‚Ä‚¢‚È‚¢ && UŒ‚‚Å‚«‚é
 	if (AnyAttack() == false && mIsStart == true){
 		RandAttack = RandNum(1, 100, OFF);
-		int a = RandAttack % 10;
-		//int a = 2;
+		//int a = RandAttack % 10;
+		int a = 1;
 		if (0 <= a && a <= 1){
 
 			mVelocity.x = 0.0f;
 			mAttackCount = 0;
-			mAttackTimer = kEnemyMaxAttack * 40;
+			mAttackTimer = kEnemyMaxAttack * 15;
 			mIsAttackStart = true;
 			mStartFrame = 0;
 			mIsStart = false;
