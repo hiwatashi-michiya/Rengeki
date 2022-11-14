@@ -370,6 +370,7 @@ void Enemy::AttackPattern(Player& player) {
 		if (0 <= a && a <= 1){
 
 			mVelocity.x = 0.0f;
+			mAttackCount = 0;
 			mAttackTimer = kEnemyMaxAttack * 40;
 			mIsAttackStart = true;
 			mStartFrame = 0;
