@@ -18,8 +18,8 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{5,10},
-	{10,15},
+	{5,5},
+	{10,8},
 	{50,20}
 };
 
@@ -32,16 +32,10 @@ static constexpr int kFallingStarMax = 10;
 //無敵時間の最大値
 const int kEnemyInvincibleTimer = 30;
 
-//弱攻撃の向き
+//敵の向き
 enum ENEMYDIRECTION {
 	ENEMYLEFT,
 	ENEMYRIGHT
-};
-
-//強攻撃の向き
-enum SPECIALDIRECTION {
-	SPECIALLEFT,
-	SPECIALRIGHT
 };
 
 class Player;
@@ -90,8 +84,6 @@ public:
 	inline float GetSpecialAttackRadius() { return mSpecialAttackRadius; }
 	//攻撃しているか
 	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
-	//向きの取得
-	inline SPECIALDIRECTION GetSpecialAttackDirection() { return mSpecialAttackDirection; }
 
 	//-----星砕流・落下星-----//
 	
@@ -105,27 +97,22 @@ public:
 	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
 
 	//攻撃を受けているか
-	inline bool GetIsHit0() { return mIsHit[0]; }
-	inline bool GetIsHit1() { return mIsHit[1]; }
-	inline bool GetIsHit2() { return mIsHit[2]; }
-
-	//無敵かどうか
-	inline bool GetIsEnemyInvincible() { return mIsInvincible; }
-	//無敵時間の取得
-	inline int GetEnemyInvincibleTime() { return mInvincibleTime; }
+	inline bool GetIsHit(int i) { return mIsHit[i]; }
+	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
 
 private:
 
 	
 
 	//動き
-	void Move(Player player);
+	void Move(Player& player);
 
 	//何か攻撃しているか
 	bool AnyAttack();
 
 	//当たり判定
-	void Collision(Player player);
+	void Collision(Player& player);
+	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 	//体力処理
 	void HitPoint(Stage& stage);
@@ -153,6 +140,7 @@ private:
 
 	//当たったかどうかの判定
 	bool mIsHit[kEnemyMaxAttack];
+	bool mIsOldHit[kEnemyMaxAttack];
 
 	//敵の向いている方向
 	ENEMYDIRECTION mDirection;
@@ -173,17 +161,8 @@ private:
 	//外積の値
 	float mCross;
 
-	//////////////////// ここから無敵関係 ////////////////////
 
-	//無敵時間
-	int mInvincibleTime;
-	//無敵時間か
-	bool mIsInvincible;
-	//無敵関数
-	void Invincible();
-
-
-	//////////////////// ここから攻撃関係 ////////////////////
+	//////////////////// 敵の動きをまとめる ////////////////////
 
 	//攻撃関数
 	void AttackPattern(Player& player);
@@ -191,12 +170,15 @@ private:
 	bool mIsStart;
 	//開始するまでのフレーム
 	int mStartFrame;
+	//どの攻撃を行うかはランダム
+	int RandAttack;
 
 	//////////////////// ここから基礎移動 ////////////////////
 
 	//-----バックステップ-----//
 	//バックステップフラグ
 	bool mIsBackStep;
+	bool mIsBackStepNoGravity;
 	//イージングの増加値
 	float mBackStepEasingt;
 	//移動の開始地点と終了地点
@@ -205,9 +187,19 @@ private:
 	//関数
 	void BackStep();
 
-	//-----左右瞬間移動-----//
+	//-----ガード-----//
+	//ガードフラグ
+	bool mIsGuard;
+	//ガード時間
+	int mGuardFrame;
+	//ガード関数
+	void Guard();
+
+	//-----左右瞬間移動（使わない可能性あり）-----//
 	//左右瞬間移動フラグ
 	bool mIsTeleport;
+	//出現しているかフラグ
+	bool mIsApper;
 	//フレーム
 	int mTeleportFrame;
 	//関数
@@ -239,17 +231,14 @@ private:
 	bool mIsSpecialAttackStart;
 	//攻撃しているかどうか
 	bool mIsSpecialAttack;
-	//敵の向き
-	SPECIALDIRECTION mSpecialAttackDirection = SPECIALLEFT;
-	//攻撃時の速度
-	Vec2 mSpecialAttackVelocity;
-	float mSpecialAttackVelocityValue;	//加算する速度
 	//攻撃時間
 	int mSpecialAttackFrame;
 	//攻撃の当たり判定の座標
 	Vec2 mSpecialAttackPosition;
 	//攻撃の当たり判定の半径
 	float mSpecialAttackRadius;
+	//攻撃時の透明度値
+	float mSpecialAttackColorAlphat;
 	//関数
 	void SpecialAttack(Player& player);
 
@@ -280,8 +269,8 @@ private:
 	//関数
 	void FallingStar(Player& player);
 
-
-	int RandAttack;
+	//最後に速度を代入する
+	void VelocityAssign();
 };
 
 

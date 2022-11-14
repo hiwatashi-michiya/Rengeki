@@ -5,10 +5,7 @@
 #include <math.h>
 #include "Enemy.h"
 #include "Quad.h"
-
-Player::Player()
-{
-}
+#include "MatVec.h"
 
 Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
@@ -44,13 +41,17 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[0] = false;
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
-	mInvincibleTime = 0;
-	mIsInvincible = false;
-	mIsLoad = false;
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
-
+	mScaling = { 1.0f, 1.0f };
+	mIsJumpScaling = false;
+	mIsLandScaling = false;
+	mIsRollingScaling = false;
+	mTheta = 0.0f;
+	mIsLoadTexture = false;
+	mTextureFrame = 0;
+	mPlayerSrcX = 0;
 }
 
 
@@ -215,8 +216,15 @@ void Player::Jump() {
 	//ジャンプ
 	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
 
-		//ジャンプ回数が残っている場合ジャンプできる
-		if (mJumpCount > 0) {
+		//ジャンプ回数残り１回
+		if (mJumpCount == 1) {
+			mVelocity.y = 0;
+			mVelocity.y -= 15.0f;
+			mJumpCount -= 1;
+		}
+
+		//ジャンプ回数残り２回
+		if (mJumpCount == 2) {
 			mVelocity.y = 0;
 			mVelocity.y -= 20.0f;
 			mJumpCount -= 1;
@@ -268,6 +276,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	//下判定
 	if (mPosition.y + mRadius >= Stage::kStageBottom) {
 		mPosition.y = Stage::kStageBottom - mRadius;
+		if (mIsGround == false) {
+			ScalingInit();
+			mIsLandScaling = true;
+		}
 		mIsGround = true;
 		mJumpCount = kMaxJump;
 	}
@@ -275,10 +287,14 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		mIsGround = false;
 	}
 
-	//ローリングしてない時に攻撃を受ける
-	if (mIsRolling == false && mIsInvincible == false){
+	for (int i = 0; i < kMaxAttack; i++) {
+		mIsOldHit[i] = mIsHit[i];
+	}
 
-		if (stage.GetRound() == Round1){
+	//ローリングしてない時に攻撃を受ける
+	if (mIsRolling == false) {
+
+		if (stage.GetRound() == Round1) {
 
 			//-----弱攻撃当たり判定-----//
 			for (int i = 0; i < kEnemyMaxAttack; i++) {
@@ -288,26 +304,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					mColor = 0xFFFF00FF;
 					mIsHit[i] = true;
 
-					if (mIsInvincible == false) {
-						mInvincibleTime = kInvincibleTimer;
-						mIsInvincible = true;
-					}
-
 					//敵の向きによってノックバックする方向を変える
-					if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
-						mKnockBackVelocity.x = kKnockBackLength[i].x;
-						mKnockBackVelocity.y = -kKnockBackLength[i].y;
-						mPosition.y -= kKnockBackLength[i].y;
-						mKnockBack[i] = true;
-					}
-
-					if (enemy.GetEnemyDirection() == LEFT && mKnockBack[i] == false) {
-						mKnockBackVelocity.x = -kKnockBackLength[i].x;
-						mKnockBackVelocity.y = -kKnockBackLength[i].y;
-						mPosition.y -= kKnockBackLength[i].y;
-						mKnockBack[i] = true;
-					}
-
+					KnockBack(enemy, i);
 				}
 				else {
 					mIsHit[i] = false;
@@ -326,25 +324,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
 
-				if (mIsInvincible == false) {
-					mInvincibleTime = kInvincibleTimer;
-					mIsInvincible = true;
-				}
-
 				//敵の向きによってノックバックする方向を変える
-				if (enemy.GetSpecialAttackDirection() == SPECIALRIGHT && mKnockBack[2] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[2].x;
-					mKnockBackVelocity.y = -kKnockBackLength[2].y;
-					mPosition.y -= kKnockBackLength[2].y;
-					mKnockBack[2] = true;
-				}
-
-				if (enemy.GetSpecialAttackDirection() == SPECIALLEFT && mKnockBack[2] == false) {
-					mKnockBackVelocity.x = -kKnockBackLength[2].x;
-					mKnockBackVelocity.y = -kKnockBackLength[2].y;
-					mPosition.y -= kKnockBackLength[2].y;
-					mKnockBack[2] = true;
-				}
+				KnockBack(enemy, 2);
 
 			}
 			else {
@@ -360,11 +341,6 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
 
-					if (mIsInvincible == false) {
-						mInvincibleTime = kInvincibleTimer;
-						mIsInvincible = true;
-					}
-
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = -kKnockBackLength[2].x;
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
@@ -378,11 +354,6 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
-
-					if (mIsInvincible == false) {
-						mInvincibleTime = kInvincibleTimer;
-						mIsInvincible = true;
-					}
 
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = kKnockBackLength[2].x;
@@ -411,35 +382,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 	}
 
-	//無敵
-	if (mIsInvincible == true) {
 
-		Invincible();
-
-	}
-
-	
-
-}
-void Player::Invincible() {
-
-	//無敵時間が0より大きいとき（Hit時に時間の最大値を代入する）
-	if (mInvincibleTime > 0) {
-
-		//1フレーム後
-		if (mInvincibleTime <= 29) {
-			mColor = 0xFFFFFF55;
-		}
-
-		mInvincibleTime -= 1;
-		mInvincibleTime = Clamp(mInvincibleTime, 0, kInvincibleTimer);
-
-		//時間が0になったらフラグをfalseにする
-		if (mInvincibleTime == 0) {
-			mIsInvincible = false;
-		}
-
-	}
 }
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 
@@ -452,21 +395,89 @@ bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 	return false;
 
 }
+void Player::KnockBack(Enemy& enemy, int i) {
+
+	//敵の向きによってノックバックする方向を変える
+	if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
+		mKnockBackVelocity.x = kKnockBackLength[i].x;
+		mKnockBackVelocity.y = -kKnockBackLength[i].y;
+		mPosition.y -= kKnockBackLength[i].y;
+		mKnockBack[i] = true;
+	}
+
+	if (enemy.GetEnemyDirection() == LEFT && mKnockBack[i] == false) {
+		mKnockBackVelocity.x = -kKnockBackLength[i].x;
+		mKnockBackVelocity.y = -kKnockBackLength[i].y;
+		mPosition.y -= kKnockBackLength[i].y;
+		mKnockBack[i] = true;
+	}
+}
 
 
 
 //----------ここから描画関係----------//
+void Player::ScalingInit() {
 
-void Player::Draw(Screen& screen) {
+	mScalingEasingt = 0.0f;
+	mJumpScalingStart = { 1.5f, 0.5f };
+	mJumpScalingEnd = { 0.8f, 1.2f };
+	mLandScalingStart = { 0.8f, 1.2f };
+	mLandScalingEnd = { 1.0f, 1.0f };
 
-	//リソースの読み込み
-	if (mIsLoad == false) {
-		player = Novice::LoadTexture("./Resources/Player/Player.png");
-		mIsLoad = true;
+}
+void Player::Animation() {
+
+	//ジャンプ時の拡縮フラグと値の初期化
+	if (Key::IsTrigger(DIK_UP) != 0 && mIsJumpScaling == false) {
+
+		ScalingInit();
+		mIsLandScaling = false;
+		mIsJumpScaling = true;
+	}
+	//ジャンプ時の拡縮
+	if (mIsJumpScaling == true){
+
+		mScalingEasingt += 0.05f;
+		mScalingEasingt = Clamp(mScalingEasingt, 0.0f, 1.0f);
+		mScaling = EasingMove(mJumpScalingStart, mJumpScalingEnd, easeOutExpo(mScalingEasingt));
+
+		if (mIsGround == true){
+			mIsJumpScaling = false;
+		}
 	}
 
+	//着地時の拡縮
+	if (mIsLandScaling == true){
+
+		mScalingEasingt += 0.1f;
+		mScalingEasingt = Clamp(mScalingEasingt, 0.0f, 1.0f);
+		mScaling = EasingMove(mLandScalingStart, mLandScalingEnd, easeOutExpo(mScalingEasingt));
+
+		if (mScalingEasingt == 1.0f) {
+			mIsLandScaling = false;
+		}
+	}
+
+}
+void Player::Draw(Screen& screen) {
+
+	mTextureFrame++;
+
+	//リソースの読み込み
+	if (mIsLoadTexture == false) {
+		mPlayer = Novice::LoadTexture("./Resources/Player/Player.png");
+		mIsLoadTexture = true;
+	}
+
+	Animation();
+
+	Quad mOriginalPosition = SquareAssign(mRadius);
+	Quad mQuadPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));
+
 	//プレイヤー描画
-	screen.DrawQuad(CenterQuad(mPosition, mRadius), 0, 0, 79, 128, player, 0xFFFFFFFF);
+	
+	screen.DrawAnime(mQuadPosition, mPlayerSrcX, 0, 0, 1, 30, mTextureFrame, 0, WHITE);
+	//screen.DrawAnime(mQuadPosition, mPlayerSrcX, 79, 128, 1, 30, mTextureFrame, mPlayer, WHITE);
 
 	//攻撃範囲描画
 	for (int i = 0; i < kMaxAttack; i++) {
@@ -477,4 +488,6 @@ void Player::Draw(Screen& screen) {
 		}
 	}
 
+	//当たり判定描画
+	screen.DrawEllipse(mPosition, mRadius, mRadius, RED, kFillModeWireFrame);
 }

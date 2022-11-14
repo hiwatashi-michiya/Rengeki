@@ -51,6 +51,16 @@ Quad CenterQuad(Vec2 center, float radius) {
 
 }
 
+Quad SquareAssign(float size) {
+
+	return {
+		{ -size, -size },
+		{  size, -size },
+		{ -size,  size },
+		{  size,  size }
+	};
+}
+
 void Draw::drawQuad(Quad quad, int srcX, int srcY, int srcW, int srcH, int textureHandle, unsigned int color) {
 
 	Novice::DrawQuad(quad.LeftTop.x, quad.LeftTop.y, quad.RightTop.x, quad.RightTop.y, quad.LeftBottom.x, quad.LeftBottom.y, quad.RightBottom.x, quad.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);

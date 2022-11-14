@@ -36,9 +36,6 @@ public:
 	/// <summary>
 	/// プレイヤーの初期化
 	/// </summary>
-	/// <param name="mPosition">初期座標</param>
-	/// <param name="mVelocity">速度</param>
-	/// <param name="mRadius">半径</param>
 	Player();
 	/// <summary>
 	/// プレイヤーの初期化
@@ -61,36 +58,23 @@ public:
 	inline float GetPlayerRadius() { return mRadius; }
 
 	//攻撃の当たり判定の取得
-	inline float GetAttackPositionX0() { return mAttackPosition[0].x; }
-	inline float GetAttackPositionX1() { return mAttackPosition[1].x; }
-	inline float GetAttackPositionX2() { return mAttackPosition[2].x; }
-	inline float GetAttackPositionY0() { return mAttackPosition[0].y; }
-	inline float GetAttackPositionY1() { return mAttackPosition[1].y; }
-	inline float GetAttackPositionY2() { return mAttackPosition[2].y; }
+	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
 
-	inline Vec2 GetAttackPositionX(int i) { return mAttackPosition[i]; }
+	//攻撃の当たり判定の半径の取得
+	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 
-	inline float GetAttackRadius0() { return mAttackRadius[0]; }
-	inline float GetAttackRadius1() { return mAttackRadius[1]; }
-	inline float GetAttackRadius2() { return mAttackRadius[2]; }
+	//攻撃しているか取得
+	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
 
-	inline bool GetIsAttack0() { return mIsAttack[0]; }
-	inline bool GetIsAttack1() { return mIsAttack[1]; }
-	inline bool GetIsAttack2() { return mIsAttack[2]; }
+	//攻撃を受けているか取得
+	inline bool GetIsHit(int i) { return mIsHit[i]; }
+	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
 
-	inline bool GetIsHit0() { return mIsHit[0]; }
-	inline bool GetIsHit1() { return mIsHit[1]; }
-	inline bool GetIsHit2() { return mIsHit[2]; }
-
+	//攻撃時間の取得
 	inline int GetAttackTimer() { return mAttackTimer; }
 
 	//プレイヤーの座標取得（外積に使用する）
 	inline Vec2 GetPlayerPosition() { return mPosition; }
-
-	//無敵かどうか
-	inline bool GetIsPlayerInvincible() { return mIsInvincible; }
-	//無敵時間の取得
-	inline int GetPlayerInvincibleTime() { return mInvincibleTime; }
 
 private:
 
@@ -124,12 +108,15 @@ private:
 
 	//当たったかどうかの判定
 	bool mIsHit[kMaxAttack];
+	bool mIsOldHit[kMaxAttack];
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kMaxAttack];
+	void KnockBack(Enemy& enemy, int i);
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
+
 
 	//----------動き関係----------//
 	//---攻撃---//
@@ -166,21 +153,34 @@ private:
 	void Rolling();
 
 
-	//----------無敵関係----------//
-	//無敵時間
-	int mInvincibleTime;
-	//無敵時間か
-	bool mIsInvincible;
-	//無敵関数
-	void Invincible();
-
-
 	//----------描画関係----------//
-	//描画するフラグ
-	bool mIsLoad;
-	int player;
 
-	//描画
+	/*　拡縮アニメーション　*/
+	Vec2 mScaling;
+	float mScalingEasingt;
+	//ジャンプ
+	bool mIsJumpScaling;
+	Vec2 mJumpScalingStart;
+	Vec2 mJumpScalingEnd;
+	//着地
+	bool mIsLandScaling;
+	Vec2 mLandScalingStart;
+	Vec2 mLandScalingEnd;
+	//ローリング
+	bool mIsRollingScaling;
+	//回転
+	float mTheta;
+	//関数
+	void ScalingInit();
+	void Animation();
+
+
+	//画像読み込みフラグ
+	bool mIsLoadTexture;
+	int mTextureFrame;
+	//プレイヤー
+	int mPlayer;
+	int mPlayerSrcX;
 
 };
 
