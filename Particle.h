@@ -85,7 +85,7 @@ private:
 	int mRandMax;
 
 	//パーティクルの最大数
-	int mMaxParticle;
+	int mMaxParticle = 500;
 
 	//パーティクルのオンオフ
 	bool mParticleAppear;
