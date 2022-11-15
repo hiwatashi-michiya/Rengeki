@@ -221,6 +221,7 @@ void Player::Jump() {
 			mVelocity.y = 0;
 			mVelocity.y -= 15.0f;
 			mJumpCount -= 1;
+			mIsJump = true;
 		}
 
 		//ジャンプ回数残り２回
@@ -478,6 +479,11 @@ void Player::Draw(Screen& screen) {
 		mAttack1_right = Novice::LoadTexture("./Resources/Player/Player_attack1_right.png");
 		mAttack2_right = Novice::LoadTexture("./Resources/Player/Player_attack2_right.png");
 		mAttack3_right = Novice::LoadTexture("./Resources/Player/Player_attack3_right.png");
+		mJumpEffect = Novice::LoadTexture("./Resources/Player/jumpeffect.png");
+		mJump = Novice::LoadTexture("./Resources/Player/Player_jump.png");
+		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
+		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
+
 		mIsLoadTexture = true;
 	}
 
@@ -485,6 +491,7 @@ void Player::Draw(Screen& screen) {
 
 	Quad mOriginalPosition = SquareAssign(mRadius);
 	Quad mQuadPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));
+
 
 	//プレイヤー描画
 
@@ -519,28 +526,45 @@ void Player::Draw(Screen& screen) {
 		}
 	}
 
-	/*if (mIsAttack[2] == true) {
-		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3, WHITE);
-	}
-	else if (mIsAttack[1] == true) {
-		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2, WHITE);
-	}
-	else if (mIsAttack[0] == true) {
-		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1, WHITE);
-	}*/
+	
 
 	//移動
-	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0]) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashRight, WHITE);
+	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashRight, WHITE);//右移動
 	}
-	if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0]) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashLeft, WHITE);
+	if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashLeft, WHITE);//左移動
 	}
 
 	//立っている時
-	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0]) {
+	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
 		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
 	}
+
+	//ジャンプ
+	if (mIsJump) {
+		mQuadJumpPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));//ジャンプエフェクトが移動しないように
+		mIsJump = false;
+	}
+
+	if (mVelocity.y < 0) {
+		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mJump, WHITE);//ジャンプ
+	}
+
+	if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
+		screen.DrawAnime(mQuadPosition, mJumpSrcX, 140, 140, 7, 4, mTextureFrame, mJumpRoll, RED);//２回目のジャンプで回転する
+		mJumpAnimeCount++;
+		Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
+	}else if (mVelocity.y > 0) {
+		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mFall, WHITE);//落ちてるとき
+	}
+
+	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
+		screen.DrawAnime(mQuadJumpPosition, mJumpSrcX, 240, 240, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
+	}
+
+	
+	
 
 	//攻撃範囲描画
 	for (int i = 0; i < kMaxAttack; i++) {

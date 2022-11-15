@@ -193,7 +193,14 @@ private:
 	int mAttack1_right;
 	int mAttack2_right;
 	int mAttack3_right;
-
+	int mJumpEffect;
+	int mJumpSrcX;
+	bool mIsJump;
+	Quad mQuadJumpPosition;
+	int mJump;
+	int mJumpRoll;
+	int mFall;
+	int mJumpAnimeCount;
 };
 
 

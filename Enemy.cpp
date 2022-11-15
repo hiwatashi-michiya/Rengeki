@@ -60,7 +60,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Enemy::Update(Stage &stage, Player &player) {
 
-	Move(player);
+	/*Move(player);*/
 
 	AttackPattern(player);
 
