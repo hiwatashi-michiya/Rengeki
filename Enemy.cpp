@@ -130,18 +130,56 @@ void Enemy::Move(Player& player) {
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -3.5f;
 
-			if (mStartFrame % RandNum(20, 30, BINARY) == 0) {
+			if (mStartFrame % 25 == 0) {
 
 				//どちらかの方向に動く
-				int plusOrMinus = RandNum(1, 2, NATURAL);
+				int plusOrMinus = 0;
 
-				if (plusOrMinus == 1) {
-					mVelocity.x = -RandNum(35, 70, NATURAL);
+				//プレイヤーとの距離によって行動の確率を変化
+				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+					//八割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//0以外の場合1に変える
+					if (plusOrMinus != 0) {
+						plusOrMinus = 1;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					//二割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//1以外は0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+					//5%の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 19, NATURAL);
+
+					//1以外の場合0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+
+				//1の場合逆に移動
+				if (plusOrMinus == 0) {
+					mVelocity.x = RandNum(70, 105, BINARY) * -1;
 				}
 				else {
-					mVelocity.x = RandNum(35, 70, NATURAL);
+					mVelocity.x = RandNum(70, 105, BINARY);
 				}
 
+			}
+
+			//距離が近すぎた場合強制的に離す
+			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
+				mVelocity.x = 150.0f;
 			}
 
 			mDirection = ENEMYLEFT;
@@ -149,18 +187,56 @@ void Enemy::Move(Player& player) {
 		else {
 			mVelocity.x = 3.5f;
 
-			if (mStartFrame % RandNum(20, 30, BINARY) == 0) {
+			if (mStartFrame % 25 == 0) {
 
 				//どちらかの方向に動く
-				int plusOrMinus = RandNum(1, 2, NATURAL);
+				int plusOrMinus = 0;
 
-				if (plusOrMinus == 1) {
-					mVelocity.x = -RandNum(35, 70, NATURAL);
+				//プレイヤーとの距離によって行動の確率を変化
+				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+					//八割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//0以外の場合1に変える
+					if (plusOrMinus != 0) {
+						plusOrMinus = 1;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					//二割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//1以外は0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+					//5%の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 19, NATURAL);
+
+					//1以外の場合0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+
+				//1の場合逆に移動
+				if (plusOrMinus == 0) {
+					mVelocity.x = RandNum(70, 105, BINARY);
 				}
 				else {
-					mVelocity.x = RandNum(35, 70, NATURAL);
+					mVelocity.x = RandNum(70, 105, BINARY) * -1;
 				}
 
+			}
+
+			//距離が近すぎた場合強制的に離す
+			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
+				mVelocity.x = -150.0f;
 			}
 
 			mDirection = ENEMYRIGHT;
@@ -170,7 +246,7 @@ void Enemy::Move(Player& player) {
 	}
 
 	//少しの間停止
-	if (RandNum(50,60,BINARY) <= mStartFrame && mStartFrame < RandNum(70,80,BINARY)) {
+	if (50 <= mStartFrame && mStartFrame < 70) {
 		mVelocity.x = 0.0f;
 	}
 
