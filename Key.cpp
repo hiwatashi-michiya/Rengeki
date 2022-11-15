@@ -24,6 +24,16 @@ bool Key::IsTrigger(int key) {
 
 }
 
+bool Key::IsRelease(int key) {
+
+	if (preKeys[key] != 0 && keys[key] == 0) {
+		return true;
+	}
+
+	return false;
+
+}
+
 bool Key::IsPress(int key) {
 
 	if (keys[key] != 0) {

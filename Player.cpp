@@ -38,6 +38,7 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsHit[0] = false;
 	mIsHit[1] = false;
 	mIsHit[2] = false;
+	mHitFrame = 0;
 	mKnockBack[0] = false;
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
@@ -92,20 +93,38 @@ void Player::Move() {
 		mAttackTimer -= 1;
 	}
 
+	//攻撃を受けたらしばらく動けない
+	mHitFrame--;
+	mHitFrame = Clamp(mHitFrame, 0, 30);
+
 	//プレイヤーの場合の操作
 
-	//攻撃していない場合のみ行動できる
-	if (mIsAttack[0] == false) {
+	//攻撃していない場合のみ行動できる || 攻撃を受けてしばらくは動けない
+	if (mIsAttack[0] == false && mHitFrame == 0) {
+
+		if ((Key::IsRelease(DIK_RIGHT) && Key::IsPress(DIK_LEFT) == false) || (Key::IsRelease(DIK_LEFT) && Key::IsPress(DIK_RIGHT) == false)) {
+			mReleaseFrame = 12;
+		}
 
 		//右移動
 		if (Key::IsPress(DIK_RIGHT) && mIsRolling == false) {
-			mPosition.x += mVelocity.x;
+
+			if (mReleaseFrame > 0){
+				mPosition.x += mVelocity.x * 2;
+			} else {
+				mPosition.x += mVelocity.x;
+			}
 			mDirection = RIGHT;
 		}
 
 		//左移動
 		if (Key::IsPress(DIK_LEFT) && mIsRolling == false) {
-			mPosition.x -= mVelocity.x;
+
+			if (mReleaseFrame > 0){
+				mPosition.x -= mVelocity.x * 2;
+			} else {
+				mPosition.x -= mVelocity.x;
+			}
 			mDirection = LEFT;
 		}
 
@@ -114,9 +133,11 @@ void Player::Move() {
 
 		//ローリング
 		Rolling();
-
 	}
 
+	mReleaseFrame--;
+	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
+	
 	//攻撃
 	Attack();
 
@@ -303,6 +324,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[i] = true;
+					mHitFrame = 10;
 
 					//敵の向きによってノックバックする方向を変える
 					KnockBack(enemy, i);
@@ -323,6 +345,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
+				mHitFrame = 10;
 
 				//敵の向きによってノックバックする方向を変える
 				KnockBack(enemy, 2);
@@ -340,6 +363,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
+					mHitFrame = 10;
 
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = -kKnockBackLength[2].x;
@@ -354,6 +378,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[2] = true;
+					mHitFrame = 10;
 
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = kKnockBackLength[2].x;

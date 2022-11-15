@@ -75,7 +75,7 @@ void Enemy::Update(Stage &stage, Player &player) {
 
 	Move(player);
 
-	AttackPattern(player);
+	MovePattern(player);
 
 	////////////////////　ここから基礎移動　////////////////////
 
@@ -180,7 +180,7 @@ void Enemy::Guard() {
 
 		mGuardFrame++;
 
-		if (mGuardFrame >= 240){
+		if (mGuardFrame >= 120){
 			mIsGuard = false;
 		}
 	}
@@ -296,12 +296,14 @@ void Enemy::SpecialAttack(Player& player) {
 						mPosition.y = Stage::kStageBottom - mRadius;
 						mSpecialAttackPosition.x = mPosition.x - (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
+						mDirection = ENEMYLEFT;
 					}
 					if (player.GetPlayerDirection() == RIGHT) {
 						mPosition.x = player.GetPlayerPosition().x - 50;
 						mPosition.y = Stage::kStageBottom - mRadius;
 						mSpecialAttackPosition.x = mPosition.x + (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
+						mDirection = ENEMYRIGHT;
 					}
 				}
 
@@ -384,11 +386,9 @@ void Enemy::FallingStar(Player& player) {
 
 
 
-void Enemy::AttackPattern(Player& player) {
+void Enemy::MovePattern(Player& player) {
 
-	
-
-	//攻撃開始までのフレーム
+	//移動開始までのフレーム
 	if (AnyAttack() == false && mIsStart == false){
 		mStartFrame++;
 		if (mStartFrame >= mStartFrameTimer){
@@ -396,59 +396,70 @@ void Enemy::AttackPattern(Player& player) {
 		}
 	}
 
-	//攻撃していない時 && 攻撃できる時
 	if (AnyAttack() == false && mIsStart == true){
-		RandAttack = RandNum(1, 100, OFF);
-		int a = RandAttack % 10;
-		/*int a = 3;*/
-		if (0 <= a && a <= 1){
 
-			mVelocity.x = 0.0f;
-			mAttackCount = 0;
-			mAttackTimer = kEnemyMaxAttack * 15;
-			mIsAttackStart = true;
-			mStartFrame = 0;
-			mIsStart = false;
-		}
-		else if (a == 2){
+		if ((player.GetPlayerPosition() - mPosition).length() <= 100)
+		{
+			GuardorBackStep = RandNum(1, 100, OFF);
+			int a = GuardorBackStep % 10;
 
-			mGuardFrame = 0;
-			mIsGuard = true;
-			mStartFrame = 0;
-			mIsStart = false;
-		}
-		else if (3 <= a && a <= 4){
+			if (0 <= a && a <= 4){
 
-			mBackStepEasingt = 0.0f;
-			mBackStepStartPosition = mPosition;
-			if (mDirection == ENEMYLEFT) {
-				mBackStepEndPosition = { mPosition.x + 400, mPosition.y - 150 };
+				mBackStepEasingt = 0.0f;
+				mBackStepStartPosition = mPosition;
+				if (mDirection == ENEMYLEFT) {
+					mBackStepEndPosition = { mPosition.x + 400, mPosition.y - 150 };
+				}
+				else {
+					mBackStepEndPosition = { mPosition.x - 400, mPosition.y - 150 };
+				}
+				mIsBackStepNoGravity = true;
+				mIsBackStep = true;
+				mStartFrame = 0;
+				mIsStart = false;
+
+			} else {
+
+				mGuardFrame = 0;
+				mIsGuard = true;
+				mStartFrame = 0;
+				mIsStart = false;
 			}
-			else {
-				mBackStepEndPosition = { mPosition.x - 400, mPosition.y - 150 };
-			}
-			mIsBackStepNoGravity = true;
-			mIsBackStep = true;
-			mStartFrame = 0;
-			mIsStart = false;
-		}
-		else if (5 <= a && a <= 7){
+		} 
+		else if ((player.GetPlayerPosition() - mPosition).length() <= 600)
+		{
+			GuardorBackStep = RandNum(1, 100, OFF);
+			int a = GuardorBackStep % 10;
 
+			if (0 <= a && a <= 4)
+			{
+				mVelocity.x = 0.0f;
+				mAttackCount = 0;
+				mAttackTimer = kEnemyMaxAttack * 15;
+				mIsAttackStart = true;
+				mStartFrame = 0;
+				mIsStart = false;
+			}
+			else
+			{
+				mVelocity.x = 0.0f;
+				mFallingStarStartPosition = mPosition;
+				mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+				for (int i = 0; i < kFallingStarMax; i++) {
+					mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+					mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+				}
+				mIsFallingStar = true;
+				mStartFrame = 0;
+				mIsStart = false;
+			}
+
+
+		} 
+		else
+		{
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
-			mStartFrame = 0;
-			mIsStart = false;
-		}
-		else if (a == 9){
-
-			mVelocity.x = 0.0f;
-			mFallingStarStartPosition = mPosition;
-			mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
-			for (int i = 0; i < kFallingStarMax; i++) {
-				mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-				mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-			}
-			mIsFallingStar = true;
 			mStartFrame = 0;
 			mIsStart = false;
 		}
