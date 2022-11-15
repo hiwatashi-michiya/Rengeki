@@ -476,8 +476,9 @@ void Player::Draw(Screen& screen) {
 
 	//ƒvƒŒƒCƒ„[•`‰æ
 	
-	screen.DrawAnime(mQuadPosition, mPlayerSrcX, 0, 0, 1, 30, mTextureFrame, 0, WHITE);
-	//screen.DrawAnime(mQuadPosition, mPlayerSrcX, 79, 128, 1, 30, mTextureFrame, mPlayer, WHITE);
+	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0]) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
+	}
 
 	//UŒ‚”ÍˆÍ•`‰æ
 	for (int i = 0; i < kMaxAttack; i++) {
