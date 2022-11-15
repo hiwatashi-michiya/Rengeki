@@ -461,6 +461,8 @@ void Player::Animation() {
 }
 void Player::Draw(Screen& screen) {
 
+	mTextureFrame++;
+
 	//ÉäÉ\Å[ÉXÇÃì«Ç›çûÇ›
 	if (mIsLoadTexture == false) {
 		mPlayer = Novice::LoadTexture("./Resources/Player/Player.png");
@@ -470,6 +472,12 @@ void Player::Draw(Screen& screen) {
 		mAttack1 = Novice::LoadTexture("./Resources/Player/Player_attack1.png");
 		mAttack2 = Novice::LoadTexture("./Resources/Player/Player_attack2.png");
 		mAttack3 = Novice::LoadTexture("./Resources/Player/Player_attack3.png");
+		mAttack1_left = Novice::LoadTexture("./Resources/Player/Player_attack1_left.png");
+		mAttack2_left = Novice::LoadTexture("./Resources/Player/Player_attack2_left.png");
+		mAttack3_left = Novice::LoadTexture("./Resources/Player/Player_attack3_left.png");
+		mAttack1_right = Novice::LoadTexture("./Resources/Player/Player_attack1_right.png");
+		mAttack2_right = Novice::LoadTexture("./Resources/Player/Player_attack2_right.png");
+		mAttack3_right = Novice::LoadTexture("./Resources/Player/Player_attack3_right.png");
 		mIsLoadTexture = true;
 	}
 
@@ -487,8 +495,31 @@ void Player::Draw(Screen& screen) {
 
 	//çUåÇ
 
+	if (mDirection == RIGHT) {
+		if (mIsAttack[2] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_right, WHITE);
+		}
+		else if (mIsAttack[1] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2_right, WHITE);
+		}
+		else if (mIsAttack[0] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1_right, WHITE);
+		}
+	}
 
-	if (mIsAttack[2] == true) {
+	if (mDirection == LEFT) {
+		if (mIsAttack[2] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_left, WHITE);
+		}
+		else if (mIsAttack[1] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2_left, WHITE);
+		}
+		else if (mIsAttack[0] == true) {
+			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1_left, WHITE);
+		}
+	}
+
+	/*if (mIsAttack[2] == true) {
 		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3, WHITE);
 	}
 	else if (mIsAttack[1] == true) {
@@ -496,7 +527,7 @@ void Player::Draw(Screen& screen) {
 	}
 	else if (mIsAttack[0] == true) {
 		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1, WHITE);
-	}
+	}*/
 
 	//à⁄ìÆ
 	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0]) {

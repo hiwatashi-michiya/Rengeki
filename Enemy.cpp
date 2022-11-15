@@ -151,7 +151,7 @@ void Enemy::Guard() {
 
 		mGuardFrame++;
 
-		if (mGuardFrame >= 240){
+		if (mGuardFrame >= 180){
 			mIsGuard = false;
 		}
 	}
@@ -364,13 +364,13 @@ void Enemy::AttackPattern(Player& player) {
 		}
 	}
 
-	//UŒ‚‚µ‚Ä‚¢‚È‚¢ && UŒ‚‚Å‚«‚é
-	if (AnyAttack() == false && mIsStart == true){
-		RandAttack = RandNum(1, 100, OFF);
-		//int a = RandAttack % 10;
-		int a = 1;
-		if (0 <= a && a <= 1){
+	if (mIsStart == true)
+	{
 
+
+
+		if (Key::IsTrigger(DIK_1))
+		{
 			mVelocity.x = 0.0f;
 			mAttackCount = 0;
 			mAttackTimer = kEnemyMaxAttack * 15;
@@ -378,15 +378,15 @@ void Enemy::AttackPattern(Player& player) {
 			mStartFrame = 0;
 			mIsStart = false;
 		}
-		else if (a == 2){
-
+		if (Key::IsTrigger(DIK_2))
+		{
 			mGuardFrame = 0;
 			mIsGuard = true;
 			mStartFrame = 0;
 			mIsStart = false;
 		}
-		else if (3 <= a && a <= 4){
-
+		if (Key::IsTrigger(DIK_3))
+		{
 			mBackStepEasingt = 0.0f;
 			mBackStepStartPosition = mPosition;
 			if (mDirection == ENEMYLEFT) {
@@ -400,15 +400,15 @@ void Enemy::AttackPattern(Player& player) {
 			mStartFrame = 0;
 			mIsStart = false;
 		}
-		else if (5 <= a && a <= 7){
-
+		if (Key::IsTrigger(DIK_4))
+		{
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
 			mStartFrame = 0;
 			mIsStart = false;
 		}
-		else if (a == 9){
-
+		if (Key::IsTrigger(DIK_5))
+		{
 			mVelocity.x = 0.0f;
 			mFallingStarStartPosition = mPosition;
 			mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
@@ -421,6 +421,63 @@ void Enemy::AttackPattern(Player& player) {
 			mIsStart = false;
 		}
 	}
+	////UŒ‚‚µ‚Ä‚¢‚È‚¢ && UŒ‚‚Å‚«‚é
+	//if (AnyAttack() == false && mIsStart == true){
+	//	RandAttack = RandNum(1, 100, OFF);
+	//	int a = RandAttack % 10;
+	//	//int a = 1;
+	//	if (0 <= a && a <= 1){
+
+	//		mVelocity.x = 0.0f;
+	//		mAttackCount = 0;
+	//		mAttackTimer = kEnemyMaxAttack * 15;
+	//		mIsAttackStart = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (a == 2){
+
+	//		mGuardFrame = 0;
+	//		mIsGuard = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (3 <= a && a <= 4){
+
+	//		mBackStepEasingt = 0.0f;
+	//		mBackStepStartPosition = mPosition;
+	//		if (mDirection == ENEMYLEFT) {
+	//			mBackStepEndPosition = { mPosition.x + 400, mPosition.y - 150 };
+	//		}
+	//		else {
+	//			mBackStepEndPosition = { mPosition.x - 400, mPosition.y - 150 };
+	//		}
+	//		mIsBackStepNoGravity = true;
+	//		mIsBackStep = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (5 <= a && a <= 7){
+
+	//		mSpecialAttackFrame = 0;
+	//		mIsSpecialAttackStart = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (a == 9){
+
+	//		mVelocity.x = 0.0f;
+	//		mFallingStarStartPosition = mPosition;
+	//		mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+	//		for (int i = 0; i < kFallingStarMax; i++) {
+	//			mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+	//			mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+	//		}
+	//		mIsFallingStar = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//}
 }
 
 
