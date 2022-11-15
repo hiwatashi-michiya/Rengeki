@@ -15,6 +15,13 @@ public:
 	static bool IsTrigger(int key);
 
 	/// <summary>
+	/// キーが離されたかどうか返す
+	/// </summary>
+	/// <param name="key">キーコード([DIK_...])</param>
+	/// <returns>されていたら : true　されていなかったら : false</returns>
+	static bool IsRelease(int key);
+
+	/// <summary>
 	/// キーが押されているか(長押し)
 	/// </summary>
 	/// <param name="key">キーコード([DIK_...])</param>

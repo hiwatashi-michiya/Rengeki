@@ -28,8 +28,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Screen screen;
 
-	Player player({ 100.0f,100.0f }, { 7.0f,7.0f }, 30.0f);
-	Enemy enemy({ 500.0f,100.0f }, { 5.0f,5.0f }, 30.0f);
+	Player player({ 100.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
+	Enemy enemy({ 1000.0f,800.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
 
 	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 500, true);

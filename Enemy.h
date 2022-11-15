@@ -104,8 +104,6 @@ private:
 
 	
 
-	//動き
-	void Move(Player& player);
 
 	//何か攻撃しているか
 	bool AnyAttack();
@@ -119,9 +117,6 @@ private:
 
 	//座標
 	Vec2 mPosition;
-
-	//速度
-	Vec2 mVelocity;
 
 	//ノックバック時の速度
 	Vec2 mKnockBackVelocity;
@@ -164,16 +159,31 @@ private:
 
 	//////////////////// 敵の動きをまとめる ////////////////////
 
-	//攻撃関数
-	void AttackPattern(Player& player);
-	//攻撃を開始できるか
+	//移動関数
+	void MovePattern(Player& player);
+	//次の移動を開始できるか
 	bool mIsStart;
-	//開始するまでのフレーム
+	//移動開始するまでのフレーム
 	int mStartFrame;
-	//どの攻撃を行うかはランダム
+	//開始するまでのフレームの時間(40,80,120のいずれか)を決める
+	int mStartFrameTimer;
+	//どの移動を行うかはランダム
 	int RandAttack;
 
 	//////////////////// ここから基礎移動 ////////////////////
+
+	//ガードかバックステップのどちらを行うか
+	int GuardorBackStep;
+
+	//-----単純な移動-----//
+	//速度
+	Vec2 mVelocity;
+	//動き
+	void Move(Player& player);
+	//ステップのクールタイム
+	int mStepFrame;
+	//ステップサウンド
+	int mStepSE;
 
 	//-----バックステップ-----//
 	//バックステップフラグ
@@ -186,6 +196,9 @@ private:
 	Vec2 mBackStepEndPosition;
 	//関数
 	void BackStep();
+	//サウンド
+	int mBackStepSE;
+	int mBackStepRing;
 
 	//-----ガード-----//
 	//ガードフラグ
@@ -223,7 +236,8 @@ private:
 	void Attack(Player& player);
 	//パーティクル
 	Particle mAttackParticle[kEnemyMaxAttack];
-
+	//サウンド
+	int mAttackSE[kEnemyMaxAttack];
 
 	////////////////////　ここから強攻撃　////////////////////
 	

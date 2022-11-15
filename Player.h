@@ -97,6 +97,9 @@ private:
 	//ノックバック時の速度
 	Vec2 mKnockBackVelocity;
 
+	//キーを離してからのフレーム
+	int mReleaseFrame;
+
 	//半径
 	float mRadius;
 
@@ -109,6 +112,9 @@ private:
 	//当たったかどうかの判定
 	bool mIsHit[kMaxAttack];
 	bool mIsOldHit[kMaxAttack];
+
+	//攻撃を受けてからのフレーム
+	int mHitFrame;
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kMaxAttack];
