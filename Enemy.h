@@ -190,6 +190,9 @@ private:
 	Vec2 mBackStepEndPosition;
 	//関数
 	void BackStep();
+	//サウンド
+	int mBackStepSE;
+	int mBackStepRing;
 
 	//-----ガード-----//
 	//ガードフラグ
@@ -227,7 +230,8 @@ private:
 	void Attack(Player& player);
 	//パーティクル
 	Particle mAttackParticle[kEnemyMaxAttack];
-
+	//サウンド
+	int mAttackSE[kEnemyMaxAttack];
 
 	////////////////////　ここから強攻撃　////////////////////
 	
