@@ -38,6 +38,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	//////////////////// ここから攻撃関係 ////////////////////
 	mIsStart = false;
 	mStartFrame = -30;
+	mStartFrameTimer = 40;
 	//////////////////// ここから基礎移動 ////////////////////
 	mIsBackStep = false;
 	mIsBackStepNoGravity = false;
@@ -56,15 +57,17 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	//////////////////////  サウンド関係  //////////////////////
+	//////////////////////  サウンド関係  ////////////////////
 	 
-	///////////////////// バックステップSE ///////////////////// 
+	///////////////////// バックステップSE /////////////////// 
 	mBackStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
 	mBackStepRing = -1;
-	//////////////////////  弱攻撃SE  ///////////////////////
+	//////////////////////  弱攻撃SE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
+	///////////////////// 強攻撃SE ///////////////////////////
+
 
 }
 
@@ -126,10 +129,20 @@ void Enemy::Move(Player& player) {
 
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -3.5f;
+
+			if (mStartFrame % 10 == 0) {
+				mVelocity.x = -RandNum(35,70,OFF);
+			}
+
 			mDirection = ENEMYLEFT;
 		}
 		else {
 			mVelocity.x = 3.5f;
+
+			if (mStartFrame % 10 == 0) {
+				mVelocity.x = RandNum(35, 70, OFF);
+			}
+
 			mDirection = ENEMYRIGHT;
 		}
 	} else {
@@ -373,10 +386,12 @@ void Enemy::FallingStar(Player& player) {
 
 void Enemy::AttackPattern(Player& player) {
 
+	
+
 	//攻撃開始までのフレーム
 	if (AnyAttack() == false && mIsStart == false){
 		mStartFrame++;
-		if (mStartFrame >= 40){
+		if (mStartFrame >= mStartFrameTimer){
 			mIsStart = true;
 		}
 	}

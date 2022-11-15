@@ -170,6 +170,8 @@ private:
 	bool mIsStart;
 	//開始するまでのフレーム
 	int mStartFrame;
+	//開始するまでのフレームの時間(40,80,120のいずれか)を決める
+	int mStartFrameTimer;
 	//どの攻撃を行うかはランダム
 	int RandAttack;
 
