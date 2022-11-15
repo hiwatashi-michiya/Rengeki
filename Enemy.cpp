@@ -130,8 +130,18 @@ void Enemy::Move(Player& player) {
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -3.5f;
 
-			if (mStartFrame % 10 == 0) {
-				mVelocity.x = -RandNum(35,70,OFF);
+			if (mStartFrame % RandNum(20, 30, BINARY) == 0) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = RandNum(1, 2, NATURAL);
+
+				if (plusOrMinus == 1) {
+					mVelocity.x = -RandNum(35, 70, NATURAL);
+				}
+				else {
+					mVelocity.x = RandNum(35, 70, NATURAL);
+				}
+
 			}
 
 			mDirection = ENEMYLEFT;
@@ -139,13 +149,28 @@ void Enemy::Move(Player& player) {
 		else {
 			mVelocity.x = 3.5f;
 
-			if (mStartFrame % 10 == 0) {
-				mVelocity.x = RandNum(35, 70, OFF);
+			if (mStartFrame % RandNum(20, 30, BINARY) == 0) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = RandNum(1, 2, NATURAL);
+
+				if (plusOrMinus == 1) {
+					mVelocity.x = -RandNum(35, 70, NATURAL);
+				}
+				else {
+					mVelocity.x = RandNum(35, 70, NATURAL);
+				}
+
 			}
 
 			mDirection = ENEMYRIGHT;
 		}
 	} else {
+		mVelocity.x = 0.0f;
+	}
+
+	//少しの間停止
+	if (RandNum(50,60,BINARY) <= mStartFrame && mStartFrame < RandNum(70,80,BINARY)) {
 		mVelocity.x = 0.0f;
 	}
 
@@ -398,9 +423,25 @@ void Enemy::MovePattern(Player& player) {
 
 	if (AnyAttack() == false && mIsStart == true){
 
+		//次の攻撃開始フレームを設定
+		mStartFrameTimer = RandNum(1, 3, NATURAL);
+
+		if (mStartFrameTimer == 1) {
+			mStartFrameTimer = 40;
+		}
+		else if(mStartFrameTimer == 2) {
+			mStartFrameTimer = 80;
+		}
+		else if (mStartFrameTimer == 3) {
+			mStartFrameTimer = 120;
+		}
+		else {
+			mStartFrameTimer = 40;
+		}
+
 		if ((player.GetPlayerPosition() - mPosition).length() <= 100)
 		{
-			GuardorBackStep = RandNum(1, 100, OFF);
+			GuardorBackStep = RandNum(1, 100, NATURAL);
 			int a = GuardorBackStep % 10;
 
 			if (0 <= a && a <= 4){
@@ -428,7 +469,7 @@ void Enemy::MovePattern(Player& player) {
 		} 
 		else if ((player.GetPlayerPosition() - mPosition).length() <= 600)
 		{
-			GuardorBackStep = RandNum(1, 100, OFF);
+			GuardorBackStep = RandNum(1, 100, NATURAL);
 			int a = GuardorBackStep % 10;
 
 			if (0 <= a && a <= 4)
