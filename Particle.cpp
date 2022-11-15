@@ -8,6 +8,11 @@
 Particle::Particle() : mParticleType(PLAYERDIFFUSION), mParticleColor(0xFFFFFF00), mParticleExtinction(100),
 mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
 
+	//最大個数を超えた場合、自動的に最大値に設定
+	if (mMaxParticle > kMaxParticle) {
+		mMaxParticle = kMaxParticle;
+	}
+
 	for (int i = 0; i < mMaxParticle; i++) {
 
 		mPosition[i] = { -10000,-10000 };
@@ -33,6 +38,11 @@ Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mPartic
 	int mRandMin, int mRandMax, int mMaxParticle, bool mParticleAppear)
 	: mParticleType(mParticleType),mParticleColor(mParticleColor), mParticleExtinction(mParticleExtinction),
 	mRandMin(mRandMin),mRandMax(mRandMax), mMaxParticle(mMaxParticle), mParticleAppear(false) {
+
+	//最大個数を超えた場合、自動的に最大値に設定
+	if (mMaxParticle > kMaxParticle) {
+		mMaxParticle = kMaxParticle;
+	}
 
 	for (int i = 0; i < mMaxParticle; i++) {
 
