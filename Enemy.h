@@ -180,8 +180,9 @@ private:
 	Vec2 mVelocity;
 	//動き
 	void Move(Player& player);
-	//ステップのクールタイム
+	//ステップのクールタイム処理
 	int mStepFrame;
+	int mStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
 

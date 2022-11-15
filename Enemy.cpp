@@ -49,6 +49,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsApper = false;
 	mTeleportFrame = 0;
 	mStepFrame = 20;
+	mStepCoolTime[0] = 15;
+	mStepCoolTime[1] = 20;
+	mStepCoolTime[2] = 25;
 	////////////////////　ここから強攻撃　////////////////////
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
@@ -183,17 +186,6 @@ void Enemy::Move(Player& player) {
 					Novice::PlayAudio(mStepSE, 0, 0.5f);
 				}
 
-				//次のステップまでのクールタイムを設定
-				if (mStepFrame == 10) {
-					mStepFrame = RandNum(20, 30, BINARY);
-				}
-				else if (mStepFrame == 20) {
-					mStepFrame = RandNum(10, 30, BINARY);
-				}
-				else if (mStepFrame == 30) {
-					mStepFrame = RandNum(10, 20, BINARY);
-				}
-
 			}
 
 			//距離が近すぎた場合強制的に離す
@@ -256,17 +248,6 @@ void Enemy::Move(Player& player) {
 					Novice::PlayAudio(mStepSE, 0, 0.5f);
 				}
 
-				//次のステップまでのクールタイムを設定
-				if (mStepFrame == 10) {
-					mStepFrame = RandNum(20, 30, BINARY);
-				}
-				else if (mStepFrame == 20) {
-					mStepFrame = RandNum(10, 30, BINARY);
-				}
-				else if (mStepFrame == 30) {
-					mStepFrame = RandNum(10, 20, BINARY);
-				}
-
 			}
 
 			//距離が近すぎた場合強制的に離す
@@ -307,6 +288,8 @@ void Enemy::BackStep() {
 		}
 		if (mBackStepEasingt >= 0.65f){
 			mIsBackStep = false;
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[1];
 		}
 	}
 }
@@ -318,6 +301,8 @@ void Enemy::Guard() {
 
 		if (mGuardFrame >= 120){
 			mIsGuard = false;
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[0];
 		}
 	}
 }
@@ -387,6 +372,9 @@ void Enemy::Attack(Player& player) {
 				mIsAttack[i] = false;
 				mAttackParticle[i].Reset();
 			}
+
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[1];
 
 			mAttackCount = 0;
 		}
@@ -458,11 +446,15 @@ void Enemy::SpecialAttack(Player& player) {
 			if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true) {
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				//次のステップの速さを設定
+				mStepFrame = mStepCoolTime[2];
 			}
 
 			if (mSpecialAttackFrame >= 420){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				//次のステップの速さを設定
+				mStepFrame = mStepCoolTime[2];
 			}
 		}
 	}
@@ -477,6 +469,11 @@ void Enemy::FallingStar(Player& player) {
 
 	//落下星開始
 	if (mIsFallingStar == true){
+
+		//次のステップの速さを設定
+		if (mStepFrame != mStepCoolTime[2]) {
+			mStepFrame = mStepCoolTime[2];
+		}
 
 		//移動
 		if (mFallingStarEasingt < 1.0f){
@@ -538,13 +535,13 @@ void Enemy::MovePattern(Player& player) {
 		mStartFrameTimer = RandNum(1, 3, NATURAL);
 
 		if (mStartFrameTimer == 1) {
-			mStartFrameTimer = 40;
-		}
-		else if(mStartFrameTimer == 2) {
 			mStartFrameTimer = 80;
 		}
-		else if (mStartFrameTimer == 3) {
+		else if(mStartFrameTimer == 2) {
 			mStartFrameTimer = 120;
+		}
+		else if (mStartFrameTimer == 3) {
+			mStartFrameTimer = 160;
 		}
 		else {
 			mStartFrameTimer = 40;
@@ -800,5 +797,8 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	//体力描画
 	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
+
+	//ステップのクールタイムを表示
+	Novice::ScreenPrintf(1000, 40, "stepTime : %d", mStepFrame);
 
 }
