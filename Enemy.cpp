@@ -56,6 +56,16 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+	//////////////////////  サウンド関係  //////////////////////
+	 
+	///////////////////// バックステップSE ///////////////////// 
+	mBackStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
+	mBackStepRing = -1;
+	//////////////////////  弱攻撃SE  ///////////////////////
+	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
+	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
+	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
+
 }
 
 void Enemy::Update(Stage &stage, Player &player) {
@@ -131,6 +141,12 @@ void Enemy::BackStep() {
 
 	if (mIsBackStep == true){
 
+		if (Novice::IsPlayingAudio(mBackStepRing) == 0 || mBackStepRing == -1) {
+
+			mBackStepRing = Novice::PlayAudio(mBackStepSE, 0, 0.5f);
+
+		}
+
 		mBackStepEasingt += 0.02f;
 		mBackStepEasingt = Clamp(mBackStepEasingt, 0.0f, 1.0f);
 		mPosition.x = EasingMove(mBackStepStartPosition.x, mBackStepEndPosition.x, easeOutExpo(mBackStepEasingt));
@@ -202,6 +218,7 @@ void Enemy::Attack(Player& player) {
 			mVelocity.x = 0.0f;
 			if (mAttackTimer % 15 == 0) {
 				mIsAttack[mAttackCount] = true;
+				Novice::PlayAudio(mAttackSE[mAttackCount], 0, 0.5f);
 				mAttackParticle[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
 				mAttackCount++;
 			}
@@ -367,8 +384,8 @@ void Enemy::AttackPattern(Player& player) {
 	//攻撃していない時 && 攻撃できる時
 	if (AnyAttack() == false && mIsStart == true){
 		RandAttack = RandNum(1, 100, OFF);
-		//int a = RandAttack % 10;
-		int a = 1;
+		int a = RandAttack % 10;
+		/*int a = 3;*/
 		if (0 <= a && a <= 1){
 
 			mVelocity.x = 0.0f;
