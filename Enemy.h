@@ -180,7 +180,11 @@ private:
 	Vec2 mVelocity;
 	//動き
 	void Move(Player& player);
-	
+	//ステップのクールタイム
+	int mStepFrame;
+	//ステップサウンド
+	int mStepSE;
+
 	//-----バックステップ-----//
 	//バックステップフラグ
 	bool mIsBackStep;

@@ -48,6 +48,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsTeleport = false;
 	mIsApper = false;
 	mTeleportFrame = 0;
+	mStepFrame = 20;
 	////////////////////　ここから強攻撃　////////////////////
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
@@ -58,9 +59,11 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
 	//////////////////////  サウンド関係  ////////////////////
-	 
+	
+	///////////////////// 基礎移動SE /////////////////////////
+	mStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
 	///////////////////// バックステップSE /////////////////// 
-	mBackStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
+	mBackStepSE = Novice::LoadAudio("./Resources/SE/backstep.wav");
 	mBackStepRing = -1;
 	//////////////////////  弱攻撃SE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
@@ -130,7 +133,7 @@ void Enemy::Move(Player& player) {
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -3.5f;
 
-			if (mStartFrame % 25 == 0) {
+			if (mStartFrame % mStepFrame == 0) {
 
 				//どちらかの方向に動く
 				int plusOrMinus = 0;
@@ -173,6 +176,22 @@ void Enemy::Move(Player& player) {
 				}
 				else {
 					mVelocity.x = RandNum(70, 105, BINARY);
+				}
+
+				//停止期間でなければ音を鳴らす
+				if (mStartFrame < 50 || 70 <= mStartFrame) {
+					Novice::PlayAudio(mStepSE, 0, 0.5f);
+				}
+
+				//次のステップまでのクールタイムを設定
+				if (mStepFrame == 10) {
+					mStepFrame = RandNum(20, 30, BINARY);
+				}
+				else if (mStepFrame == 20) {
+					mStepFrame = RandNum(10, 30, BINARY);
+				}
+				else if (mStepFrame == 30) {
+					mStepFrame = RandNum(10, 20, BINARY);
 				}
 
 			}
@@ -187,7 +206,7 @@ void Enemy::Move(Player& player) {
 		else {
 			mVelocity.x = 3.5f;
 
-			if (mStartFrame % 25 == 0) {
+			if (mStartFrame % mStepFrame == 0) {
 
 				//どちらかの方向に動く
 				int plusOrMinus = 0;
@@ -230,6 +249,22 @@ void Enemy::Move(Player& player) {
 				}
 				else {
 					mVelocity.x = RandNum(70, 105, BINARY) * -1;
+				}
+
+				//停止期間でなければ音を鳴らす
+				if (mStartFrame < 50 || 70 <= mStartFrame) {
+					Novice::PlayAudio(mStepSE, 0, 0.5f);
+				}
+
+				//次のステップまでのクールタイムを設定
+				if (mStepFrame == 10) {
+					mStepFrame = RandNum(20, 30, BINARY);
+				}
+				else if (mStepFrame == 20) {
+					mStepFrame = RandNum(10, 30, BINARY);
+				}
+				else if (mStepFrame == 30) {
+					mStepFrame = RandNum(10, 20, BINARY);
 				}
 
 			}
