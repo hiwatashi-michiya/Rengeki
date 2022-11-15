@@ -181,6 +181,12 @@ private:
 	//ƒvƒŒƒCƒ„[
 	int mPlayer;
 	int mPlayerSrcX;
+	int mRolling;
+	int mDashLeft;
+	int mDashRight;
+	int mAttack1;
+	int mAttack2;
+	int mAttack3;
 
 };
 

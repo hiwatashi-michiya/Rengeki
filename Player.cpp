@@ -461,11 +461,15 @@ void Player::Animation() {
 }
 void Player::Draw(Screen& screen) {
 
-	mTextureFrame++;
-
 	//リソースの読み込み
 	if (mIsLoadTexture == false) {
 		mPlayer = Novice::LoadTexture("./Resources/Player/Player.png");
+		mDashLeft = Novice::LoadTexture("./Resources/Player/Player_dash_left.png");
+		mDashRight = Novice::LoadTexture("./Resources/Player/Player_dash_right.png");
+		mRolling = Novice::LoadTexture("./Resources/Player/Player_rolling.png");
+		mAttack1 = Novice::LoadTexture("./Resources/Player/Player_attack1.png");
+		mAttack2 = Novice::LoadTexture("./Resources/Player/Player_attack2.png");
+		mAttack3 = Novice::LoadTexture("./Resources/Player/Player_attack3.png");
 		mIsLoadTexture = true;
 	}
 
@@ -475,7 +479,34 @@ void Player::Draw(Screen& screen) {
 	Quad mQuadPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));
 
 	//プレイヤー描画
-	
+
+	//ローリング
+	if (mIsRolling) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, WHITE);
+	}
+
+	//攻撃
+
+
+	if (mIsAttack[2] == true) {
+		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3, WHITE);
+	}
+	else if (mIsAttack[1] == true) {
+		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2, WHITE);
+	}
+	else if (mIsAttack[0] == true) {
+		screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1, WHITE);
+	}
+
+	//移動
+	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0]) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashRight, WHITE);
+	}
+	if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0]) {
+		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashLeft, WHITE);
+	}
+
+	//立っている時
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0]) {
 		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
 	}
