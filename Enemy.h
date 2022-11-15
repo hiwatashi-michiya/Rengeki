@@ -256,7 +256,8 @@ private:
 	float mSpecialAttackColorAlphat;
 	//関数
 	void SpecialAttack(Player& player);
-
+	//サウンド
+	int mHeavyAttackReserveSE;
 
 
 	////////////////////　ここから必殺技　////////////////////

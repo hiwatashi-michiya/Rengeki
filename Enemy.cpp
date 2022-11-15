@@ -73,7 +73,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
 	///////////////////// ã≠çUåÇSE ///////////////////////////
-
+	mHeavyAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
 
 }
 
@@ -390,7 +390,14 @@ void Enemy::SpecialAttack(Player& player) {
 
 	//ã≠çUåÇäJén
 	if (mIsSpecialAttackStart == true){
+
+		//âπçƒê∂
+		if (mSpecialAttackFrame == 0) {
+			Novice::PlayAudio(mHeavyAttackReserveSE, 0, 0.5f);
+		}
+
 		mSpecialAttackFrame++;
+
 		if (mSpecialAttackFrame <= 240){
 
 			//ìßñæíÜÇÕçUåÇÇêHÇÁÇÌÇ»Ç¢
