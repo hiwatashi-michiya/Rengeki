@@ -154,13 +154,16 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 				//‹——£‚É‚æ‚Á‚ÄƒWƒƒƒ“ƒv‹——£‚ð•Ï‚¦‚é
 				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+					mVelocity.y = -20.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
 					mVelocity.y = -15.0f;
 				}
 				else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
-					mVelocity.y = -20.0f;
+					mVelocity.y = -30.0f;
 				}
 				else {
-					mVelocity.y = -30.0f;
+					mVelocity.y = -35.0f;
 				}
 
 			}
@@ -202,7 +205,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
 
 				//­‚µ‚¾‚¯‘Þ‚­
-				if (mStartFrame % 30 <= 5) {
+				if (mStartFrame % 30 <= 10) {
 					mVelocity.x = 2.0f;
 				}
 
@@ -298,7 +301,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
 
 				//­‚µ‚¾‚¯‘Þ‚­
-				if (mStartFrame % 30 <= 5) {
+				if (mStartFrame % 30 <= 10) {
 					mVelocity.x = -2.0f;
 				}
 
@@ -372,7 +375,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 	}
 
 	//­‚µ‚ÌŠÔ’âŽ~
-	if (50 <= mStartFrame && mStartFrame < 70) {
+	if (55 <= mStartFrame && mStartFrame < 65) {
 		mVelocity.x = 0.0f;
 	}
 
