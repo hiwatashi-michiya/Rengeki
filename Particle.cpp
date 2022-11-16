@@ -67,7 +67,7 @@ void Particle::Draw(Screen& screen) {
 
 		if (mIsAlive[i] == true) {
 
-			screen.DrawQuad(CenterQuad(mPosition[i], mRadius[i]), 0, 0, 32, 32, mTextureHandle, mColor[i] + mRandColor[i]);
+			screen.DrawQuad(mPosition[i], mRadius[i], 0, 0, 32, 32, mTextureHandle, mColor[i] + mRandColor[i]);
 		}
 
 	}

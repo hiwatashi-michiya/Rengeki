@@ -4,6 +4,13 @@
 
 
 
+void Stage::Init() {
+	mIsHitStop = false;
+	mHitStopFrame = 0;
+	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
+	mIsLoadTexture = false;
+}
+
 void Stage::HitStop(Player& player, Enemy& enemy) {
 
 	//攻撃を受けた時ヒットストップフラグをtrueにする
@@ -35,6 +42,12 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 
 }
 
-void Stage::Draw(int Flame) {
-	Novice::DrawSprite(0, 0, Flame, 1, 1, 0.0f, WHITE);
+void Stage::Draw(Screen& screen) {
+
+	if (mIsLoadTexture == false){
+		mFlame = Novice::LoadTexture("./Resources/Stage/Flame.png");
+		mIsLoadTexture = true;
+	}
+
+	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
 }

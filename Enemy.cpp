@@ -260,7 +260,6 @@ void Enemy::SpecialAttack(Player& player) {
 			mColor = 0x0000FF00;
 
 			//飛ばす
-			mPosition.y = -2000;
 			mVelocity.x = 0.0f;
 
 			//プレイヤーとの位置関係で向きを変える

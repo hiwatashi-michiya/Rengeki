@@ -19,6 +19,7 @@ Quad Translation(Quad quad, Vec2 position);
 
 Quad CenterQuad(Vec2 center, float radius);
 Quad SquareAssign(float size);
+Quad WindowAssign();
 
 class Draw
 {

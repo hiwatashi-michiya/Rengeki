@@ -496,13 +496,10 @@ void Player::Draw(Screen& screen) {
 
 	Animation();
 
-	Quad mOriginalPosition = SquareAssign(mRadius);
-	Quad mQuadPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));
-
 	//ÉvÉåÉCÉÑÅ[ï`âÊ
 	
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0]) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
 	}
 
 	//çUåÇîÕàÕï`âÊ

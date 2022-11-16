@@ -18,9 +18,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
-	//リソース読み込み
-	int Flame = Novice::LoadTexture("./Resources/Stage/Flame.png");
-
 	//乱数生成
 	unsigned int kCurrentTime = time(nullptr);
 
@@ -28,7 +25,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Screen screen;
 
-	Player player({ 100.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
+	Player player({ 0.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
 	Enemy enemy({ 1000.0f,800.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
 
@@ -63,6 +60,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		screen.ZoomUpdate(player, enemy);
+		screen.ScrollUpdate(player, enemy);
+
 		if (stage.mIsHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
@@ -95,7 +95,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
-		stage.Draw(Flame);
+		stage.Draw(screen);
 		stageParticle.Draw(screen);
 		enemyParticle.Draw(screen);
 		enemyParticle2.Draw(screen);
@@ -103,11 +103,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
-
-		Novice::ScreenPrintf(70, 40, "Move : Arrow Left or Arrow Right Key");
-		Novice::ScreenPrintf(70, 60, "Jump : Arrow Up Key");
-		Novice::ScreenPrintf(70, 80, "Attack : C Key");
-		Novice::ScreenPrintf(70, 100, "Rolling : X Key");
 
 		///
 		/// ↑描画処理ここまで

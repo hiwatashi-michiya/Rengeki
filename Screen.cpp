@@ -1,9 +1,28 @@
 #include "Screen.h"
+#include "MatVec.h"
+#include "Player.h"
+#include "Enemy.h"
 
 Screen::Screen(){
+	WorldCenter = { kWindowWidth / 2, kWindowHeight - 50.0f};
+	Scroll = { 0.0f, 0.0f };
+	Zoom = 1.0f;
 	ScreenShake = { 0.0f, 0.0f };
-	Zoom = { 1.0f, 1.0f };
 };
+
+void Screen::ScrollUpdate(Player& Player, Enemy& Enemy) {
+
+	Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2 / Zoom);
+	Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+	//Scroll.x = Clamp(Scroll.x, 400.0f, 800.0f);
+	//Scroll.y = Clamp(Scroll.y, -400.0f, 0.0f);
+}
+
+void Screen::ZoomUpdate(Player& Player, Enemy& Enemy) {
+
+	Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
+	Zoom = Clamp(Zoom, 0.9f, 1.5f);
+}
 
 void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
 	if (is == true) {
@@ -15,54 +34,52 @@ void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
 	}
 }
 
-Vec2 Screen::SetScreen(Vec2 Position) {
-	Vec2 tmpPosition;
-	tmpPosition.x = Position.x + ScreenShake.x;
-	tmpPosition.y = Position.y + ScreenShake.y;
-	return tmpPosition;
-}
-
 
 
 void Screen::DrawBox(Vec2 Position, float w, float h, float angle, unsigned int color, FillMode fillMode) {
-	float x = Position.x * Zoom.x + ScreenShake.x;
-	float y = Position.y * Zoom.y - ScreenShake.y;
-	Novice::DrawBox(static_cast<int>(x), static_cast<int>(y), w, h, angle, color, fillMode);
+	float x = Position.x * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;
+	float y = Position.y * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y;
+	Novice::DrawBox((int)x, (int)y, w * Zoom, h * Zoom, angle, color, fillMode);
 }
 
 
 void Screen::DrawEllipse(Vec2 Position, float radius, float angle, unsigned int color, FillMode fillMode) {
-	float x = Position.x * Zoom.x + ScreenShake.x;
-	float y = Position.y * Zoom.y - ScreenShake.y;
-	Novice::DrawEllipse(static_cast<int>(x), static_cast<int>(y),  radius * Zoom.x,  radius * Zoom.y,  angle,  color, fillMode);
+	float x = Position.x * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;
+	float y = Position.y * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y;
+	Novice::DrawEllipse((int)x, (int)y,  radius * Zoom,  radius * Zoom,  angle,  color, fillMode);
 }
 
-void Screen::DrawQuad(Quad quad, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
-	float x1 = quad.LeftTop.x * Zoom.x + ScreenShake.x;
-	float y1 = quad.LeftTop.y * Zoom.y - ScreenShake.y;
-	float x2 = quad.RightTop.x * Zoom.x + ScreenShake.x;
-	float y2 = quad.RightTop.y * Zoom.y - ScreenShake.y;
-	float x3 = quad.LeftBottom.x * Zoom.x + ScreenShake.x;
-	float y3 = quad.LeftBottom.y * Zoom.y - ScreenShake.y;
-	float x4 = quad.RightBottom.x * Zoom.x + ScreenShake.x;
-	float y4 = quad.RightBottom.y * Zoom.y - ScreenShake.y;
-	Novice::DrawQuad(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2), static_cast<int>(y2), static_cast<int>(x3), static_cast<int>(y3), static_cast<int>(x4), static_cast<int>(y4), srcX, srcY, srcW, srcH, textureHandle, color);
+void Screen::DrawQuad(Vec2 Position, float Radius, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
+	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
-void Screen::DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color) {
-	float x1 = quad.LeftTop.x * Zoom.x + ScreenShake.x;
-	float y1 = quad.LeftTop.y * Zoom.y - ScreenShake.y;
-	float x2 = quad.RightTop.x * Zoom.x + ScreenShake.x;
-	float y2 = quad.RightTop.y * Zoom.y - ScreenShake.y;
-	float x3 = quad.LeftBottom.x * Zoom.x + ScreenShake.x;
-	float y3 = quad.LeftBottom.y * Zoom.y - ScreenShake.y;
-	float x4 = quad.RightBottom.x * Zoom.x + ScreenShake.x;
-	float y4 = quad.RightBottom.y * Zoom.y - ScreenShake.y;
+void Screen::DrawWindowQuad(Vec2 Position, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
+	Quad OriginalPosition = WindowAssign();
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
+	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
+}
+
+void Screen::DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
 	if (framehensuu % frame == 0) {
 		srcX += srcW;
 	}
 	if (srcX >= srcW * sheets){
 		srcX = 0;
 	}
-	Novice::DrawQuad(x1, y1, x2, y2, x3, y3, x4, y4, srcX, 0, srcW, srcH, textureHandle, color);
+	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, 0, srcW, srcH, textureHandle, color);
+}
+
+
+
+
+Vec2 Screen::ScreenTransform(Vec2 Position) {
+
+	return{
+		Position.x * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x,
+		Position.y * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y
+	};
 }
