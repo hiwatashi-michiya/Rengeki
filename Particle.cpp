@@ -8,6 +8,11 @@
 Particle::Particle() : mParticleType(PLAYERDIFFUSION), mParticleColor(0xFFFFFF00), mParticleExtinction(100),
 mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
 
+	//Å‘åŒÂ”‚ð’´‚¦‚½ê‡AŽ©“®“I‚ÉÅ‘å’l‚ÉÝ’è
+	if (mMaxParticle > kMaxParticle) {
+		mMaxParticle = kMaxParticle;
+	}
+
 	for (int i = 0; i < mMaxParticle; i++) {
 
 		mPosition[i] = { -10000,-10000 };
@@ -33,6 +38,11 @@ Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mPartic
 	int mRandMin, int mRandMax, int mMaxParticle, bool mParticleAppear)
 	: mParticleType(mParticleType),mParticleColor(mParticleColor), mParticleExtinction(mParticleExtinction),
 	mRandMin(mRandMin),mRandMax(mRandMax), mMaxParticle(mMaxParticle), mParticleAppear(false) {
+
+	//Å‘åŒÂ”‚ð’´‚¦‚½ê‡AŽ©“®“I‚ÉÅ‘å’l‚ÉÝ’è
+	if (mMaxParticle > kMaxParticle) {
+		mMaxParticle = kMaxParticle;
+	}
 
 	for (int i = 0; i < mMaxParticle; i++) {
 
@@ -110,10 +120,10 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
-				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
-				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
-				mRandColor[i] = RandNum(0x00000044, 0x00000088, OFF);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
+				mVelocity[i].x = cosf(RandNum(0, 120, NATURAL) * M_PI / 60) * RandNum(1, 3, NATURAL);
+				mVelocity[i].y = sinf(RandNum(0, 120, NATURAL) * M_PI / 60) * RandNum(1, 3, NATURAL);
+				mRandColor[i] = RandNum(0x00000044, 0x00000088, NATURAL);
 				mColor[i] = mParticleColor;
 
 				if (mVelocity[i].x == 0) {
@@ -133,10 +143,10 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
-				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
-				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) * RandNum(1, 3, OFF);
-				mRandColor[i] = RandNum(0x00000044, 0x00000088, OFF);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
+				mVelocity[i].x = cosf(RandNum(0, 120, NATURAL) * M_PI / 60) * RandNum(1, 3, NATURAL);
+				mVelocity[i].y = sinf(RandNum(0, 120, NATURAL) * M_PI / 60) * RandNum(1, 3, NATURAL);
+				mRandColor[i] = RandNum(0x00000044, 0x00000088, NATURAL);
 				mColor[i] = mParticleColor;
 
 				if (mVelocity[i].x == 0) {
@@ -154,9 +164,9 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mVelocity[i].x = cosf(RandNum(0, 120, OFF) * M_PI / 60) + RandNum(3, 5, ON);
-				mVelocity[i].y = sinf(RandNum(0, 120, OFF) * M_PI / 60) + RandNum(2, 2, ON);
-				mRandColor[i] = RandNum(0x00000000, 0x000000FF, OFF);
+				mVelocity[i].x = cosf(RandNum(0, 120, NATURAL) * M_PI / 60) + RandNum(3, 5, PLUSMINUS);
+				mVelocity[i].y = sinf(RandNum(0, 120, NATURAL) * M_PI / 60) + RandNum(2, 2, PLUSMINUS);
+				mRandColor[i] = RandNum(0x00000000, 0x000000FF, NATURAL);
 				mColor[i] = mParticleColor;
 
 				if (mVelocity[i].x == 0) {
@@ -174,11 +184,11 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
-				mVelocity[i].x = cosf(RandNum(60, 120, OFF) * M_PI / 60) * RandNum(13, 15, OFF);
-				mVelocity[i].y = sinf(RandNum(60, 120, OFF) * M_PI / 60) * RandNum(13, 15, OFF) + 10;
-				mRandColor[i] = RandNum(0x00000000, 0x000000FF, OFF);
-				mColor[i] = RandNum(1, 2, OFF);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
+				mVelocity[i].x = cosf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(13, 15, NATURAL);
+				mVelocity[i].y = sinf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(13, 15, NATURAL) + 10;
+				mRandColor[i] = RandNum(0x00000000, 0x000000FF, NATURAL);
+				mColor[i] = RandNum(1, 2, NATURAL);
 
 				if (mColor[i] == 0) {
 					mColor[i] = 0xFF000000;
@@ -211,7 +221,7 @@ void Particle::SetFlag(Vec2 position) {
 					mVelocity[i].x = -10;
 				}
 				mVelocity[i].y = 0;
-				mRandColor[i] = RandNum(0x00000000, 0x000000FF, OFF);
+				mRandColor[i] = RandNum(0x00000000, 0x000000FF, NATURAL);
 				mColor[i] = mParticleColor;
 
 			}
@@ -219,12 +229,12 @@ void Particle::SetFlag(Vec2 position) {
 			//ã¸Œ^
 			if (mParticleType == BOTTOMTOTOP) {
 
-				mPosition[i].x = RandNum(0, 1280, OFF);
+				mPosition[i].x = RandNum(0, 1280, NATURAL);
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
 				mVelocity[i].x = cosf(mTheta + ((i * M_PI) / 120)) * 3;
-				mVelocity[i].y = RandNum(-4, -2, OFF);
-				mRandColor[i] = RandNum(0x00000066, 0x000000FF, OFF);
+				mVelocity[i].y = RandNum(-4, -2, NATURAL);
+				mRandColor[i] = RandNum(0x00000066, 0x000000FF, NATURAL);
 				mColor[i] = mParticleColor;
 
 				break;
@@ -236,10 +246,10 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(1, 10, OFF);
-				mVelocity[i].x = RandNum(1, 3, ON) + (RandNum(0, 9, ON) * 0.1f);
-				mVelocity[i].y = RandNum(-30, -15, OFF);
-				mRandColor[i] = RandNum(0x00000088, 0x000000FF, OFF);
+				mRadius[i] = RandNum(1, 10, NATURAL);
+				mVelocity[i].x = RandNum(1, 3, PLUSMINUS) + (RandNum(0, 9, PLUSMINUS) * 0.1f);
+				mVelocity[i].y = RandNum(-30, -15, NATURAL);
+				mRandColor[i] = RandNum(0x00000088, 0x000000FF, NATURAL);
 				mColor[i] = mParticleColor;
 
 			}
@@ -247,12 +257,12 @@ void Particle::SetFlag(Vec2 position) {
 			//‘ØÝŒ^
 			if (mParticleType == STAY) {
 
-				mPosition[i].x = position.x + RandNum(0, 28, ON);
-				mPosition[i].y = position.y + RandNum(0, 28, ON);
-				mRadius[i] = RandNum(mRandMin, mRandMax, OFF);
+				mPosition[i].x = position.x + RandNum(0, 28, PLUSMINUS);
+				mPosition[i].y = position.y + RandNum(0, 28, PLUSMINUS);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
 				mVelocity[i].x = 0;
 				mVelocity[i].y = 0;
-				mRandColor[i] = RandNum(0x00000044, 0x00000088, OFF);
+				mRandColor[i] = RandNum(0x00000044, 0x00000088, NATURAL);
 				mColor[i] = mParticleColor;
 
 			}
@@ -314,7 +324,7 @@ void Particle::Move(Vec2 position) {
 
 			//•¬…Œ^
 			if (mParticleType == FOUNTAIN) {
-				mVelocity[i].y += RandNum(1, 2, OFF);
+				mVelocity[i].y += RandNum(1, 2, NATURAL);
 			}
 
 			//‘ØÝŒ^

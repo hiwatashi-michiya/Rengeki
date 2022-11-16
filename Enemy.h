@@ -165,6 +165,8 @@ private:
 	bool mIsStart;
 	//移動開始するまでのフレーム
 	int mStartFrame;
+	//開始するまでのフレームの時間(40,80,120のいずれか)を決める
+	int mStartFrameTimer;
 	//どの移動を行うかはランダム
 	int RandAttack;
 
@@ -178,7 +180,12 @@ private:
 	Vec2 mVelocity;
 	//動き
 	void Move(Player& player);
-	
+	//ステップのクールタイム処理
+	int mStepFrame;
+	int mStepCoolTime[3];
+	//ステップサウンド
+	int mStepSE;
+
 	//-----バックステップ-----//
 	//バックステップフラグ
 	bool mIsBackStep;
@@ -249,7 +256,8 @@ private:
 	float mSpecialAttackColorAlphat;
 	//関数
 	void SpecialAttack(Player& player);
-
+	//サウンド
+	int mHeavyAttackReserveSE;
 
 
 	////////////////////　ここから必殺技　////////////////////

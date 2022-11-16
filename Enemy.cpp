@@ -38,6 +38,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	//////////////////// ここから攻撃関係 ////////////////////
 	mIsStart = false;
 	mStartFrame = -30;
+	mStartFrameTimer = 40;
 	//////////////////// ここから基礎移動 ////////////////////
 	mIsBackStep = false;
 	mIsBackStepNoGravity = false;
@@ -47,6 +48,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsTeleport = false;
 	mIsApper = false;
 	mTeleportFrame = 0;
+	mStepFrame = 20;
+	mStepCoolTime[0] = 15;
+	mStepCoolTime[1] = 20;
+	mStepCoolTime[2] = 25;
 	////////////////////　ここから強攻撃　////////////////////
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
@@ -56,15 +61,19 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	//////////////////////  サウンド関係  //////////////////////
-	 
-	///////////////////// バックステップSE ///////////////////// 
-	mBackStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
+	//////////////////////  サウンド関係  ////////////////////
+	
+	///////////////////// 基礎移動SE /////////////////////////
+	mStepSE = Novice::LoadAudio("./Resources/SE/step.wav");
+	///////////////////// バックステップSE /////////////////// 
+	mBackStepSE = Novice::LoadAudio("./Resources/SE/backstep.wav");
 	mBackStepRing = -1;
-	//////////////////////  弱攻撃SE  ///////////////////////
+	//////////////////////  弱攻撃SE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
+	///////////////////// 強攻撃SE ///////////////////////////
+	mHeavyAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
 
 }
 
@@ -126,13 +135,134 @@ void Enemy::Move(Player& player) {
 
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 			mVelocity.x = -3.5f;
+
+			if (mStartFrame % mStepFrame == 0) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+				//プレイヤーとの距離によって行動の確率を変化
+				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+					//八割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//0以外の場合1に変える
+					if (plusOrMinus != 0) {
+						plusOrMinus = 1;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					//二割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//1以外は0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+					//5%の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 19, NATURAL);
+
+					//1以外の場合0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+
+				//1の場合逆に移動
+				if (plusOrMinus == 0) {
+					mVelocity.x = RandNum(70, 105, BINARY) * -1;
+				}
+				else {
+					mVelocity.x = RandNum(70, 105, BINARY);
+				}
+
+				//停止期間でなければ音を鳴らす
+				if (mStartFrame < 50 || 70 <= mStartFrame) {
+					Novice::PlayAudio(mStepSE, 0, 0.5f);
+				}
+
+			}
+
+			//距離が近すぎた場合強制的に離す
+			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
+				mVelocity.x = 150.0f;
+			}
+
 			mDirection = ENEMYLEFT;
 		}
 		else {
 			mVelocity.x = 3.5f;
+
+			if (mStartFrame % mStepFrame == 0) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+				//プレイヤーとの距離によって行動の確率を変化
+				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+					//八割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//0以外の場合1に変える
+					if (plusOrMinus != 0) {
+						plusOrMinus = 1;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					//二割の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 4, NATURAL);
+
+					//1以外は0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+					//5%の確率で進行方向とは逆に移動
+					plusOrMinus = RandNum(0, 19, NATURAL);
+
+					//1以外の場合0に変える
+					if (plusOrMinus != 1) {
+						plusOrMinus = 0;
+					}
+
+				}
+
+				//1の場合逆に移動
+				if (plusOrMinus == 0) {
+					mVelocity.x = RandNum(70, 105, BINARY);
+				}
+				else {
+					mVelocity.x = RandNum(70, 105, BINARY) * -1;
+				}
+
+				//停止期間でなければ音を鳴らす
+				if (mStartFrame < 50 || 70 <= mStartFrame) {
+					Novice::PlayAudio(mStepSE, 0, 0.5f);
+				}
+
+			}
+
+			//距離が近すぎた場合強制的に離す
+			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
+				mVelocity.x = -150.0f;
+			}
+
 			mDirection = ENEMYRIGHT;
 		}
 	} else {
+		mVelocity.x = 0.0f;
+	}
+
+	//少しの間停止
+	if (50 <= mStartFrame && mStartFrame < 70) {
 		mVelocity.x = 0.0f;
 	}
 
@@ -158,6 +288,8 @@ void Enemy::BackStep() {
 		}
 		if (mBackStepEasingt >= 0.65f){
 			mIsBackStep = false;
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[1];
 		}
 	}
 }
@@ -169,6 +301,8 @@ void Enemy::Guard() {
 
 		if (mGuardFrame >= 120){
 			mIsGuard = false;
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[0];
 		}
 	}
 }
@@ -239,6 +373,9 @@ void Enemy::Attack(Player& player) {
 				mAttackParticle[i].Reset();
 			}
 
+			//次のステップの速さを設定
+			mStepFrame = mStepCoolTime[1];
+
 			mAttackCount = 0;
 		}
 
@@ -253,7 +390,14 @@ void Enemy::SpecialAttack(Player& player) {
 
 	//強攻撃開始
 	if (mIsSpecialAttackStart == true){
+
+		//音再生
+		if (mSpecialAttackFrame == 0) {
+			Novice::PlayAudio(mHeavyAttackReserveSE, 0, 0.5f);
+		}
+
 		mSpecialAttackFrame++;
+
 		if (mSpecialAttackFrame <= 240){
 
 			//透明中は攻撃を食らわない
@@ -308,11 +452,15 @@ void Enemy::SpecialAttack(Player& player) {
 			if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true) {
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				//次のステップの速さを設定
+				mStepFrame = mStepCoolTime[2];
 			}
 
 			if (mSpecialAttackFrame >= 420){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				//次のステップの速さを設定
+				mStepFrame = mStepCoolTime[2];
 			}
 		}
 	}
@@ -327,6 +475,11 @@ void Enemy::FallingStar(Player& player) {
 
 	//落下星開始
 	if (mIsFallingStar == true){
+
+		//次のステップの速さを設定
+		if (mStepFrame != mStepCoolTime[2]) {
+			mStepFrame = mStepCoolTime[2];
+		}
 
 		//移動
 		if (mFallingStarEasingt < 1.0f){
@@ -377,16 +530,32 @@ void Enemy::MovePattern(Player& player) {
 	//移動開始までのフレーム
 	if (AnyAttack() == false && mIsStart == false){
 		mStartFrame++;
-		if (mStartFrame >= 40){
+		if (mStartFrame >= mStartFrameTimer){
 			mIsStart = true;
 		}
 	}
 
 	if (AnyAttack() == false && mIsStart == true){
 
+		//次の攻撃開始フレームを設定
+		mStartFrameTimer = RandNum(1, 3, NATURAL);
+
+		if (mStartFrameTimer == 1) {
+			mStartFrameTimer = 80;
+		}
+		else if(mStartFrameTimer == 2) {
+			mStartFrameTimer = 120;
+		}
+		else if (mStartFrameTimer == 3) {
+			mStartFrameTimer = 160;
+		}
+		else {
+			mStartFrameTimer = 40;
+		}
+
 		if ((player.GetPlayerPosition() - mPosition).length() <= 100)
 		{
-			GuardorBackStep = RandNum(1, 100, OFF);
+			GuardorBackStep = RandNum(1, 100, NATURAL);
 			int a = GuardorBackStep % 10;
 
 			if (0 <= a && a <= 4){
@@ -414,7 +583,7 @@ void Enemy::MovePattern(Player& player) {
 		} 
 		else if ((player.GetPlayerPosition() - mPosition).length() <= 600)
 		{
-			GuardorBackStep = RandNum(1, 100, OFF);
+			GuardorBackStep = RandNum(1, 100, NATURAL);
 			int a = GuardorBackStep % 10;
 
 			if (0 <= a && a <= 4)
@@ -450,6 +619,63 @@ void Enemy::MovePattern(Player& player) {
 			mIsStart = false;
 		}
 	}
+	////攻撃していない時 && 攻撃できる時
+	//if (AnyAttack() == false && mIsStart == true){
+	//	RandAttack = RandNum(1, 100, OFF);
+	//	int a = RandAttack % 10;
+	//	//int a = 1;
+	//	if (0 <= a && a <= 1){
+
+	//		mVelocity.x = 0.0f;
+	//		mAttackCount = 0;
+	//		mAttackTimer = kEnemyMaxAttack * 15;
+	//		mIsAttackStart = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (a == 2){
+
+	//		mGuardFrame = 0;
+	//		mIsGuard = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (3 <= a && a <= 4){
+
+	//		mBackStepEasingt = 0.0f;
+	//		mBackStepStartPosition = mPosition;
+	//		if (mDirection == ENEMYLEFT) {
+	//			mBackStepEndPosition = { mPosition.x + 400, mPosition.y - 150 };
+	//		}
+	//		else {
+	//			mBackStepEndPosition = { mPosition.x - 400, mPosition.y - 150 };
+	//		}
+	//		mIsBackStepNoGravity = true;
+	//		mIsBackStep = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (5 <= a && a <= 7){
+
+	//		mSpecialAttackFrame = 0;
+	//		mIsSpecialAttackStart = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//	else if (a == 9){
+
+	//		mVelocity.x = 0.0f;
+	//		mFallingStarStartPosition = mPosition;
+	//		mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+	//		for (int i = 0; i < kFallingStarMax; i++) {
+	//			mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+	//			mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+	//		}
+	//		mIsFallingStar = true;
+	//		mStartFrame = 0;
+	//		mIsStart = false;
+	//	}
+	//}
 }
 
 
@@ -634,5 +860,8 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	//体力描画
 	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
+
+	//ステップのクールタイムを表示
+	Novice::ScreenPrintf(1000, 40, "stepTime : %d", mStepFrame);
 
 }
