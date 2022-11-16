@@ -1,8 +1,9 @@
 #pragma once
 #include <Novice.h>
-#include "Function.h"
+#include "Rand.h"
 #include "Quad.h"
 
+class Stage;
 class Player;
 class Enemy;
 
@@ -18,8 +19,9 @@ public:
 	void ScrollUpdate(Player& Player, Enemy& Enemy);
 
 	float Zoom;
-	void ZoomUpdate(Player& Player, Enemy& Enemy);
+	void ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy);
 
+	static constexpr float kShakeValue = 30.0f;
 	Vec2 ScreenShake;
 	void Shake(int mixX,int maxX,int mixY,int maxY, bool is);
 	

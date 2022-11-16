@@ -60,10 +60,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		screen.ZoomUpdate(player, enemy);
+		screen.ZoomUpdate(stage, player, enemy);
 		screen.ScrollUpdate(player, enemy);
 
-		if (stage.mIsHitStop == false) {
+		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
 				enemy.ResetPosition();
@@ -85,6 +85,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		stage.HitStop(player, enemy);
+		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
+		screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
 
 		///
 		/// ↑更新処理ここまで
@@ -103,6 +105,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
+
+		Novice::ScreenPrintf(40, 40, "stage.mIsHitStop : %d", stage.mIsHitStop);
 
 		///
 		/// ↑描画処理ここまで

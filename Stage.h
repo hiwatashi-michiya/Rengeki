@@ -40,6 +40,7 @@ public:
 
 	//-----ヒットストップ-----//
 	bool mIsHitStop;
+	bool mIsHeavyHitStop;
 	int mHitStopFrame;
 	void HitStop(Player& player, Enemy& enemy);
 

@@ -372,6 +372,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 						mPosition.y -= kKnockBackLength[2].y;
 						mKnockBack[2] = true;
 					}
+					break;
 
 				}
 
@@ -387,6 +388,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 						mPosition.y -= kKnockBackLength[2].y;
 						mKnockBack[2] = true;
 					}
+					break;
 
 				}
 
@@ -518,32 +520,32 @@ void Player::Draw(Screen& screen) {
 
 	//ローリング
 	if (mIsRolling) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, WHITE);
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, WHITE);
 	}
 
 	//攻撃
 
 	if (mDirection == RIGHT) {
 		if (mIsAttack[2] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_right, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3_right, WHITE);
 		}
 		else if (mIsAttack[1] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2_right, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2_right, WHITE);
 		}
 		else if (mIsAttack[0] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1_right, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1_right, WHITE);
 		}
 	}
 
 	if (mDirection == LEFT) {
 		if (mIsAttack[2] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_left, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3_left, WHITE);
 		}
 		else if (mIsAttack[1] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack2_left, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2_left, WHITE);
 		}
 		else if (mIsAttack[0] == true) {
-			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack1_left, WHITE);
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1_left, WHITE);
 		}
 	}
 
@@ -551,37 +553,37 @@ void Player::Draw(Screen& screen) {
 
 	//移動
 	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashRight, WHITE);//右移動
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashRight, WHITE);//右移動
 	}
 	if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashLeft, WHITE);//左移動
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDashLeft, WHITE);//左移動
 	}
 
 	//立っている時
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
 	}
 
 	//ジャンプ
 	if (mIsJump) {
-		mQuadJumpPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));//ジャンプエフェクトが移動しないように
+		//mQuadJumpPosition = Transform(mOriginalPosition, MakeAffineMatrix(mScaling, mTheta, mPosition));//ジャンプエフェクトが移動しないように
 		mIsJump = false;
 	}
 
 	if (mVelocity.y < 0) {
-		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mJump, WHITE);//ジャンプ
+		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mJump, WHITE);//ジャンプ
 	}
 
 	if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
-		screen.DrawAnime(mQuadPosition, mJumpSrcX, 140, 140, 7, 4, mTextureFrame, mJumpRoll, RED);//２回目のジャンプで回転する
+		screen.DrawAnime(mPosition, mRadius, mJumpSrcX, 140, 140, 7, 4, mTextureFrame, mJumpRoll, RED);//２回目のジャンプで回転する
 		mJumpAnimeCount++;
 		Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
 	}else if (mVelocity.y > 0) {
-		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mFall, WHITE);//落ちてるとき
+		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mFall, WHITE);//落ちてるとき
 	}
 
 	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
-		screen.DrawAnime(mQuadJumpPosition, mJumpSrcX, 240, 240, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
+		screen.DrawAnime(mPosition, mRadius, mJumpSrcX, 240, 240, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
 	}
 
 	

@@ -1,5 +1,6 @@
 #include "Screen.h"
 #include "MatVec.h"
+#include "Stage.h"
 #include "Player.h"
 #include "Enemy.h"
 
@@ -12,22 +13,26 @@ Screen::Screen(){
 
 void Screen::ScrollUpdate(Player& Player, Enemy& Enemy) {
 
-	Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2 / Zoom);
+	Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
 	Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
-	//Scroll.x = Clamp(Scroll.x, 400.0f, 800.0f);
-	//Scroll.y = Clamp(Scroll.y, -400.0f, 0.0f);
 }
 
-void Screen::ZoomUpdate(Player& Player, Enemy& Enemy) {
+void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 
-	Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
-	Zoom = Clamp(Zoom, 0.9f, 1.5f);
+	if (stage.mIsHeavyHitStop == true){
+		Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
+		Zoom = Clamp(Zoom, 0.9f, 3.0f);
+	}
+	else{
+		Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
+		Zoom = Clamp(Zoom, 0.9f, 1.5f);
+	}
 }
 
 void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
 	if (is == true) {
-		ScreenShake.x = RAND(minX, maxX);
-		ScreenShake.y = RAND(minY, maxY);
+		ScreenShake.x = RandNum(minX, maxX, NATURAL);
+		ScreenShake.y = RandNum(minY, maxY, NATURAL);
 	}
 	else {
 		ScreenShake = { 0.0f, 0.0f };
