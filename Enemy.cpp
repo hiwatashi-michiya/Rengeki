@@ -130,9 +130,44 @@ bool Enemy::AnyAttack() {
 
 void Enemy::Move(Player& player, Particle& particle) {
 
-	//敵の移動
+	///敵の移動
+
+	//重力を加算（攻撃していない）
+	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
+		mVelocity.y += kEnemyGravity;
+	}
+
+	//地面にいる場合重力加算を無効
+	if (mIsGround == true || mIsBackStepNoGravity == true) {
+		mVelocity.y = 0;
+		mKnockBackVelocity.y = 0;
+	}
+
+	//攻撃していない場合
 	if (AnyAttack() == false) {
 
+		//地面にいる場合
+		if (mIsGround == true) {
+
+			//ステップしない時一定のタイミングで低確率でジャンプ
+			if (11 % RandNum(2, 11, NATURAL) == 0 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
+
+				//距離によってジャンプ距離を変える
+				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+					mVelocity.y = -15.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+					mVelocity.y = -20.0f;
+				}
+				else {
+					mVelocity.y = -30.0f;
+				}
+
+			}
+
+		}
+
+		//背景の色を変化させる
 		if (particle.GetParticleColor(0xFFFFFF00) == false) {
 			particle.ChangeParticleColor(0xFFFFFF00);
 		}
@@ -173,7 +208,8 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			}
 
-			if (mStartFrame % mStepFrame == 0) {
+			//地面にいるときステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
 
 				//どちらかの方向に動く
 				int plusOrMinus = 0;
@@ -268,13 +304,15 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			}
 
-			// 3/4の確率でステップする
-			if (5 % RandNum(2, 5, NATURAL) != 0) {
+			//地面にいる時ステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
 
-				if (mStartFrame % mStepFrame == 0) {
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
 
-					//どちらかの方向に動く
-					int plusOrMinus = 0;
+
+				// 3/4の確率でステップする
+				if (5 % RandNum(2, 5, NATURAL) != 0) {
 
 					//プレイヤーとの距離によって行動の確率を変化
 					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
@@ -324,6 +362,8 @@ void Enemy::Move(Player& player, Particle& particle) {
 				}
 
 			}
+
+			
 
 			mDirection = ENEMYRIGHT;
 		}
@@ -461,6 +501,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 	//強攻撃開始
 	if (mIsSpecialAttackStart == true){
 
+		//背景の色を変化させる
 		if (particle.GetParticleColor(0x00FF0000) == false) {
 			particle.ChangeParticleColor(0x00FF0000);
 		}
@@ -757,16 +798,7 @@ void Enemy::MovePattern(Player& player) {
 //速度の代入
 void Enemy::VelocityAssign() {
 
-	//重力を加算（攻撃していない）
-	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
-		mVelocity.y += kEnemyGravity;
-	}
-
-	//地面にいる場合重力加算を無効
-	if (mIsGround == true || mIsBackStepNoGravity == true) {
-		mVelocity.y = 0;
-		mKnockBackVelocity.y = 0;
-	}
+	
 
 	//速度減衰
 	if (mKnockBackVelocity.x > 0) {
