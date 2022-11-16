@@ -40,6 +40,8 @@ enum ENEMYDIRECTION {
 
 class Player;
 
+class Particle;
+
 class Enemy
 {
 public:
@@ -47,7 +49,7 @@ public:
 	Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Stage& stage, Player& player);
+	void Update(Stage& stage, Player& player, Particle& particle);
 
 	//描画処理
 	void Draw(Screen& screen, Player& player);
@@ -179,7 +181,7 @@ private:
 	//速度
 	Vec2 mVelocity;
 	//動き
-	void Move(Player& player);
+	void Move(Player& player, Particle& particle);
 	//ステップのクールタイム処理
 	int mStepFrame;
 	int mStepCoolTime[3];
@@ -255,7 +257,7 @@ private:
 	//攻撃時の透明度値
 	float mSpecialAttackColorAlphat;
 	//関数
-	void SpecialAttack(Player& player);
+	void SpecialAttack(Player& player, Particle& particle);
 	//サウンド
 	int mHeavyAttackReserveSE;
 

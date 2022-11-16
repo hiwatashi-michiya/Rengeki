@@ -77,9 +77,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 }
 
-void Enemy::Update(Stage &stage, Player &player) {
+void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
-	Move(player);
+	Move(player, particle);
 
 	MovePattern(player);
 
@@ -101,7 +101,7 @@ void Enemy::Update(Stage &stage, Player &player) {
 	Attack(player);
 
 	////////////////////　ここから強攻撃　////////////////////
-	SpecialAttack(player);
+	SpecialAttack(player, particle);
 
 	////////////////////　ここから必殺技　////////////////////
 	FallingStar(player);
@@ -128,131 +128,201 @@ bool Enemy::AnyAttack() {
 
 //////////////////// ここから基礎移動 ////////////////////
 
-void Enemy::Move(Player& player) {
+void Enemy::Move(Player& player, Particle& particle) {
 
 	//敵の移動
 	if (AnyAttack() == false) {
 
+		if (particle.GetParticleColor(0xFFFFFF00) == false) {
+			particle.ChangeParticleColor(0xFFFFFF00);
+		}
+
 		if (mPosition.x >= player.GetPlayerPosition().x) {
-			mVelocity.x = -3.5f;
+
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = -1.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = -2.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = -4.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = -3.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = -6.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = -4.5f;
+			}
+			else {
+				mVelocity.x = -10.0f;
+			}
+
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+
+				//少しだけ退く
+				if (mStartFrame % 30 <= 5) {
+					mVelocity.x = 2.0f;
+				}
+
+			}
 
 			if (mStartFrame % mStepFrame == 0) {
 
 				//どちらかの方向に動く
 				int plusOrMinus = 0;
 
-				//プレイヤーとの距離によって行動の確率を変化
-				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
-					//八割の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 4, NATURAL);
+				// 3/4の確率でステップする
+				if (5 % RandNum(2, 5, NATURAL) != 0) {
 
-					//0以外の場合1に変える
-					if (plusOrMinus != 0) {
-						plusOrMinus = 1;
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(70, 105, BINARY) * -1;
+					}
+					else {
+						mVelocity.x = RandNum(70, 105, BINARY);
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 50 || 70 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
 					}
 
 				}
-				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
-					//二割の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 4, NATURAL);
 
-					//1以外は0に変える
-					if (plusOrMinus != 1) {
-						plusOrMinus = 0;
-					}
-
-				}
-				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
-					//5%の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 19, NATURAL);
-
-					//1以外の場合0に変える
-					if (plusOrMinus != 1) {
-						plusOrMinus = 0;
-					}
-
-				}
-
-				//1の場合逆に移動
-				if (plusOrMinus == 0) {
-					mVelocity.x = RandNum(70, 105, BINARY) * -1;
-				}
-				else {
-					mVelocity.x = RandNum(70, 105, BINARY);
-				}
-
-				//停止期間でなければ音を鳴らす
-				if (mStartFrame < 50 || 70 <= mStartFrame) {
-					Novice::PlayAudio(mStepSE, 0, 0.5f);
-				}
-
-			}
-
-			//距離が近すぎた場合強制的に離す
-			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
-				mVelocity.x = 150.0f;
 			}
 
 			mDirection = ENEMYLEFT;
 		}
 		else {
-			mVelocity.x = 3.5f;
+			
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = 1.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = 2.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = 4.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = 3.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = 6.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = 4.5f;
+			}
+			else {
+				mVelocity.x = 10.0f;
+			}
 
-			if (mStartFrame % mStepFrame == 0) {
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
 
-				//どちらかの方向に動く
-				int plusOrMinus = 0;
-
-				//プレイヤーとの距離によって行動の確率を変化
-				if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
-					//八割の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 4, NATURAL);
-
-					//0以外の場合1に変える
-					if (plusOrMinus != 0) {
-						plusOrMinus = 1;
-					}
-
-				}
-				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
-					//二割の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 4, NATURAL);
-
-					//1以外は0に変える
-					if (plusOrMinus != 1) {
-						plusOrMinus = 0;
-					}
-
-				}
-				else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
-					//5%の確率で進行方向とは逆に移動
-					plusOrMinus = RandNum(0, 19, NATURAL);
-
-					//1以外の場合0に変える
-					if (plusOrMinus != 1) {
-						plusOrMinus = 0;
-					}
-
-				}
-
-				//1の場合逆に移動
-				if (plusOrMinus == 0) {
-					mVelocity.x = RandNum(70, 105, BINARY);
-				}
-				else {
-					mVelocity.x = RandNum(70, 105, BINARY) * -1;
-				}
-
-				//停止期間でなければ音を鳴らす
-				if (mStartFrame < 50 || 70 <= mStartFrame) {
-					Novice::PlayAudio(mStepSE, 0, 0.5f);
+				//少しだけ退く
+				if (mStartFrame % 30 <= 5) {
+					mVelocity.x = -2.0f;
 				}
 
 			}
 
-			//距離が近すぎた場合強制的に離す
-			if ((player.GetPlayerPosition() - mPosition).length() <= 50) {
-				mVelocity.x = -150.0f;
+			// 3/4の確率でステップする
+			if (5 % RandNum(2, 5, NATURAL) != 0) {
+
+				if (mStartFrame % mStepFrame == 0) {
+
+					//どちらかの方向に動く
+					int plusOrMinus = 0;
+
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(70, 105, BINARY);
+					}
+					else {
+						mVelocity.x = RandNum(70, 105, BINARY) * -1;
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 50 || 70 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
+					}
+
+				}
+
 			}
 
 			mDirection = ENEMYRIGHT;
@@ -386,10 +456,14 @@ void Enemy::Attack(Player& player) {
 
 ////////////////////　ここから強攻撃　////////////////////
 
-void Enemy::SpecialAttack(Player& player) {
+void Enemy::SpecialAttack(Player& player,Particle& particle) {
 
 	//強攻撃開始
 	if (mIsSpecialAttackStart == true){
+
+		if (particle.GetParticleColor(0x00FF0000) == false) {
+			particle.ChangeParticleColor(0x00FF0000);
+		}
 
 		//音再生
 		if (mSpecialAttackFrame == 0) {

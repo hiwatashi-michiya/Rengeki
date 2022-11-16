@@ -70,7 +70,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			player.Update(stage, enemy);
-			enemy.Update(stage, player);
+			enemy.Update(stage, player,stageParticle);
 			stageParticle.SetFlag(stageParticlePosition);
 			stageParticle.Update(stageParticlePosition);
 			enemyParticle.SetFlag(enemy.GetEnemyPosition());
