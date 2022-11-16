@@ -310,8 +310,8 @@ void Enemy::Move(Player& player, Particle& particle) {
 			//地面にいる時ステップ
 			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
 
-			//	//どちらかの方向に動く
-			//	int plusOrMinus = 0;
+			//どちらかの方向に動く
+			int plusOrMinus = 0;
 
 
 				// 3/4の確率でステップする

@@ -7,6 +7,7 @@
 #include "Particle.h"
 #include "Rand.h"
 #include <time.h>
+#include "ControllerInput.h"
 
 const char kWindowTitle[] = "1203_Rengeki";
 
@@ -52,6 +53,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//キー入力の更新
 		Key::Update();
+
+		//コントローラー
+		Controller::SetState();
 
 		while (!((oldTime + 16) - clock() <= 0));
 
