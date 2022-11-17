@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			player.Update(stage, enemy);
-			enemy.Update(stage, player,stageParticle);
+			/*enemy.Update(stage, player,stageParticle);*/
 			stageParticle.SetFlag(stageParticlePosition);
 			stageParticle.Update(stageParticlePosition);
 			enemyParticle.SetFlag(enemy.GetEnemyPosition());
@@ -112,10 +112,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
-
-		Novice::ScreenPrintf(40, 40, "screen.Zoom : %f", screen.Zoom);
-		Novice::ScreenPrintf(40, 60, "screen.OldZoom : %f", screen.OldZoom);
-		Novice::ScreenPrintf(40, 80, "length() : %f", 800 / (player.GetPlayerPosition() - enemy.GetEnemyPosition()).length());
 
 		///
 		/// ↑描画処理ここまで

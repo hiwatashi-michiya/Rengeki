@@ -75,6 +75,7 @@ public:
 
 	//プレイヤーの座標取得（外積に使用する）
 	inline Vec2 GetPlayerPosition() { return mPosition; }
+	inline Vec2 GetOldPlayerPosition() { return mOldPosition; }
 
 private:
 
@@ -90,6 +91,7 @@ private:
 
 	//座標
 	Vec2 mPosition;
+	Vec2 mOldPosition;
 
 	//速度
 	Vec2 mVelocity;
@@ -190,11 +192,11 @@ private:
 	bool mIsLoadTexture;
 	int mTextureFrame;
 	//プレイヤー
-	int mPlayer;
+	int mPlayer_right;
+	int mPlayer_left;
 	int mPlayerSrcX;
 	int mRolling;
-	int mDashLeft;
-	int mDashRight;
+	int mDash;
 	int mAttack1;
 	int mAttack2;
 	int mAttack3;
@@ -207,9 +209,10 @@ private:
 	int mJumpEffect;
 	int mJumpSrcX;
 	bool mIsJump;
-	Quad mQuadJumpPosition;
+	Vec2 mJumpPosition;
 	int mJump;
 	int mJumpRoll;
+	bool mIsjumpRoll;
 	int mFall;
 	int mJumpAnimeCount;
 };

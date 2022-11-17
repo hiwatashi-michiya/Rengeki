@@ -81,3 +81,10 @@ float Vec2::Dot(const Vec2& other) const {
 float Vec2::Cross(const Vec2& other) const {
 	return x * other.y - y * other.x;
 }
+
+float Vec2::VectorComparison(Vec2 vector1, Vec2 vector2) {
+	if (vector1.length() > vector2.length()) {
+		return vector1.length();
+	}
+	return vector2.length();
+}

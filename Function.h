@@ -3,6 +3,7 @@
 #include <math.h>
 #include<cstdlib>
 #include<ctime>
+#include "Vec2.h"
 
 /*@”äŠr@*/
 void Comparison(int& num, int num1);

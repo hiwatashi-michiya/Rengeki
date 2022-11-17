@@ -18,7 +18,6 @@ public:
 	Vec2 Scroll;
 	Vec2 OldScroll;
 	Vec2 TmpScroll;
-	float ScrollSpeed;
 	bool IsTmpScroll;
 	void ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy);
 
@@ -89,8 +88,37 @@ public:
 	/// <param name="framehensuu">加算しているフレームの変数</param>
 	/// <param name="textureHandle">テクスチャのハンドル</param>
 	/// <param name="color">描画するスプライトの色</param>
-	void DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color);
-
+	/// <param name="roopstart">何枚目からループさせるか</param>
+	/// <param name="roop">ループする"1"  ループしない"0"</param>
+	void DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color,int roopstart,int roop);
+	/// <summary>
+	/// アニメーションを反転して描画する
+	/// </summary>
+	/// <param name="Position">中心座標</param>
+	/// <param name="Radius">半径</param>
+	/// <param name="srcX">画像上の描画したい範囲左上座標 X（変数）</param>
+	/// <param name="srcW">画像上の描画したい範囲横幅</param>
+	/// <param name="srcH">画像上の描画したい範囲縦幅</param>
+	/// <param name="sheets">画像枚数</param>
+	/// <param name="frame">何フレームで切り替えるか</param>
+	/// <param name="framehensuu">加算しているフレームの変数</param>
+	/// <param name="textureHandle">テクスチャのハンドル</param>
+	/// <param name="color">描画するスプライトの色</param>
+	/// <param name="roopstart">何枚目からループさせるか</param>
+	/// <param name="roop">ループする"1"  ループしない"0"</param>
+	void DrawAnimeReverse(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color, int roopstart, int roop);
+	/// <summary>
+	/// 静止画を描画する
+	/// </summary>
+	/// <param name="Position">中心座標</param>
+	/// <param name="Radius">半径</param>
+	/// <param name="srcX">画像上の描画したい範囲左上座標 X</param>
+	/// <param name="srcY">画像上の描画したい範囲左上座標 Y</param>
+	/// <param name="srcW">画像上の描画したい範囲横幅</param>
+	/// <param name="srcH">画像上の描画したい範囲縦幅</param>
+	/// <param name="textureHandle">テクスチャのハンドル</param>
+	/// <param name="color">描画するスプライトの色</param>
+	void DrawQuadReverse(Vec2 Position, float Radius, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color);
 
 
 	Vec2 ScreenTransform(Vec2 Position);

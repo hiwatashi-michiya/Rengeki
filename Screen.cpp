@@ -33,17 +33,7 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 	}
 	else{
 
-		if (OldScroll.x > (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
-			ScrollSpeed = -5.0f;
-		}
-		else if (OldScroll.x < (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
-			ScrollSpeed = 5.0f;
-		}
-		else {
-			ScrollSpeed = 0.0f;
-			Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
-		}
-		Scroll.x += ScrollSpeed;
+		Scroll.x += ((Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom) - Scroll.x) * 0.4f;
 		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
 	}
 
@@ -128,22 +118,61 @@ void Screen::DrawQuad(Vec2 Position, float Radius, float srcX, float srcY, float
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
+
 void Screen::DrawWindowQuad(Vec2 Position, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
 	Quad OriginalPosition = WindowAssign();
 	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
-void Screen::DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color) {
+void Screen::DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color,int roopstart, int roop) {
 	Quad OriginalPosition = SquareAssign(Radius);
 	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
-	if (framehensuu % frame == 0) {
-		srcX += srcW;
+	
+	if (roop) {
+		if (framehensuu % frame == 0) {
+			srcX += srcW;
+		}
+		if (srcX >= srcW * sheets) {
+			srcX = roopstart * srcW;
+		}
 	}
-	if (srcX >= srcW * sheets){
-		srcX = 0;
+	if (!roop) {
+		if (framehensuu % frame == 0 && srcX <= srcW * sheets) {
+			srcX += srcW;
+		}
+		
 	}
+	
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, 0, srcW, srcH, textureHandle, color);
+}
+
+void Screen::DrawAnimeReverse(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color, int roopstart, int roop) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
+
+	if (roop) {
+		if (framehensuu % frame == 0) {
+			srcX += srcW;
+		}
+		if (srcX >= srcW * sheets) {
+			srcX = roopstart * srcW;
+		}
+	}
+	if (!roop) {
+		if (framehensuu % frame == 0 && srcX <= srcW * sheets) {
+			srcX += srcW;
+		}
+
+	}
+
+	Novice::DrawQuad( (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftTop.x, (int)Rect.LeftTop.y,  (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, srcX, 0, srcW, srcH, textureHandle, color);
+}
+
+void Screen::DrawQuadReverse(Vec2 Position, float Radius, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
+	Novice::DrawQuad( (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftTop.x, (int)Rect.LeftTop.y,  (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
 
