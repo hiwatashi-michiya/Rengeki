@@ -269,7 +269,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			}
 
-			//mDirection = ENEMYLEFT;
+			mDirection = ENEMYLEFT;
 		}
 		else {
 			
@@ -644,6 +644,9 @@ void Enemy::FallingStar(Player& player) {
 
 
 void Enemy::MovePattern(Player& player) {
+
+	//強攻撃を行った瞬間を取得するため
+	mIsOldSpecialAttackStart = mIsSpecialAttackStart;
 
 	//移動開始までのフレーム
 	if (AnyAttack() == false && mIsStart == false){

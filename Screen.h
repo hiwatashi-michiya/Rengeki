@@ -16,9 +16,18 @@ public:
 	Vec2 WorldCenter;
 
 	Vec2 Scroll;
-	void ScrollUpdate(Player& Player, Enemy& Enemy);
+	Vec2 OldScroll;
+	Vec2 TmpScroll;
+	float ScrollSpeed;
+	bool IsTmpScroll;
+	void ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy);
 
 	float Zoom;
+	float OldZoom;
+	float ZoomSpeed;
+	bool StartSpecialAttackEasing;
+	float ZoomEasingt;
+	float StartZoom;
 	void ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy);
 
 	static constexpr float kShakeValue = 30.0f;
