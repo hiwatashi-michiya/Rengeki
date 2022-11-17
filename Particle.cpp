@@ -267,6 +267,55 @@ void Particle::SetFlag(Vec2 position) {
 
 			}
 
+			//ï«ìñÇƒâE
+			if (mParticleType == WALLHITRIGHT) {
+
+				mPosition[i].x = position.x;
+				mPosition[i].y = position.y + RandNum(0, 32, PLUSMINUS);
+				mRadius[i] = RandNum(2, 5, NATURAL);
+				mVelocity[i].x = RandNum(4, 10, NATURAL) + (RandNum(0, 9, NATURAL) / static_cast<float>(10));
+
+				if (mPosition[i].y > position.y + 15) {
+					mVelocity[i].y = sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL);
+				}
+				else {
+					mVelocity[i].y = -(sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL));
+				}
+
+
+				mRandColor[i] = RandNum(0x00000088, 0x000000AA, NATURAL);
+				mColor[i] = mParticleColor;
+
+				if (i % 50 == 0) {
+					break;
+				}
+
+			}
+
+			//ï«ìñÇƒç∂
+			if (mParticleType == WALLHITLEFT) {
+
+				mPosition[i].x = position.x;
+				mPosition[i].y = position.y + RandNum(0, 32, PLUSMINUS);
+				mRadius[i] = RandNum(2, 5, NATURAL);
+				mVelocity[i].x = -RandNum(4, 10, NATURAL) - (RandNum(0, 9, NATURAL) / static_cast<float>(10));
+
+				if (mPosition[i].y > position.y + 15) {
+					mVelocity[i].y = sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL);
+				}
+				else {
+					mVelocity[i].y = -(sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL));
+				}
+
+				mRandColor[i] = RandNum(0x00000088, 0x000000AA, NATURAL);
+				mColor[i] = mParticleColor;
+
+				if (i % 50 == 0) {
+					break;
+				}
+
+			}
+
 		}
 
 	}
@@ -339,6 +388,20 @@ void Particle::Move(Vec2 position) {
 
 			}
 
+			//ï«ìñÇƒâE
+			if (mParticleType == WALLHITRIGHT) {
+
+				mRandColor[i] -= RandNum(2, 4, NATURAL);
+
+			}
+
+			//ï«ìñÇƒç∂
+			if (mParticleType == WALLHITLEFT) {
+
+				mRandColor[i] -= RandNum(2, 4, NATURAL);
+
+			}
+
 			mPosition[i].x += mVelocity[i].x;
 			mPosition[i].y += mVelocity[i].y;
 
@@ -380,6 +443,24 @@ void Particle::Move(Vec2 position) {
 			if (mParticleType == BOTTOMTOTOP) {
 
 				if (mPosition[i].y < mParticleExtinction - mRadius[i]) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			//ï«ìñÇƒâE
+			if (mParticleType == WALLHITRIGHT) {
+
+				if (mPosition[i].x > mParticleExtinction) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			//ï«ìñÇƒç∂
+			if (mParticleType == WALLHITLEFT) {
+
+				if (mPosition[i].x < mParticleExtinction) {
 					mIsAlive[i] = false;
 				}
 
