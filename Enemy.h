@@ -59,6 +59,7 @@ public:
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
+	inline Vec2 GetOldEnemyPosition() { return mOldPosition; }
 
 	//半径取得
 	inline float GetEnemyRadius() { return mRadius; }
@@ -86,6 +87,11 @@ public:
 	inline float GetSpecialAttackRadius() { return mSpecialAttackRadius; }
 	//攻撃しているか
 	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
+	//強攻撃を開始しているかの取得
+	inline bool GetIsSpecialAttackStart() { return mIsSpecialAttackStart; }
+	inline bool GetIsOldSpecialAttackStart() { return mIsOldSpecialAttackStart; }
+	//透明度取得
+	inline float GetSpecialAttackColorAlphat() { return mSpecialAttackColorAlphat; }
 
 	//-----星砕流・落下星-----//
 	
@@ -119,6 +125,7 @@ private:
 
 	//座標
 	Vec2 mPosition;
+	Vec2 mOldPosition;
 
 	//ノックバック時の速度
 	Vec2 mKnockBackVelocity;
@@ -246,6 +253,7 @@ private:
 	
 	//攻撃が始まったかどうか
 	bool mIsSpecialAttackStart;
+	bool mIsOldSpecialAttackStart;
 	//攻撃しているかどうか
 	bool mIsSpecialAttack;
 	//攻撃時間

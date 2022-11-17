@@ -84,6 +84,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
+	//１フレーム前の座標取得
+	mOldPosition = mPosition;
+
 	Move(player, particle);
 
 	MovePattern(player);
@@ -266,7 +269,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//停止期間でなければ音を鳴らす
-					if (mStartFrame < 50 || 70 <= mStartFrame) {
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.5f);
 					}
 
@@ -363,7 +366,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//停止期間でなければ音を鳴らす
-					if (mStartFrame < 50 || 70 <= mStartFrame) {
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.5f);
 					}
 
@@ -649,6 +652,9 @@ void Enemy::FallingStar(Player& player) {
 
 
 void Enemy::MovePattern(Player& player) {
+
+	//強攻撃を行った瞬間を取得するため
+	mIsOldSpecialAttackStart = mIsSpecialAttackStart;
 
 	//移動開始までのフレーム
 	if (AnyAttack() == false && mIsStart == false){

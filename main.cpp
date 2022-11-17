@@ -65,7 +65,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		screen.ZoomUpdate(stage, player, enemy);
-		screen.ScrollUpdate(player, enemy);
+		screen.ScrollUpdate(stage, player, enemy);
 
 		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
 
@@ -103,16 +103,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(screen);
 		stageParticle.Draw(screen);
-		enemyParticle.Draw(screen);
-		enemyParticle2.Draw(screen);
+		//透明の間表示しない
+		if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
+			enemyParticle.Draw(screen);
+			enemyParticle2.Draw(screen);
+		}
 		playerParticle.Draw(screen);
 		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
-
-		Novice::ScreenPrintf(40, 40, "stage.mIsHitStop : %d", stage.mIsHitStop);
-
-		
 
 		///
 		/// ↑描画処理ここまで

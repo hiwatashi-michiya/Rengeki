@@ -70,4 +70,10 @@ public:
 	/// <returns>floatŒ^</returns>
 	float Cross(const Vec2& other) const;
 
+	/// <summary>
+	/// ‚Q‚Â‚ÌƒxƒNƒgƒ‹‚Ì’·‚³‚ğ”äŠr‚·‚é
+	/// </summary>
+	/// <param name="other"> Vec2</param>
+	/// <returns>floatŒ^</returns>
+	static float VectorComparison(Vec2 vector1, Vec2 vector2);
 };

@@ -65,6 +65,9 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Player::Update(Stage &stage, Enemy &enemy) {
 
+	//１フレーム前の座標を取得する
+	mOldPosition = mPosition;
+
 	//攻撃パーティクルの更新
 	for (int i = 0; i < kEnemyMaxAttack; i++) {
 
@@ -360,7 +363,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				KnockBack(enemy, 2);
 
 			}
-			else {
+			else if (enemy.GetIsAttack(2) == false) {
 				mIsHit[2] = false;
 				mKnockBack[2] = false;
 			}
@@ -400,7 +403,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 				}
 
-				else if (enemy.GetIsSpecialAttack() == false) {
+				else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
 					mIsHit[2] = false;
 					mKnockBack[2] = false;
 				}
@@ -640,7 +643,4 @@ void Player::Draw(Screen& screen) {
 			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
 		}
 	}
-
-	//当たり判定描画
-	screen.DrawEllipse(mPosition, mRadius, mRadius, RED, kFillModeWireFrame);
 }
