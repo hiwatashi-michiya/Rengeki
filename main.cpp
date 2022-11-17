@@ -103,8 +103,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 		stage.Draw(screen);
 		stageParticle.Draw(screen);
-		enemyParticle.Draw(screen);
-		enemyParticle2.Draw(screen);
+		//透明の間表示しない
+		if (enemy.GetIsSpecialAttackStart() == false || enemy.GetSpecialAttackColorAlphat() > 0.01f) {
+			enemyParticle.Draw(screen);
+			enemyParticle2.Draw(screen);
+		}
 		playerParticle.Draw(screen);
 		playerParticle2.Draw(screen);
 		player.Draw(screen);

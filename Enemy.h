@@ -86,6 +86,10 @@ public:
 	inline float GetSpecialAttackRadius() { return mSpecialAttackRadius; }
 	//攻撃しているか
 	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
+	//強攻撃を開始しているかの取得
+	inline bool GetIsSpecialAttackStart() { return mIsSpecialAttackStart; }
+	//透明度取得
+	inline float GetSpecialAttackColorAlphat() { return mSpecialAttackColorAlphat; }
 
 	//-----星砕流・落下星-----//
 	
