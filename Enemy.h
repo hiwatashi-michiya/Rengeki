@@ -307,6 +307,7 @@ private:
 	int mEnemySrcX;
 	int mBackStep;
 	int mAttack;
+	int mGuard;
 };
 
 

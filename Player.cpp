@@ -592,28 +592,21 @@ void Player::Draw(Screen& screen) {
 	//ジャンプ
 	
 
-	if (mVelocity.y < 0) {
-		if (mDirection == RIGHT) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
-		}
-		if (mDirection == LEFT) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
-		}
-	}
+	//if (mVelocity.y < 0) {
+	//	if (mDirection == RIGHT) {
+	//		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
+	//	}
+	//	if (mDirection == LEFT) {
+	//		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
+	//	}
+	//}
 
-	if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
+	/*if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
 		
 		
 		
-	}if (mVelocity.y > 0 && mIsJump == true) {
-		if (mDirection == RIGHT) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
-		}
-		if (mDirection == LEFT) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
-		}
+	}*/
 	
-	}
 
 	if (Key::IsTrigger(DIK_UP) && mJumpCount == 0 && mIsRolling == false && !mIsJump) {
 		mJumpPosition.x = mPosition.x;
@@ -623,13 +616,33 @@ void Player::Draw(Screen& screen) {
 	}
 	if (mIsJump) {
 		mJumpAnimeCount++;
-		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 4, mTextureFrame, mJumpRoll, mColor, 6, 1);//２回目のジャンプで回転する
+		
 		screen.DrawAnime(mJumpPosition, mRadius, mJumpSrcX, 240, 240, 6, 2, mTextureFrame, mJumpEffect, mColor, 0, 0);//ジャンプ時のエフェクト
 	}
 	if (!mIsJump) {
 		mJumpSrcX = 0;
 	}
+
+	//２回目のジャンプで回転する
+	if (mVelocity.y != 0) {
+		if (mDirection == RIGHT) {
+			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
+		}
+		if (mDirection == LEFT) {
+			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
+		}
+		
+	}
 	
+	//if (mVelocity.y > 0) {
+	//	if (mDirection == RIGHT) {
+	//		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
+	//	}
+	//	if (mDirection == LEFT) {
+	//		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
+	//	}
+
+	//}
 	
 	
 	Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);

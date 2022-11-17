@@ -990,7 +990,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	if (mIsLoadTexture == false) {
 		mEnemy = Novice::LoadTexture("./Resources/Enemy/Enemy.png");
 		mBackStep = Novice::LoadTexture("./Resources/Enemy/Enemy_backstep.png");
-
+		mGuard = Novice::LoadTexture("./Resources/Enemy/Enemy_guard.png");
 		mIsLoadTexture = true;
 	}
 
@@ -1014,6 +1014,16 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 	}
 
+	//ガードモーション
+	if (mIsGuard) {
+		if (mDirection == ENEMYRIGHT) {
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
+		}
+		if (mDirection == ENEMYLEFT) {
+			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
+		}
+	}
 
+	//歩くモーション
 
 }
