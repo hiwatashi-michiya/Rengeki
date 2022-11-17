@@ -63,6 +63,55 @@ public:
 	//出現フラグを戻す
 	inline bool ResetParticleAppear() { mParticleAppear = false; return mParticleAppear; }
 
+	//パーティクルの色を確認し、一つでも指定した色と違えばfalseを返す
+	inline bool GetParticleColor(int color) {
+
+		for (int i = 0; i < mMaxParticle; i++) {
+
+			if (mColor[i] != color) {
+				return false;
+			}
+
+		}
+
+		return true;
+
+	}
+
+	//パーティクルの色を指定の色に変更
+	inline void ChangeParticleColor(int color) {
+
+		mParticleColor = color;
+
+		for (int i = 0; i < mMaxParticle; i++) {
+
+			if (mColor[i] != mParticleColor) {
+
+				if (mColor[i] > mParticleColor) {
+
+					mColor[i] -= 0x04040400;
+
+					if (mColor[i] < mParticleColor) {
+						mColor[i] = mParticleColor;
+					}
+
+				}
+				else if (mColor[i] < mParticleColor) {
+
+					mColor[i] += 0x04040400;
+
+					if (mColor[i] > mParticleColor) {
+						mColor[i] = mParticleColor;
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
 private:
 
 	void Move(Vec2 position);

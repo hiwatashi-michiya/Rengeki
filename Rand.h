@@ -13,4 +13,4 @@ enum OPTION {
 /// <param name="max">自然数の最大値</param>
 /// <param name="option">NATURAL : 自然数 PLUSMINUS : 整数 BINARY : 最小値、最大値のどちらか</param>
 /// <returns></returns>
-int RandNum(int min,int max,OPTION option);
+int RandNum(int min, int max, OPTION option);

@@ -7,6 +7,7 @@
 #include "Particle.h"
 #include "Rand.h"
 #include <time.h>
+#include "ControllerInput.h"
 
 const char kWindowTitle[] = "1203_Rengeki";
 
@@ -18,9 +19,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
-	//リソース読み込み
-	int Flame = Novice::LoadTexture("./Resources/Stage/Flame.png");
-
 	//乱数生成
 	unsigned int kCurrentTime = time(nullptr);
 
@@ -28,7 +26,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Screen screen;
 
-	Player player({ 100.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
+	Player player({ 0.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
 	Enemy enemy({ 1000.0f,800.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
 
@@ -56,6 +54,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//キー入力の更新
 		Key::Update();
 
+		//コントローラー
+		Controller::SetState();
+
 		while (!((oldTime + 16) - clock() <= 0));
 
 
@@ -63,14 +64,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		if (stage.mIsHitStop == false) {
+		screen.ZoomUpdate(stage, player, enemy);
+		screen.ScrollUpdate(player, enemy);
+
+		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
 				enemy.ResetPosition();
 			}
 
 			player.Update(stage, enemy);
-			enemy.Update(stage, player);
+			enemy.Update(stage, player,stageParticle);
 			stageParticle.SetFlag(stageParticlePosition);
 			stageParticle.Update(stageParticlePosition);
 			enemyParticle.SetFlag(enemy.GetEnemyPosition());
@@ -85,6 +89,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		stage.HitStop(player, enemy);
+		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
+		screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
 
 		///
 		/// ↑更新処理ここまで
@@ -95,7 +101,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
-		stage.Draw(Flame);
+		stage.Draw(screen);
 		stageParticle.Draw(screen);
 		enemyParticle.Draw(screen);
 		enemyParticle2.Draw(screen);
@@ -104,10 +110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Draw(screen);
 		enemy.Draw(screen, player);
 
-		Novice::ScreenPrintf(70, 40, "Move : Arrow Left or Arrow Right Key");
-		Novice::ScreenPrintf(70, 60, "Jump : Arrow Up Key");
-		Novice::ScreenPrintf(70, 80, "Attack : C Key");
-		Novice::ScreenPrintf(70, 100, "Rolling : X Key");
+		Novice::ScreenPrintf(40, 40, "stage.mIsHitStop : %d", stage.mIsHitStop);
 
 		
 

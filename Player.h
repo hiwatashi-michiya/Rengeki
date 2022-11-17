@@ -14,7 +14,7 @@ const int kMaxJump = 2;
 const int kMaxAttack = 3;
 
 //UŒ‚—Í
-const int kAttackValue[kMaxAttack] = { 2, 5, 20 };
+const int kAttackValue[kMaxAttack] = { 1, 3, 10 };
 
 //UŒ‚‚Ì‘±ŠÔ
 const int kAttackPersistence = 30;

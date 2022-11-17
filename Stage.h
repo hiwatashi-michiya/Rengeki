@@ -1,5 +1,6 @@
 #pragma once
 #include <Novice.h>
+#include "Screen.h"
 
 //画面の横幅
 const int kWindowWidth = 1280;
@@ -20,8 +21,7 @@ class Stage
 {
 public:
 	Stage() { 
-		mIsHitStop = false; 
-		mHitStopFrame = 0;
+		Init();
 	}
 
 	//ステージの横幅
@@ -40,14 +40,22 @@ public:
 
 	//-----ヒットストップ-----//
 	bool mIsHitStop;
+	bool mIsHeavyHitStop;
 	int mHitStopFrame;
 	void HitStop(Player& player, Enemy& enemy);
 
-	void Draw(int Flame);
+	void Draw(Screen& screen);
 
 private:
 
+	void Init();
+
 	ROUND Round = Round1;
+
+	Vec2 mFlamePosition;
+
+	bool mIsLoadTexture;
+	int mFlame;
 
 };
 

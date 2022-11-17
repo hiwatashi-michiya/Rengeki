@@ -1,4 +1,5 @@
 #include "Quad.h"
+#include "Stage.h"
 
 Quad Scaling(Quad quad, float scale) {
 	return { {quad.LeftTop.x * scale,		quad.LeftTop.y * scale},
@@ -60,6 +61,16 @@ Quad SquareAssign(float size) {
 		{  size,  size }
 	};
 }
+Quad WindowAssign() {
+
+	return {
+		{ -kWindowWidth / 2, -kWindowHeight / 2 },
+		{  kWindowWidth / 2, -kWindowHeight / 2 },
+		{ -kWindowWidth / 2,  kWindowHeight / 2 },
+		{  kWindowWidth / 2,  kWindowHeight / 2 }
+	};
+}
+
 
 void Draw::drawQuad(Quad quad, int srcX, int srcY, int srcW, int srcH, int textureHandle, unsigned int color) {
 
