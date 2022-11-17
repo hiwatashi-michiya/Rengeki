@@ -6,7 +6,7 @@
 
 Screen::Screen(){
 	WorldCenter = { kWindowWidth / 2, kWindowHeight - 50.0f};
-	Scroll = { 0.0f, 0.0f };
+	Scroll = { kWindowWidth / 2.0f, 0.0f };
 	Zoom = 1.0f;
 	ZoomEasingt = 0.0f;
 	IsTmpScroll = false;
