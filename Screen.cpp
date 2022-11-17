@@ -60,15 +60,27 @@ void Screen::DrawQuad(Vec2 Position, float Radius, float srcX, float srcY, float
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
+<<<<<<< HEAD
+void Screen::DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color, int roopstate, int roop) {
+	float x1 = quad.LeftTop.x * Zoom.x + ScreenShake.xint roopstate,
+	float y1 = quad.LeftTop.y * Zoom.y - ScreenShake.y;
+	float x2 = quad.RightTop.x * Zoom.x + ScreenShake.x;
+	float y2 = quad.RightTop.y * Zoom.y - ScreenShake.y;
+	float x3 = quad.LeftBottom.x * Zoom.x + ScreenShake.x;
+	float y3 = quad.LeftBottom.y * Zoom.y - ScreenShake.y;
+	float x4 = quad.RightBottom.x * Zoom.x + ScreenShake.x;
+	float y4 = quad.RightBottom.y * Zoom.y - ScreenShake.y;
+=======
 void Screen::DrawWindowQuad(Vec2 Position, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
 	Quad OriginalPosition = WindowAssign();
 	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
-void Screen::DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color) {
+void Screen::DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color,int roopstate, int roop) {
 	Quad OriginalPosition = SquareAssign(Radius);
 	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, 0.0f, ScreenTransform(Position)));
+>>>>>>> 51a996da640c733377d056cb99486f97847b0c08
 	if (framehensuu % frame == 0) {
 		srcX += srcW;
 	}

@@ -80,7 +80,9 @@ public:
 	/// <param name="framehensuu">加算しているフレームの変数</param>
 	/// <param name="textureHandle">テクスチャのハンドル</param>
 	/// <param name="color">描画するスプライトの色</param>
-	void DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color);
+	/// <param name="roopstate">何枚目からループさせるか</param>
+	/// <param name="roop">ループする"1"  ループしない"0"</param>
+	void DrawAnime(Vec2 Position, float Radius, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color,int roopstate,int roop);
 
 
 
