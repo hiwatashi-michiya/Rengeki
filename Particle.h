@@ -22,7 +22,11 @@ enum PARTICLETYPE {
 	//•¬…
 	FOUNTAIN,
 	//‘ØÝ
-	STAY
+	STAY,
+	//•Ç“–‚Ä‰E
+	WALLHITRIGHT,
+	//•Ç“–‚Ä¶
+	WALLHITLEFT,
 
 };
 
