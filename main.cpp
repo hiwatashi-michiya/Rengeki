@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stage.Draw(screen);
 		stageParticle.Draw(screen);
 		//透明の間表示しない
-		if (enemy.GetIsSpecialAttackStart() == false || enemy.GetSpecialAttackColorAlphat() > 0.01f) {
+		if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
 			enemyParticle.Draw(screen);
 			enemyParticle2.Draw(screen);
 		}

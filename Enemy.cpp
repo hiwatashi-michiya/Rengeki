@@ -261,7 +261,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//’âŽ~ŠúŠÔ‚Å‚È‚¯‚ê‚Î‰¹‚ð–Â‚ç‚·
-					if (mStartFrame < 50 || 70 <= mStartFrame) {
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.5f);
 					}
 
@@ -358,7 +358,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//’âŽ~ŠúŠÔ‚Å‚È‚¯‚ê‚Î‰¹‚ð–Â‚ç‚·
-					if (mStartFrame < 50 || 70 <= mStartFrame) {
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.5f);
 					}
 
