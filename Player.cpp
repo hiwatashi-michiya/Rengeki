@@ -681,13 +681,6 @@ void Player::Draw(Screen& screen) {
 	if (!mIsJump) {
 		mJumpSrcX = 0;
 	}
-
-	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
-		screen.DrawAnime(mPosition, mRadius, mJumpSrcX, 240, 240, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
-	}
-
-	
-	
 	
 	Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
 	
