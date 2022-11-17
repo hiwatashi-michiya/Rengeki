@@ -8,28 +8,96 @@ Screen::Screen(){
 	WorldCenter = { kWindowWidth / 2, kWindowHeight - 50.0f};
 	Scroll = { 0.0f, 0.0f };
 	Zoom = 1.0f;
+	ZoomEasingt = 0.0f;
+	IsTmpScroll = false;
+	StartSpecialAttackEasing = false;
 	ScreenShake = { 0.0f, 0.0f };
 };
 
-void Screen::ScrollUpdate(Player& Player, Enemy& Enemy) {
+void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 
-	Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
-	Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+	//１フレーム前のズーム量を取得
+	OldScroll = Scroll;
+
+	if (StartSpecialAttackEasing == true){
+		Scroll.x = kWindowWidth / (2.0f / Zoom);
+		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+	}
+	else if (stage.mIsHeavyHitStop == true) {
+		if (IsTmpScroll == false){
+			TmpScroll = Scroll;
+			IsTmpScroll = true;
+		}
+		Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
+		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+	}
+	else{
+
+		if (OldScroll.x > (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
+			ScrollSpeed = -5.0f;
+		}
+		else if (OldScroll.x < (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
+			ScrollSpeed = 5.0f;
+		}
+		else {
+			ScrollSpeed = 0.0f;
+			Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
+		}
+		Scroll.x += ScrollSpeed;
+		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+	}
+
+	if (stage.mIsHeavyHitStop == false){
+
+		if (IsTmpScroll == true){
+			Scroll = TmpScroll;
+		}
+		IsTmpScroll = false;
+	}
+
 }
 
 void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 
+	//１フレーム前のズーム量を取得
+	OldZoom = Zoom;
+
+	//強攻撃時のズームをイージングで行う
+	if (Enemy.GetIsOldSpecialAttackStart() == false && Enemy.GetIsSpecialAttackStart() == true && StartSpecialAttackEasing == false) {
+		StartZoom = Zoom;
+		ZoomEasingt = 0.0f;
+		StartSpecialAttackEasing = true;
+	}
+
+
 	if (stage.mIsHeavyHitStop == true){
-		Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
-		Zoom = Clamp(Zoom, 0.9f, 3.0f);
+		Zoom = 3.0f;
+	}
+	else if (StartSpecialAttackEasing == true){
+		if (Enemy.GetIsSpecialAttackStart() == false){
+			StartSpecialAttackEasing = false;
+		}
+		ZoomEasingt += 0.01f;
+		ZoomEasingt = Clamp(ZoomEasingt, 0.0f, 1.0f);
+		Zoom = EasingMove(StartZoom, 0.9f, easeOutExpo(ZoomEasingt));
 	}
 	else{
-		Zoom = 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length();
-		Zoom = Clamp(Zoom, 0.9f, 1.5f);
+		if (OldZoom > 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length()){
+			ZoomSpeed = -0.01f;
+		}
+		else if (OldZoom < 800 / (Player.GetPlayerPosition() - Enemy.GetEnemyPosition()).length()) {
+			ZoomSpeed = 0.01f;
+		}
+		else {
+			ZoomSpeed = 0.0f;
+		}
+		Zoom += ZoomSpeed;
+		Zoom = Clamp(Zoom, 0.9f, 1.2f);
 	}
 }
 
 void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
+
 	if (is == true) {
 		ScreenShake.x = RandNum(minX, maxX, NATURAL);
 		ScreenShake.y = RandNum(minY, maxY, NATURAL);

@@ -88,6 +88,7 @@ public:
 	inline bool GetIsSpecialAttack() { return mIsSpecialAttack; }
 	//‹­UŒ‚‚ğŠJn‚µ‚Ä‚¢‚é‚©‚Ìæ“¾
 	inline bool GetIsSpecialAttackStart() { return mIsSpecialAttackStart; }
+	inline bool GetIsOldSpecialAttackStart() { return mIsOldSpecialAttackStart; }
 	//“§–¾“xæ“¾
 	inline float GetSpecialAttackColorAlphat() { return mSpecialAttackColorAlphat; }
 
@@ -250,6 +251,7 @@ private:
 	
 	//UŒ‚‚ªn‚Ü‚Á‚½‚©‚Ç‚¤‚©
 	bool mIsSpecialAttackStart;
+	bool mIsOldSpecialAttackStart;
 	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©
 	bool mIsSpecialAttack;
 	//UŒ‚ŠÔ

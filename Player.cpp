@@ -356,7 +356,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				KnockBack(enemy, 2);
 
 			}
-			else {
+			else if (enemy.GetIsAttack(2) == false) {
 				mIsHit[2] = false;
 				mKnockBack[2] = false;
 			}
@@ -396,7 +396,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 				}
 
-				else if (enemy.GetIsSpecialAttack() == false) {
+				else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
 					mIsHit[2] = false;
 					mKnockBack[2] = false;
 				}
@@ -601,7 +601,4 @@ void Player::Draw(Screen& screen) {
 			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
 		}
 	}
-
-	//“–‚½‚è”»’è•`‰æ
-	screen.DrawEllipse(mPosition, mRadius, mRadius, RED, kFillModeWireFrame);
 }
