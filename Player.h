@@ -185,7 +185,8 @@ private:
 	bool mIsLoadTexture;
 	int mTextureFrame;
 	//ƒvƒŒƒCƒ„[
-	int mPlayer;
+	int mPlayer_right;
+	int mPlayer_left;
 	int mPlayerSrcX;
 	int mRolling;
 	int mDashLeft;

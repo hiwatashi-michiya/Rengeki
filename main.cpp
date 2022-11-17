@@ -109,6 +109,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::ScreenPrintf(70, 80, "Attack : C Key");
 		Novice::ScreenPrintf(70, 100, "Rolling : X Key");
 
+		
+
 		///
 		/// ↑描画処理ここまで
 		///

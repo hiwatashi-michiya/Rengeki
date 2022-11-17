@@ -491,7 +491,8 @@ void Player::Draw(Screen& screen) {
 
 	//リソースの読み込み
 	if (mIsLoadTexture == false) {
-		mPlayer = Novice::LoadTexture("./Resources/Player/Player.png");
+		mPlayer_right = Novice::LoadTexture("./Resources/Player/Player.png");
+		mPlayer_left = Novice::LoadTexture("./Resources/Player/Player_left.png");
 		mDashLeft = Novice::LoadTexture("./Resources/Player/Player_dash_left.png");
 		mDashRight = Novice::LoadTexture("./Resources/Player/Player_dash_right.png");
 		mRolling = Novice::LoadTexture("./Resources/Player/Player_rolling.png");
@@ -525,8 +526,9 @@ void Player::Draw(Screen& screen) {
 		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, WHITE);
 	}
 
-	//攻撃
+	//  攻撃
 
+	//右攻撃
 	if (mDirection == RIGHT) {
 		if (mIsAttack[2] == true) {
 			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_right, WHITE);
@@ -539,6 +541,7 @@ void Player::Draw(Screen& screen) {
 		}
 	}
 
+	//左攻撃
 	if (mDirection == LEFT) {
 		if (mIsAttack[2] == true) {
 			screen.DrawQuad(mQuadPosition, 0, 0, 160, 160, mAttack3_left, WHITE);
@@ -563,7 +566,12 @@ void Player::Draw(Screen& screen) {
 
 	//立っている時
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
-		screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer, WHITE);
+		if (mDirection == RIGHT) {
+			screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, WHITE);//右
+		}
+		if (mDirection == LEFT) {
+			screen.DrawAnime(mQuadPosition, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_left, WHITE);//左
+		}
 	}
 
 	//ジャンプ
@@ -576,19 +584,21 @@ void Player::Draw(Screen& screen) {
 		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mJump, WHITE);//ジャンプ
 	}
 
-	if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
+	if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount <= 28 && mIsRolling == false) {
 		screen.DrawAnime(mQuadPosition, mJumpSrcX, 140, 140, 7, 4, mTextureFrame, mJumpRoll, RED);//２回目のジャンプで回転する
 		mJumpAnimeCount++;
-		Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
+		
 	}else if (mVelocity.y > 0) {
 		screen.DrawQuad(mQuadPosition, 0, 0, 140, 140, mFall, WHITE);//落ちてるとき
 	}
 
 	if (Key::IsTrigger(DIK_UP) && mIsRolling == false) {
-		screen.DrawAnime(mQuadJumpPosition, mJumpSrcX, 240, 240, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
+		
 	}
 
-	
+	screen.DrawAnime(mQuadPosition, mJumpSrcX, 140, 140, 6, 3, mTextureFrame, mJumpEffect, RED);//ジャンプ時のエフェクト
+
+	Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
 	
 
 	//攻撃範囲描画

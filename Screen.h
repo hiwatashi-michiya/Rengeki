@@ -57,7 +57,9 @@ public:
 	/// <param name="framehensuu">加算しているフレームの変数</param>
 	/// <param name="textureHandle">テクスチャのハンドル</param>
 	/// <param name="color">描画するスプライトの色</param>
-	void DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color);
+	/// <param name="roopstate">何枚目からループスタート</param>
+	/// <param name="color">ループする "1" ループ</param>
+	void DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color, int roopstate, int roop);
 
 };
 

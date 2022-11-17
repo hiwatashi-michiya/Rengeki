@@ -49,7 +49,7 @@ void Screen::DrawQuad(Quad quad, float srcX, float srcY, float srcW, float srcH,
 	Novice::DrawQuad(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2), static_cast<int>(y2), static_cast<int>(x3), static_cast<int>(y3), static_cast<int>(x4), static_cast<int>(y4), srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
-void Screen::DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color) {
+void Screen::DrawAnime(Quad quad, int& srcX, int srcW, int srcH, int sheets, int frame, int& framehensuu, int textureHandle, unsigned int color, int roopstate, int roop) {
 	float x1 = quad.LeftTop.x * Zoom.x + ScreenShake.x;
 	float y1 = quad.LeftTop.y * Zoom.y - ScreenShake.y;
 	float x2 = quad.RightTop.x * Zoom.x + ScreenShake.x;
