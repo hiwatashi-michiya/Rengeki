@@ -60,6 +60,9 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Player::Update(Stage &stage, Enemy &enemy) {
 
+	//１フレーム前の座標を取得する
+	mOldPosition = mPosition;
+
 	//攻撃パーティクルの更新
 	for (int i = 0; i < kEnemyMaxAttack; i++) {
 

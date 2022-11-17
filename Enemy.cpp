@@ -79,6 +79,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
+	//１フレーム前の座標取得
+	mOldPosition = mPosition;
+
 	Move(player, particle);
 
 	MovePattern(player);

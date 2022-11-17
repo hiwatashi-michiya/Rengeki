@@ -59,6 +59,7 @@ public:
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
+	inline Vec2 GetOldEnemyPosition() { return mOldPosition; }
 
 	//半径取得
 	inline float GetEnemyRadius() { return mRadius; }
@@ -124,6 +125,7 @@ private:
 
 	//座標
 	Vec2 mPosition;
+	Vec2 mOldPosition;
 
 	//ノックバック時の速度
 	Vec2 mKnockBackVelocity;

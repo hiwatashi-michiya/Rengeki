@@ -18,7 +18,6 @@ public:
 	Vec2 Scroll;
 	Vec2 OldScroll;
 	Vec2 TmpScroll;
-	float ScrollSpeed;
 	bool IsTmpScroll;
 	void ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy);
 

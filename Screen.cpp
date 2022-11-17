@@ -33,17 +33,7 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 	}
 	else{
 
-		if (OldScroll.x > (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
-			ScrollSpeed = -5.0f;
-		}
-		else if (OldScroll.x < (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom)){
-			ScrollSpeed = 5.0f;
-		}
-		else {
-			ScrollSpeed = 0.0f;
-			Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
-		}
-		Scroll.x += ScrollSpeed;
+		Scroll.x += ((Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom) - Scroll.x) * 0.4f;
 		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
 	}
 

@@ -75,6 +75,7 @@ public:
 
 	//プレイヤーの座標取得（外積に使用する）
 	inline Vec2 GetPlayerPosition() { return mPosition; }
+	inline Vec2 GetOldPlayerPosition() { return mOldPosition; }
 
 private:
 
@@ -90,6 +91,7 @@ private:
 
 	//座標
 	Vec2 mPosition;
+	Vec2 mOldPosition;
 
 	//速度
 	Vec2 mVelocity;
