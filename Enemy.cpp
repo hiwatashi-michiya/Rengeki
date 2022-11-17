@@ -61,6 +61,11 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+
+	///////////////////// 描画関係 ///////////////////////////
+	mIsLoadTexture = false;
+	mEnemySrcX = 0;
+
 	//////////////////////  サウンド関係  ////////////////////
 	
 	///////////////////// 基礎移動SE /////////////////////////
@@ -131,7 +136,7 @@ bool Enemy::AnyAttack() {
 void Enemy::Move(Player& player, Particle& particle) {
 
 	///敵の移動
-
+ 
 	//重力を加算（攻撃していない）
 	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
 		mVelocity.y += kEnemyGravity;
@@ -269,7 +274,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			}
 
-			//mDirection = ENEMYLEFT;
+			mDirection = ENEMYLEFT;
 		}
 		else {
 			
@@ -934,7 +939,7 @@ void Enemy::HitPoint(Stage& stage) {
 void Enemy::Draw(Screen& screen, Player& player) {
 
 	//敵描画
-	screen.DrawEllipse(mPosition, mRadius, 0.0f, mColor, kFillModeSolid);
+	
 
 	////////////////////　ここから弱攻撃　////////////////////
 
@@ -972,5 +977,37 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	//ステップのクールタイムを表示
 	Novice::ScreenPrintf(1000, 40, "stepTime : %d", mStepFrame);
+
+	mTextureFrame++;
+
+	//リソースの読み込み
+	if (mIsLoadTexture == false) {
+		mEnemy = Novice::LoadTexture("./Resources/Enemy/Enemy.png");
+		mBackStep = Novice::LoadTexture("./Resources/Enemy/Enemy_backstep.png");
+
+		mIsLoadTexture = true;
+	}
+
+	//待機モーション
+	if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
+		if (mDirection == ENEMYRIGHT) {
+			screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+		}
+		if (mDirection == ENEMYLEFT) {
+			screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+		}
+	}
+
+	//バックステップモーション
+	if (mIsBackStep) {
+		if (mDirection == ENEMYRIGHT) {
+			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mBackStep, mColor);
+		}
+		if (mDirection == ENEMYLEFT) {
+			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mBackStep, mColor);
+		}
+	}
+
+
 
 }

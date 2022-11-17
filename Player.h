@@ -189,8 +189,7 @@ private:
 	int mPlayer_left;
 	int mPlayerSrcX;
 	int mRolling;
-	int mDashLeft;
-	int mDashRight;
+	int mDash;
 	int mAttack1;
 	int mAttack2;
 	int mAttack3;
@@ -203,9 +202,10 @@ private:
 	int mJumpEffect;
 	int mJumpSrcX;
 	bool mIsJump;
-	Quad mQuadJumpPosition;
+	Vec2 mJumpPosition;
 	int mJump;
 	int mJumpRoll;
+	bool mIsjumpRoll;
 	int mFall;
 	int mJumpAnimeCount;
 };

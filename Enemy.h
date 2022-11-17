@@ -289,6 +289,16 @@ private:
 
 	//ÅŒã‚É‘¬“x‚ğ‘ã“ü‚·‚é
 	void VelocityAssign();
+
+
+	//‰æ‘œ“Ç‚İ‚İƒtƒ‰ƒO
+	bool mIsLoadTexture;
+	int mTextureFrame;
+	//•`‰æŠÖŒW
+	int mEnemy;
+	int mEnemySrcX;
+	int mBackStep;
+	int mAttack;
 };
 
 
