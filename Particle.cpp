@@ -273,7 +273,7 @@ void Particle::SetFlag(Vec2 position) {
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y + RandNum(0, 32, PLUSMINUS);
 				mRadius[i] = RandNum(2, 5, NATURAL);
-				mVelocity[i].x = RandNum(4, 10, NATURAL) + (RandNum(0, 9, NATURAL) / static_cast<float>(10));
+				mVelocity[i].x = RandNum(10, 15, NATURAL) + (RandNum(0, 9, NATURAL) / static_cast<float>(10));
 
 				if (mPosition[i].y > position.y + 15) {
 					mVelocity[i].y = sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL);
@@ -286,9 +286,9 @@ void Particle::SetFlag(Vec2 position) {
 				mRandColor[i] = RandNum(0x00000088, 0x000000AA, NATURAL);
 				mColor[i] = mParticleColor;
 
-				if (i % 50 == 0) {
+				/*if (i % 50 == 0) {
 					break;
-				}
+				}*/
 
 			}
 
@@ -298,7 +298,7 @@ void Particle::SetFlag(Vec2 position) {
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y + RandNum(0, 32, PLUSMINUS);
 				mRadius[i] = RandNum(2, 5, NATURAL);
-				mVelocity[i].x = -RandNum(4, 10, NATURAL) - (RandNum(0, 9, NATURAL) / static_cast<float>(10));
+				mVelocity[i].x = -RandNum(10, 15, NATURAL) - (RandNum(0, 9, NATURAL) / static_cast<float>(10));
 
 				if (mPosition[i].y > position.y + 15) {
 					mVelocity[i].y = sinf(RandNum(0, 20, NATURAL) * M_PI / 90) * RandNum(0, 3, NATURAL);
@@ -310,9 +310,9 @@ void Particle::SetFlag(Vec2 position) {
 				mRandColor[i] = RandNum(0x00000088, 0x000000AA, NATURAL);
 				mColor[i] = mParticleColor;
 
-				if (i % 50 == 0) {
+				/*if (i % 50 == 0) {
 					break;
-				}
+				}*/
 
 			}
 
@@ -391,14 +391,14 @@ void Particle::Move(Vec2 position) {
 			//ï«ìñÇƒâE
 			if (mParticleType == WALLHITRIGHT) {
 
-				mRandColor[i] -= RandNum(2, 4, NATURAL);
+				mRandColor[i] -= RandNum(6, 8, NATURAL);
 
 			}
 
 			//ï«ìñÇƒç∂
 			if (mParticleType == WALLHITLEFT) {
 
-				mRandColor[i] -= RandNum(2, 4, NATURAL);
+				mRandColor[i] -= RandNum(6, 8, NATURAL);
 
 			}
 

@@ -13,10 +13,16 @@
 Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
-
+	//パーティクル
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 100, false);
 	}
+
+	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 200, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 200, false);
+
+	mIsWallHitRightFlag = false;
+	mIsWallHitLeftFlag = false;
 
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
@@ -75,6 +81,23 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 			mAttackParticle[i].Update(mAttackPosition[i]);
 		}
 
+	}
+
+	if (mIsWallHitRightFlag == true) {
+		mWallHitRight.Update(mPosition);
+	}
+
+	if (mIsWallHitLeftFlag == true) {
+		mWallHitLeft.Update(mPosition);
+	}
+
+	//パーティクルが全て出たらフラグを降ろす
+	if (mWallHitRight.GetAllParticleFlag() == false) {
+		mIsWallHitRightFlag = false;
+	}
+
+	if (mWallHitLeft.GetAllParticleFlag() == false) {
+		mIsWallHitLeftFlag = false;
 	}
 
 	Move();
@@ -299,11 +322,31 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	//左判定
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
 		mPosition.x = Stage::kStageLeft + mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
+
+			mWallHitLeft.SetFlag(mPosition);
+			mIsWallHitLeftFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
 	}
 
 	//右判定
 	if (mPosition.x + mRadius > Stage::kStageRight) {
 		mPosition.x = Stage::kStageRight - mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
+
+			mWallHitRight.SetFlag(mPosition);
+			mIsWallHitRightFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
 	}
 
 	//下判定
@@ -521,6 +564,15 @@ void Player::Draw(Screen& screen) {
 
 	Animation();
 
+	//壁当てパーティクル
+	if (mIsWallHitRightFlag == true) {
+		mWallHitRight.Draw(screen);
+	}
+
+	if (mIsWallHitLeftFlag == true) {
+		mWallHitLeft.Draw(screen);
+	}
+
 	//プレイヤー描画
 
 	//ローリング
@@ -633,17 +685,6 @@ void Player::Draw(Screen& screen) {
 		}
 		
 	}
-	
-	//if (mVelocity.y > 0) {
-	//	if (mDirection == RIGHT) {
-	//		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
-	//	}
-	//	if (mDirection == LEFT) {
-	//		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mFall, mColor);//落ちてるとき
-	//	}
-
-	//}
-	
 	
 	Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
 	

@@ -181,7 +181,12 @@ private:
 	//関数
 	void ScalingInit();
 	void Animation();
-
+	//壁に当たった時のエフェクト
+	Particle mWallHitRight;
+	Particle mWallHitLeft;
+	//パーティクルフラグが立っているかどうか
+	bool mIsWallHitRightFlag;
+	bool mIsWallHitLeftFlag;
 
 	//画像読み込みフラグ
 	bool mIsLoadTexture;

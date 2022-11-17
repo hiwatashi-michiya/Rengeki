@@ -13,6 +13,12 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 100, false);
 	}
 
+	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 200, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 200, false);
+
+	mIsWallHitRightFlag = false;
+	mIsWallHitLeftFlag = false;
+
 	mKnockBackVelocity = { 0.0f, 0.0f };
 	mColor = 0x0000FFFF;
 	mAttackCount = kEnemyMaxAttack;
@@ -84,6 +90,24 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
+	//パーティクル表示
+	if (mIsWallHitRightFlag == true) {
+		mWallHitRight.Update(mPosition);
+	}
+
+	if (mIsWallHitLeftFlag == true) {
+		mWallHitLeft.Update(mPosition);
+	}
+
+	//パーティクルが全て出たらフラグを降ろす
+	if (mWallHitRight.GetAllParticleFlag() == false) {
+		mIsWallHitRightFlag = false;
+	}
+
+	if (mWallHitLeft.GetAllParticleFlag() == false) {
+		mIsWallHitLeftFlag = false;
+	}
+
 	//１フレーム前の座標取得
 	mOldPosition = mPosition;
 
@@ -98,6 +122,7 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
 	////////////////////　ここから弱攻撃　////////////////////
 
+	//パーティクル表示
 	for (int i = 0; i < kEnemyMaxAttack; i++) {
 
 		if (mIsAttack[i] == true) {
@@ -894,11 +919,31 @@ void Enemy::Collision(Player& player) {
 	//左判定
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
 		mPosition.x = Stage::kStageLeft + mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
+
+			mWallHitLeft.SetFlag(mPosition);
+			mIsWallHitLeftFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
 	}
 
 	//右判定
 	if (mPosition.x + mRadius > Stage::kStageRight) {
 		mPosition.x = Stage::kStageRight - mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
+
+			mWallHitRight.SetFlag(mPosition);
+			mIsWallHitRightFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
 	}
 
 	//下判定
@@ -943,6 +988,15 @@ void Enemy::HitPoint(Stage& stage) {
 }
 
 void Enemy::Draw(Screen& screen, Player& player) {
+
+	//壁当てパーティクル
+	if (mIsWallHitRightFlag == true) {
+		mWallHitRight.Draw(screen);
+	}
+
+	if (mIsWallHitLeftFlag == true) {
+		mWallHitLeft.Draw(screen);
+	}
 
 	//敵描画
 	

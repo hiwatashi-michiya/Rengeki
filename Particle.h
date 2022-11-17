@@ -82,6 +82,21 @@ public:
 
 	}
 
+	//パーティクルのフラグが全てfalseだった場合falseを返す
+	inline bool GetAllParticleFlag() {
+
+		for (int i = 0; i < mMaxParticle; i++) {
+
+			if (mIsAlive[i] == true) {
+				return true;
+			}
+
+		}
+
+		return false;
+
+	}
+
 	//パーティクルの色を指定の色に変更
 	inline void ChangeParticleColor(int color) {
 
