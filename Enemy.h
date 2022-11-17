@@ -163,6 +163,12 @@ private:
 	//外積の値
 	float mCross;
 
+	//壁に当たった時のエフェクト
+	Particle mWallHitRight;
+	Particle mWallHitLeft;
+	//パーティクルフラグが立っているかどうか
+	bool mIsWallHitRightFlag;
+	bool mIsWallHitLeftFlag;
 
 	//////////////////// 敵の動きをまとめる ////////////////////
 
