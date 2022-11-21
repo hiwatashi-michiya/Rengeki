@@ -351,7 +351,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//ŠÔ‡‚¢‚ğæ‚é
-			if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
 
 				//­‚µ‚¾‚¯‘Ş‚­
 				if (mStartFrame % 30 <= 10) {
@@ -499,7 +499,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//ŠÔ‡‚¢‚ğæ‚é
-			if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//‘Ş‚­
 				if (mStartFrame % 30 <= 15) {
@@ -607,7 +607,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//ŠÔ‡‚¢‚ğæ‚é
-			if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//‘Ş‚­
 				if (mStartFrame % 30 <= 15) {
