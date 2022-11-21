@@ -616,17 +616,7 @@ void Player::Draw(Screen& screen) {
 
 	
 
-	//移動
-	if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		mIsJump = false;
-		mJumpAnimeCount = 0;
-		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
-	}
-	if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		mIsJump = false;
-		mJumpAnimeCount = 0;
-		screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
-	}
+	
 
 	//立っている時
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
@@ -639,6 +629,25 @@ void Player::Draw(Screen& screen) {
 
 		mIsJump = false;
 		mJumpAnimeCount = 0;
+	}
+	//移動
+	if (Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		if (mDirection == RIGHT) {
+			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+		}
+		if (mDirection == LEFT) {
+			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+		}
+	}
+	else if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		mIsJump = false;
+		mJumpAnimeCount = 0;
+		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
+	}
+	else if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		mIsJump = false;
+		mJumpAnimeCount = 0;
+		screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
 	}
 
 	//ジャンプ
