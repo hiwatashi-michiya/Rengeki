@@ -12,7 +12,10 @@ void Comparison(int& num, int num1);
 float Lerp(float easing, int end);
 
 /*　数値を収める関数　*/
-float Clamp(float t, float min, float max); 
+float Clamp(float num, float min, float max); 
+
+/*　イージング使用時に増加量とクランプを楽に行うための関数　*/
+float EasingClamp(float increase, float t);
 
 /*　度数を入れるとラジアンに変換する関数　*/
 float Degree(float degree);

@@ -104,6 +104,11 @@ public:
 	//攻撃しているか
 	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
 
+	//-----星砕流奥義・星の雫-----//
+
+	//攻撃しているか
+	inline bool GetIsStarDropAttack() { return mIsActive; }
+
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
 	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
@@ -300,6 +305,49 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+
+	////////////////////　ここから第二形態の必殺技　////////////////////
+
+	//-----必殺技２　星砕流・落下星改-----//
+
+	//-----必殺技３　星砕流奥義・星の雫-----//
+	//-----ステータス-----//
+	//原石
+	float mWidth;
+	float mHeight;
+	const float kStoneInterval = 350.0f;
+	unsigned int mStoneColor;
+	int mStone;
+	//エネルギー
+	float mEnergyRadius;
+	unsigned int mEnergyColor;
+	//雫
+	float mPowerRadius;
+	unsigned int mPowerColor;
+
+	//-----動作-----//
+	bool mIsActive;
+	bool mIsDisplay;
+	//原石
+	Vec2 mStonePosition[3];
+	bool mIsStoneDisplay[3];
+	//エネルギー
+	Vec2 mEnergyPosition[50];
+	Vec2 mEnergyStartPosition[50];
+	Vec2 mEnergyEndPosition;
+	bool mIsEnergyActive[50];
+	float mEnergyEasingt[50];
+	//雫
+	Vec2 mPowerPosition;
+	bool mIsPowerDisplay;
+	float mPowerStartRadius;
+	float mPowerEasingt;
+
+	bool mIsStartAttack;
+
+	int mFrame;
+	//関数
+	void StarDrop();
 
 	//最後に速度を代入する
 	void VelocityAssign();

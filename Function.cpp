@@ -23,6 +23,14 @@ float Clamp(float num, float min, float max) {
 	return num;
 };
 
+/*　イージング使用時に増加量とクランプを楽に行うための関数　*/
+float EasingClamp(float increase, float t) {
+	if (t >= 1.0f) {
+		return 1.0f;
+	}
+	return t + increase;
+}
+
 /*　度数を入れるとラジアンに変換する関数　*/
 float Degree(float degree) {
 	return degree * (M_PI / 180);

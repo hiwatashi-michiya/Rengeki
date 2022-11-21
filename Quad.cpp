@@ -70,7 +70,15 @@ Quad WindowAssign() {
 		{  kWindowWidth / 2,  kWindowHeight / 2 }
 	};
 }
+Quad RectAssign(float Width, float Height) {
 
+	return {
+		{ -Width / 2, -Height / 2 },
+		{  Width / 2, -Height / 2 },
+		{ -Width / 2,  Height / 2 },
+		{  Width / 2,  Height / 2 }
+	};
+}
 
 void Draw::drawQuad(Quad quad, int srcX, int srcY, int srcW, int srcH, int textureHandle, unsigned int color) {
 
