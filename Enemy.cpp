@@ -10,11 +10,16 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 
 	for (int i = 0; i < 3; i++) {
-		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 100, false);
+		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
 	}
 
-	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 200, false);
-	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 200, false);
+	for (int i = 0; i < kFallingStarMax; i++) {
+		mFallingStarParticleLeft[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
+		mFallingStarParticleRight[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
+	}
+
+	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
 
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;
@@ -155,6 +160,16 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	SpecialAttack(player, particle);
 
 	////////////////////@‚±‚±‚©‚ç•KŽE‹Z@////////////////////
+
+	for (int i = 0; i < kFallingStarMax; i++) {
+
+		if (mIsFallingStarAttack[i] == true) {
+			mFallingStarParticleLeft[i].Update(mLeftFallingStarPosition[i]);
+			mFallingStarParticleRight[i].Update(mRightFallingStarPosition[i]);
+		}
+
+	}
+
 	FallingStar(player);
 
 	//‘¬“x‚Ì‘ã“ü
@@ -937,12 +952,16 @@ void Enemy::FallingStar(Player& player) {
 			if (mIsGround == true) {
 				mFallingStarFrame++;
 				mIsFallingStarAttack[mFallingStarStartValue] = true;
+				mFallingStarParticleLeft[mFallingStarStartValue].SetFlag(mLeftFallingStarPosition[mFallingStarStartValue]);
+				mFallingStarParticleRight[mFallingStarStartValue].SetFlag(mRightFallingStarPosition[mFallingStarStartValue]);
 				if (mFallingStarFrame % 5 == 0) {
 					mFallingStarStartValue++;
 					mFallingStarStartValue = Clamp(mFallingStarStartValue, 0, 9);
 				}
 				if ((mFallingStarFrame - 20) >= 0 && (mFallingStarFrame - 20) % 5 == 0){
 					mIsFallingStarAttack[mFallingStarEndValue] = false;
+					mFallingStarParticleLeft[mFallingStarEndValue].Reset();
+					mFallingStarParticleRight[mFallingStarEndValue].Reset();
 					mFallingStarEndValue++;
 				}
 				if (mFallingStarFrame >= ( 5 * (kFallingStarMax - 1) + 20 )) {
@@ -1314,6 +1333,8 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		if (mIsFallingStarAttack[i] == true) {
 			screen.DrawEllipse(mLeftFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
 			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			mFallingStarParticleLeft[i].Draw(screen);
+			mFallingStarParticleRight[i].Draw(screen);
 		}
 	}
 

@@ -246,7 +246,7 @@ void Particle::SetFlag(Vec2 position) {
 
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
-				mRadius[i] = RandNum(1, 10, NATURAL);
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
 				mVelocity[i].x = RandNum(1, 3, PLUSMINUS) + (RandNum(0, 9, PLUSMINUS) * 0.1f);
 				mVelocity[i].y = RandNum(-30, -15, NATURAL);
 				mRandColor[i] = RandNum(0x00000088, 0x000000FF, NATURAL);
@@ -440,9 +440,19 @@ void Particle::Move(Vec2 position) {
 
 			}
 
+			//è„è∏å^
 			if (mParticleType == BOTTOMTOTOP) {
 
 				if (mPosition[i].y < mParticleExtinction - mRadius[i]) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			//ï¨êÖå^
+			if (mParticleType == FOUNTAIN) {
+
+				if (mPosition[i].y >= mParticleExtinction) {
 					mIsAlive[i] = false;
 				}
 

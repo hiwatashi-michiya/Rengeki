@@ -55,7 +55,7 @@ public:
 	void Draw(Screen& screen, Player& player);
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
+	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -309,6 +309,9 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+	//パーティクル
+	Particle mFallingStarParticleLeft[kFallingStarMax];
+	Particle mFallingStarParticleRight[kFallingStarMax];
 
 	//最後に速度を代入する
 	void VelocityAssign();
