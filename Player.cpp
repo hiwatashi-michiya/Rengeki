@@ -15,11 +15,11 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 	//パーティクル
 	for (int i = 0; i < 3; i++) {
-		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 100, false);
+		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
 	}
 
-	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 200, false);
-	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 200, false);
+	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 100, false);
 
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;

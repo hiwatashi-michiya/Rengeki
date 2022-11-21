@@ -30,19 +30,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Enemy enemy({ 1000.0f,800.0f }, { 5.0f,5.0f }, 30.0f);
 	Stage stage;
 
-	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 500, true);
+	Particle stageParticle(BOTTOMTOTOP, 0xFFFFFF00, 0, 1, 3, 300, true);
 
 	Particle enemyParticle(PLAYERDIFFUSION, 0xFF00FF00, 
-		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() + 12, enemy.GetEnemyRadius() + 13, 100, true);
+		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() + 12, enemy.GetEnemyRadius() + 13, 10, true);
 
 	Particle enemyParticle2(STAY, 0xFF00FF00,
-		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() - 25, enemy.GetEnemyRadius() - 15, 100, true);
+		(enemy.GetEnemyRadius() / 2), enemy.GetEnemyRadius() - 25, enemy.GetEnemyRadius() - 15, 50, true);
 
 	Particle playerParticle(PLAYERDIFFUSION, 0x00FFFF00,
-		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() + 12, player.GetPlayerRadius() + 13, 100, true);
+		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() + 12, player.GetPlayerRadius() + 13, 10, true);
 
 	Particle playerParticle2(STAY, 0x00FFFF00, 
-		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() - 25, player.GetPlayerRadius() - 15, 100, true);
+		(player.GetPlayerRadius() / 2), player.GetPlayerRadius() - 25, player.GetPlayerRadius() - 15, 50, true);
 
 	Vec2 stageParticlePosition = { 0,800 };
 
@@ -66,6 +66,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		screen.ZoomUpdate(stage, player, enemy);
 		screen.ScrollUpdate(stage, player, enemy);
+
+		//体力が低くなったら敵パーティクルの色を変える
+		if (enemy.GetEnemyHitPoint() <= 50 &&
+			enemyParticle.GetParticleColor(0xFF000000) == false &&
+			enemyParticle2.GetParticleColor(0xFF000000) == false) {
+			enemyParticle.ChangeParticleColor(0xFF000000);
+			enemyParticle2.ChangeParticleColor(0xFF000000);
+		}
 
 		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
 

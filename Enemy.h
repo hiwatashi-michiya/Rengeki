@@ -55,7 +55,7 @@ public:
 	void Draw(Screen& screen, Player& player);
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
+	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -63,6 +63,9 @@ public:
 
 	//半径取得
 	inline float GetEnemyRadius() { return mRadius; }
+
+	//体力取得
+	inline int GetEnemyHitPoint() { return mHitPoint; }
 
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
@@ -198,8 +201,14 @@ private:
 	//ステップのクールタイム処理
 	int mStepFrame;
 	int mStepCoolTime[3];
+	//第二形態時のクールタイム
+	int mNewStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
+	//大ジャンプフラグ
+	bool mBigJumpLeft;
+	bool mBigJumpRight;
+
 
 	//-----バックステップ-----//
 	//バックステップフラグ
@@ -300,6 +309,9 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+	//パーティクル
+	Particle mFallingStarParticleLeft[kFallingStarMax];
+	Particle mFallingStarParticleRight[kFallingStarMax];
 
 	//最後に速度を代入する
 	void VelocityAssign();
