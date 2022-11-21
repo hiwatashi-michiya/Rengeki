@@ -58,6 +58,11 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mStepCoolTime[0] = 15;
 	mStepCoolTime[1] = 20;
 	mStepCoolTime[2] = 25;
+	mNewStepCoolTime[0] = 13;
+	mNewStepCoolTime[1] = 18;
+	mNewStepCoolTime[2] = 30;
+	mBigJumpLeft = false;
+	mBigJumpRight = false;
 	////////////////////　ここから強攻撃　////////////////////
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
@@ -89,6 +94,19 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 }
 
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
+
+	//体力低下でパーティクルの色を変える
+	if (mHitPoint <= 50 &&
+		mWallHitLeft.GetParticleColor(0xFF000000) == false &&
+		mWallHitRight.GetParticleColor(0xFF000000) == false) {
+		mWallHitLeft.ChangeParticleColor(0xFF000000);
+		mWallHitRight.ChangeParticleColor(0xFF000000);
+
+		for (int i = 0; i < kMaxAttack; i++) {
+			mAttackParticle[i].ChangeParticleColor(0xFF000000);
+		}
+
+	}
 
 	//パーティクル表示
 	if (mIsWallHitRightFlag == true) {
@@ -177,7 +195,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 	}
 
 	//攻撃していない場合
-	if (AnyAttack() == false) {
+	if (AnyAttack() == false && mHitPoint > 50) {
+
+		//背景の色を変化させる
+		if (particle.GetParticleColor(0xFFFFFF00) == false) {
+			particle.ChangeParticleColor(0xFFFFFF00);
+		}
 
 		//地面にいる場合
 		if (mIsGround == true) {
@@ -203,11 +226,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 		}
 
-		//背景の色を変化させる
-		if (particle.GetParticleColor(0xFFFFFF00) == false) {
-			particle.ChangeParticleColor(0xFFFFFF00);
-		}
-
+		//プレイヤーより右側の場合
 		if (mPosition.x >= player.GetPlayerPosition().x) {
 
 			//距離によって速度を変える
@@ -304,6 +323,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			mDirection = ENEMYLEFT;
 		}
+		//プレイヤーより左側の場合
 		else {
 			
 			//距離によって速度を変える
@@ -403,13 +423,283 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 			mDirection = ENEMYRIGHT;
 		}
-	} else {
-		mVelocity.x = 0.0f;
+	}
+	//体力が減ったら行動パターンを変更
+	else if (AnyAttack() == false && mHitPoint <= 50) {
+
+		//背景の色を変化させる
+		if (particle.GetParticleColor(0xFFFFFF00) == false) {
+			particle.ChangeParticleColor(0xFFFFFF00);
+		}
+
+		//地面にいる場合
+		if (mIsGround == true) {
+
+			//大ジャンプフラグをfalseに
+			mBigJumpLeft = false;
+			mBigJumpRight = false;
+
+			//ステップしない時一定のタイミングで低確率でジャンプ
+			if (RandNum(1,10,NATURAL) % 10 <= 1 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
+
+				//距離によってジャンプ距離を変える
+				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+					mVelocity.y = -30.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					mVelocity.y = -20.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+					mVelocity.y = -25.0f;
+				}
+				else {
+					mVelocity.y = -40.0f;
+				}
+
+			}
+
+		}
+
+		//プレイヤーより右側の場合
+		if (mPosition.x >= player.GetPlayerPosition().x) {
+
+			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100 && mStartFrame > 30) {
+
+				//右側の場合
+				if (Stage::kStageRight - mPosition.x - mRadius < 100) {
+					mVelocity.y = -35.0f;
+					mBigJumpRight = true;
+				}
+
+			}
+
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = -2.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = -3.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = -5.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = -4.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = -7.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = -5.5f;
+			}
+			else {
+				mVelocity.x = -15.0f;
+			}
+
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+
+				//退く
+				if (mStartFrame % 30 <= 15) {
+					mVelocity.x = 3.0f;
+				}
+
+			}
+
+			//地面にいるときステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+				// 4/5の確率でステップする
+				if (RandNum(1,5,NATURAL) % 5 != 0) {
+
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(70, 105, BINARY) * -1;
+					}
+					else {
+						mVelocity.x = RandNum(70, 105, BINARY);
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
+					}
+
+				}
+
+			}
+
+			mDirection = ENEMYLEFT;
+		}
+		//プレイヤーより左側の場合
+		else {
+
+			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100 && mStartFrame > 30) {
+
+				//左側の場合
+				if (mPosition.x - mRadius - Stage::kStageLeft < 100) {
+					mVelocity.y = -35.0f;
+					mBigJumpLeft = true;
+				}
+
+			}
+
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = 2.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = 3.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = 5.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = 5.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = 7.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = 5.5f;
+			}
+			else {
+				mVelocity.x = 15.0f;
+			}
+
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+
+				//退く
+				if (mStartFrame % 30 <= 15) {
+					mVelocity.x = -3.0f;
+				}
+
+			}
+
+			//地面にいる時ステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+
+				// 4/5の確率でステップする
+				if (RandNum(1,5,NATURAL) % 5 != 0) {
+
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(70, 140, BINARY);
+					}
+					else {
+						mVelocity.x = RandNum(70, 140, BINARY) * -1;
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
+					}
+
+				}
+
+			}
+
+
+
+			mDirection = ENEMYRIGHT;
+		}
+
+	}
+	else {
+		mVelocity.x = 0;
+		//大ジャンプフラグをfalseに
+		mBigJumpLeft = false;
+		mBigJumpRight = false;
 	}
 
 	//少しの間停止
 	if (55 <= mStartFrame && mStartFrame < 65) {
 		mVelocity.x = 0.0f;
+	}
+
+	//大ジャンプしていたら移動
+	if (mBigJumpLeft == true) {
+		mVelocity.x = 20.0f;
+	}
+
+	if (mBigJumpRight == true) {
+		mVelocity.x = -20.0f;
 	}
 
 }

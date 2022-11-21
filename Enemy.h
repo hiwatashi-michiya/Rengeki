@@ -64,6 +64,9 @@ public:
 	//半径取得
 	inline float GetEnemyRadius() { return mRadius; }
 
+	//体力取得
+	inline int GetEnemyHitPoint() { return mHitPoint; }
+
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
 
@@ -198,8 +201,14 @@ private:
 	//ステップのクールタイム処理
 	int mStepFrame;
 	int mStepCoolTime[3];
+	//第二形態時のクールタイム
+	int mNewStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
+	//大ジャンプフラグ
+	bool mBigJumpLeft;
+	bool mBigJumpRight;
+
 
 	//-----バックステップ-----//
 	//バックステップフラグ

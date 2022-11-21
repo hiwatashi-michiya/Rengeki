@@ -67,6 +67,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screen.ZoomUpdate(stage, player, enemy);
 		screen.ScrollUpdate(stage, player, enemy);
 
+		//体力が低くなったら敵パーティクルの色を変える
+		if (enemy.GetEnemyHitPoint() <= 50 &&
+			enemyParticle.GetParticleColor(0xFF000000) == false &&
+			enemyParticle2.GetParticleColor(0xFF000000) == false) {
+			enemyParticle.ChangeParticleColor(0xFF000000);
+			enemyParticle2.ChangeParticleColor(0xFF000000);
+		}
+
 		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
