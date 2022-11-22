@@ -415,6 +415,8 @@ private:
 	int mBefore_triple_attack;
 	int mFallingStarAttack;
 	int mButtobi;
+	int mEnerge;
+	int mTama;
 };
 
 

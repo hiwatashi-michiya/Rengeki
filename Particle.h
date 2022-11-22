@@ -27,6 +27,8 @@ enum PARTICLETYPE {
 	WALLHITRIGHT,
 	//壁当て左
 	WALLHITLEFT,
+	//星の雫
+	STARDROP
 
 };
 
@@ -162,6 +164,10 @@ private:
 
 	//座標
 	Vec2 mPosition[kMaxParticle];
+
+	//イージング用の初期座標保持
+	Vec2 mStartPosition[kMaxParticle];
+	float mEasingt[kMaxParticle];
 
 	//速度
 	Vec2 mVelocity[kMaxParticle];
