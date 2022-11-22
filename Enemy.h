@@ -81,6 +81,8 @@ public:
 	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 	//攻撃しているか
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
+	//攻撃回数の取得
+	inline int GetAttackCount() { return mAttackCount; }
 	//向きの取得
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
 	//被弾後に壁にあったかどうかを取得する
@@ -392,6 +394,9 @@ private:
 	int mAttackFrame;
 	//関数
 	void StarDrop();
+	//パーティクル
+	Particle mStarDropParticle;
+	Particle mStarDropAttackParticle;
 
 	//最後に速度を代入する
 	void VelocityAssign();

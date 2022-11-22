@@ -285,6 +285,7 @@ void Player::Attack() {
 		mAttackCount = kMaxAttack;
 	}
 
+
 }
 void Player::Jump() {
 
@@ -404,11 +405,11 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
 					mColor = 0xFFFF00FF;
-					mIsHit[i] = true;
+					mIsHit[enemy.GetAttackCount() - 1] = true;
 					mHitFrame = 10;
 
 					//“G‚ÌŒü‚«‚É‚æ‚Á‚ÄƒmƒbƒNƒoƒbƒN‚·‚é•ûŒü‚ğ•Ï‚¦‚é
-					KnockBack(enemy, i);
+					KnockBack(enemy, enemy.GetAttackCount() - 1);
 				}
 				else {
 					mIsHit[i] = false;
@@ -717,7 +718,7 @@ void Player::Draw(Screen& screen) {
 		
 	}
 	
-	Novice::ScreenPrintf(400, 400, "mKnockBackVelocity.y : %f", mKnockBackVelocity.y);
+	Novice::ScreenPrintf(400, 400, "mAttackCount : %d", mAttackCount);
 	
 
 	//UŒ‚”ÍˆÍ•`‰æ
@@ -728,4 +729,5 @@ void Player::Draw(Screen& screen) {
 			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
 		}
 	}
+
 }

@@ -23,12 +23,15 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
 	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
 
+	mStarDropParticle = Particle(STARDROP, 0xFFFFFF00, 20, 3, 25, 100, false);
+	mStarDropAttackParticle = Particle(HALFCIRCLE, 0xFFFFFF00, 20, 3, 25, 200, false);
+
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;
 
 	mKnockBackVelocity = { 0.0f, 0.0f };
 	mColor = 0x0000FFFF;
-	mAttackCount = kEnemyMaxAttack;
+	mAttackCount = 0;
 	mJumpCount = 0;
 	mIsGround = false;
 	mDirection = ENEMYRIGHT;
@@ -1076,6 +1079,15 @@ void Enemy::StarDrop() {
 
 		if (300 <= mFrame) {
 
+			if (mIsStartAttack == false) {
+				mStarDropParticle.SetFlag(mPosition);
+				mStarDropParticle.Update(mPosition);
+			}
+			else {
+				mStarDropParticle.Reset();
+			}
+			
+
 			for (int i = 0; i < 50; i++) {
 
 				if (mFrame % 10 == 0 && mIsEnergyActive[i] == false && mIsStartAttack == false) {
@@ -1133,6 +1145,11 @@ void Enemy::StarDrop() {
 			mIsActiveStarDrop = true;
 		}
 
+		if (mIsActiveStarDrop == true) {
+			mStarDropAttackParticle.SetFlag({ mPowerStartPosition.x, Stage::kStageBottom });
+			mStarDropAttackParticle.Update({ mPowerStartPosition.x, Stage::kStageBottom });
+		}
+
 		if (240 <= mAttackFrame){
 			mPowerColort = EasingClamp(0.01f, mPowerColort);
 			mWhiteColor = ColorEasingMove(0xFFFFFF00, 0xFFFFFFFF, easeLinear(mPowerColort));
@@ -1167,6 +1184,7 @@ void Enemy::StarDrop() {
 		mPowerColort = EasingClamp(0.01f, mPowerColort);
 		mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
 		if (mPowerColort == 1.0f) {
+			mStarDropAttackParticle.Reset();
 			mIsActive = false;
 			mIsEasingMust = false;
 		}
@@ -1191,6 +1209,15 @@ void Enemy::MovePattern(Player& player) {
 		if (mStartFrame >= mStartFrameTimer){
 			mIsStart = true;
 		}
+	}
+
+	if (Key::IsTrigger(DIK_A)){
+		mVelocity.x = 0.0f;
+		mAttackCount = 0;
+		mAttackTimer = kEnemyMaxAttack * 15;
+		mIsAttackStart = true;
+		mStartFrame = 0;
+		mIsStart = false;
 	}
 
 	if (AnyAttack() == false && mIsStart == true && mCanAttack == true){
@@ -1385,26 +1412,26 @@ void Enemy::Collision(Player& player) {
 
 				mColor = 0xFFFF00FF;
 				//ヒットフラグを立てる
-				if (mIsHit[i] == false) {
-					mHitPoint -= kAttackValue[i];
-					mIsHit[i] = true;
+				if (mIsHit[2 - player.GetAttackCount()] == false) {
+					mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
+					mIsHit[2 - player.GetAttackCount()] = true;
 				}
 
 				//プレイヤーの向きによってノックバックする方向を変える
-				if (player.GetPlayerDirection() == RIGHT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
+				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2 - player.GetAttackCount()] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2 - player.GetAttackCount()].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
 					mVelocity.y = 0.0f;
 					mCanAttack = false;
-					mKnockBack[i] = true;
+					mKnockBack[2 - player.GetAttackCount()] = true;
 				}
 
-				if (player.GetPlayerDirection() == LEFT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = -kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
+				if (player.GetPlayerDirection() == LEFT && mKnockBack[2 - player.GetAttackCount()] == false) {
+					mKnockBackVelocity.x = -kKnockBackLength[2 - player.GetAttackCount()].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
 					mVelocity.y = 0.0f;
 					mCanAttack = false;
-					mKnockBack[i] = true;
+					mKnockBack[2 - player.GetAttackCount()] = true;
 				}
 
 			}
@@ -1551,15 +1578,23 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	//星の雫使用時の移動中は描画しない
 	if (mIsDisplay == true){
 
-		////待機モーション
-		//if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
-		//	if (mDirection == ENEMYRIGHT) {
-		//		screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
-		//	}
-		//	if (mDirection == ENEMYLEFT) {
-		//		screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
-		//	}
-		//}
+		//エネルギーを溜めている間のパーティクル表示
+		mStarDropParticle.Draw(screen);
+
+		//星の雫が落ちたときにパーティクル表示
+		if (mIsActiveStarDrop == true) {
+			mStarDropAttackParticle.Draw(screen);
+		}
+
+		//待機モーション
+		if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
+			if (mDirection == ENEMYRIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
+			if (mDirection == ENEMYLEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
+		}
 
 	//バックステップモーション
 		if (mIsBackStep) {
@@ -1670,5 +1705,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
+
+	Novice::ScreenPrintf(40, 40, "mAttackCount : %d", mAttackCount);
 
 }
