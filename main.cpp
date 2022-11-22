@@ -102,6 +102,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			enemyParticle2.ChangeParticleColor(0xFF000000);
 		}
 
+		//ラウンド2で敵パーティクルの色を変える
+		if (enemy.GetIsHitPointAssign() == true &&
+			enemyParticle.GetParticleColor(0xFFFFFF00) == false &&
+			enemyParticle2.GetParticleColor(0xFFFFFF00) == false) {
+			enemyParticle.ChangeParticleColor(0xFFFFFF00);
+			enemyParticle2.ChangeParticleColor(0xFFFFFF00);
+		}
+
 		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false && stage.mIsWallHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
