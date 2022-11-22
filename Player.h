@@ -139,6 +139,13 @@ private:
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
 
+	//////////////////// ラウンド遷移用 ////////////////////
+
+	//移動の始点と終点
+	Vec2 mRoundStartPosition;
+	Vec2 mRoundEndPosition;
+	//遷移関数
+	void RoundTranslation(Enemy& enemy);
 
 	//----------動き関係----------//
 	//---攻撃---//

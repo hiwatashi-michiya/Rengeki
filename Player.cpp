@@ -106,6 +106,8 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Collision(stage, enemy);
 
+	RoundTranslation(enemy);
+
 }
 
 
@@ -133,7 +135,7 @@ void Player::Move(Enemy& enemy) {
 	//プレイヤーの場合の操作
 
 	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか
-	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false) {
+	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -175,8 +177,19 @@ void Player::Move(Enemy& enemy) {
 	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
 	
 	//攻撃
-	if (enemy.GetIsStarDropAttack() == false){
+	if (enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false){
 		Attack();
+	}
+
+	//タイマーが0になったらフラグを戻す
+	if (enemy.GetIsRoundTranslation() == true) {
+
+		for (int i = 0; i < kMaxAttack; i++) {
+			mIsAttack[i] = false;
+			mAttackParticle[i].Reset();
+		}
+
+		mAttackCount = kMaxAttack;
 	}
 
 	//速度を加算
@@ -319,7 +332,20 @@ void Player::Rolling() {
 	}
 }
 
+void Player::RoundTranslation(Enemy& enemy) {
 
+	if (enemy.GetIsRoundTranslation() == true) {
+
+		if (enemy.GetIsOldRoundMove() == false && enemy.GetIsRoundMove() == true) {
+			mRoundStartPosition = mPosition;
+			mRoundEndPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
+		}
+
+		if (enemy.GetIsRoundMove() == true) {
+			mPosition = EasingMove(mRoundStartPosition, mRoundEndPosition, easeOutExpo(enemy.GetRoundEasingt()));
+		}
+	}
+}
 
 //----------ここから当たり判定----------//
 void Player::Collision(Stage& stage, Enemy& enemy) {
@@ -381,98 +407,92 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	//ローリングしてない時に攻撃を受ける
 	if (mIsRolling == false) {
 
-		if (stage.GetRound() == Round1) {
 
-			//-----弱攻撃当たり判定-----//
-			for (int i = 0; i < kEnemyMaxAttack; i++) {
+		//-----弱攻撃当たり判定-----//
+		for (int i = 0; i < kEnemyMaxAttack; i++) {
 
-				//攻撃を受けた場合
-				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
-					mColor = 0xFFFF00FF;
-					mIsHit[enemy.GetAttackCount() - 1] = true;
-					mHitFrame = 10;
+			//攻撃を受けた場合
+			if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[enemy.GetAttackCount() - 1] = true;
+				mHitFrame = 10;
 
-					//敵の向きによってノックバックする方向を変える
-					KnockBack(enemy, enemy.GetAttackCount() - 1);
-				}
-				else {
-					mIsHit[i] = false;
-					mKnockBack[i] = false;
-				}
-
-				//何も攻撃を受けていない時は色を戻す
-				if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
-					mColor = 0xFFFFFFFF;
-				}
+				//敵の向きによってノックバックする方向を変える
+				KnockBack(enemy, enemy.GetAttackCount() - 1);
+			}
+			else {
+				mIsHit[i] = false;
+				mKnockBack[i] = false;
 			}
 
-			//-----強攻撃当たり判定-----
-			//攻撃を受けた場合
-			if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+			//何も攻撃を受けていない時は色を戻す
+			if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
+				mColor = 0xFFFFFFFF;
+			}
+		}
+
+		//-----強攻撃当たり判定-----
+		//攻撃を受けた場合
+		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+			mColor = 0xFFFF00FF;
+			mIsHit[2] = true;
+			mHitFrame = 10;
+
+			//敵の向きによってノックバックする方向を変える
+			KnockBack(enemy, 2);
+
+		}
+		else if (enemy.GetIsAttack(2) == false) {
+			mIsHit[2] = false;
+			mKnockBack[2] = false;
+		}
+
+		//-----星砕流・落下星当たり判定-----//
+		for (int i = 0; i < kFallingStarMax; i++) {
+
+			//左側攻撃を受けた場合
+			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
 				mHitFrame = 10;
 
-				//敵の向きによってノックバックする方向を変える
-				KnockBack(enemy, 2);
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = -kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mVelocity.y = 0;
+					mCanJump = false;
+					mKnockBack[2] = true;
+				}
+				break;
 
 			}
-			else if (enemy.GetIsAttack(2) == false) {
+
+			//右側攻撃を受けた場合
+			if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[2] = true;
+				mHitFrame = 10;
+
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mVelocity.y = 0;
+					mCanJump = false;
+					mKnockBack[2] = true;
+				}
+				break;
+
+			}
+
+			else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
 				mIsHit[2] = false;
 				mKnockBack[2] = false;
 			}
 
-			//-----星砕流・落下星当たり判定-----//
-			for (int i = 0; i < kFallingStarMax; i++) {
-
-				//左側攻撃を受けた場合
-				if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
-					mColor = 0xFFFF00FF;
-					mIsHit[2] = true;
-					mHitFrame = 10;
-
-					if (mKnockBack[2] == false) {
-						mKnockBackVelocity.x = -kKnockBackLength[2].x;
-						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mVelocity.y = 0;
-						mCanJump = false;
-						mKnockBack[2] = true;
-					}
-					break;
-
-				}
-
-				//右側攻撃を受けた場合
-				if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
-					mColor = 0xFFFF00FF;
-					mIsHit[2] = true;
-					mHitFrame = 10;
-
-					if (mKnockBack[2] == false) {
-						mKnockBackVelocity.x = kKnockBackLength[2].x;
-						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mVelocity.y = 0;
-						mCanJump = false;
-						mKnockBack[2] = true;
-					}
-					break;
-
-				}
-
-				else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
-					mIsHit[2] = false;
-					mKnockBack[2] = false;
-				}
-
-				//何も攻撃を受けていない時は色を戻す
-				if (mIsHit[2] == false) {
-					mColor = 0xFFFFFFFF;
-				}
+			//何も攻撃を受けていない時は色を戻す
+			if (mIsHit[2] == false) {
+				mColor = 0xFFFFFFFF;
 			}
-		}
-
-		if (stage.GetRound() == Round2) {
-
 		}
 
 	}
@@ -697,7 +717,6 @@ void Player::Draw(Screen& screen) {
 		
 	}
 	
-	Novice::ScreenPrintf(400, 400, "mAttackCount : %d", mAttackCount);
 	
 
 	//攻撃範囲描画

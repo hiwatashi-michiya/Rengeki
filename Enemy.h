@@ -70,6 +70,15 @@ public:
 	//体力取得
 	inline int GetEnemyHitPoint() { return mHitPoint; }
 
+	////////////////////　ラウンド遷移取得関数　////////////////////
+
+	inline bool GetIsRoundTranslation() { return mIsRoundTranslation; }
+	inline bool GetIsOldRoundTranslation() { return mIsOldRoundTranslation; }
+	inline bool GetIsRoundMove() { return mIsRoundMove; }
+	inline bool GetIsOldRoundMove() { return mIsOldRoundMove; }
+	inline int GetRoundFrame() { return mRoundFrame; }
+	inline float GetRoundEasingt() { return mRoundEasingt; }
+
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
 
@@ -198,6 +207,25 @@ private:
 	//パーティクルフラグが立っているかどうか
 	bool mIsWallHitRightFlag;
 	bool mIsWallHitLeftFlag;
+
+	//////////////////// ラウンド遷移用 ////////////////////
+
+	//ラウンド遷移を開始するか && できるか
+	bool mIsRoundTranslation;
+	bool mIsOldRoundTranslation;
+	bool mCanRoundTranslation;
+	//遷移時に移動を開始するか
+	bool mIsRoundMove;
+	bool mIsOldRoundMove;
+	//ラウンド遷移のフレーム
+	int mRoundFrame;
+	//イージング値
+	float mRoundEasingt;
+	//移動の始点と終点
+	Vec2 mRoundStartPosition;
+	Vec2 mRoundEndPosition;
+	//遷移関数
+	void RoundTranslation();
 
 	//////////////////// 敵の動きをまとめる ////////////////////
 

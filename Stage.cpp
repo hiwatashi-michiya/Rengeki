@@ -66,6 +66,13 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 
 }
 
+void Stage::RoundTranslation(Enemy& enemy) {
+
+	if (120 <= enemy.GetRoundFrame()){
+		Round = Round2;
+	}
+}
+
 void Stage::Draw(Screen& screen) {
 
 	if (mIsLoadTexture == false){

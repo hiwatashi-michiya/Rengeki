@@ -50,6 +50,12 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mCross = 0.0f;
 	mCanAttack = true;
 	mIsWallHit = false;
+	//////////////////// ƒ‰ƒEƒ“ƒh‘JˆÚ—p ////////////////////
+	mIsRoundTranslation = false;
+	mIsRoundMove = false;
+	mCanRoundTranslation = false;
+	mRoundFrame = 0;
+	mRoundEasingt = 0.0f;
 	//////////////////// ‚±‚±‚©‚çUŒ‚ŠÖŒW ////////////////////
 	mIsStart = false;
 	mStartFrame = -30;
@@ -180,9 +186,12 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	//‚PƒtƒŒ[ƒ€‘O‚ÌÀ•WŽæ“¾
 	mOldPosition = mPosition;
 
-	Move(player, particle);
+	if (mIsRoundTranslation == false) {
 
-	MovePattern(player);
+		Move(player, particle);
+
+		MovePattern(player);
+	}
 
 	////////////////////@‚±‚±‚©‚çŠî‘bˆÚ“®@////////////////////
 
@@ -224,12 +233,15 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	FallingStar(player);
 	StarDrop();
 
+
 	//‘¬“x‚Ì‘ã“ü
 	VelocityAssign();
 
 	Collision(player);
 
 	HitPoint(stage);
+
+	RoundTranslation();
 
 }
 
@@ -248,18 +260,6 @@ bool Enemy::AnyAttack() {
 //////////////////// ‚±‚±‚©‚çŠî‘bˆÚ“® ////////////////////
 
 void Enemy::Move(Player& player, Particle& particle) {
-
-	///“G‚ÌˆÚ“®
- 
-	//d—Í‚ð‰ÁŽZiUŒ‚‚µ‚Ä‚¢‚È‚¢j
-	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
-		mVelocity.y += kEnemyGravity;
-	}
-
-	//’n–Ê‚É‚¢‚éê‡d—Í‰ÁŽZ‚ð–³Œø
-	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
-		mVelocity.y = 0;
-	}
 
 	//UŒ‚‚µ‚Ä‚¢‚È‚¢ê‡
 	if (AnyAttack() == false && mHitPoint > 50) {
@@ -1172,6 +1172,10 @@ void Enemy::StarDrop() {
 		}
 	}
 
+	if (mIsActive == false){
+		mPowerColort = 0.0f;
+	}
+
 }
 
 
@@ -1297,10 +1301,60 @@ void Enemy::MovePattern(Player& player) {
 }
 
 
+void Enemy::RoundTranslation() {
+
+	mIsOldRoundTranslation = mIsRoundTranslation;
+	mIsOldRoundMove = mIsRoundMove;
+
+	if (mIsGround == true){
+		mCanRoundTranslation = true;
+	}
+	else{
+		mCanRoundTranslation = false;
+	}
+
+	if (mHitPoint == 0 && mIsRoundTranslation == false){
+		mIsRoundTranslation = true;
+	}
+
+	if (mIsRoundTranslation == true){
+
+		if (mCanRoundTranslation == true && mIsRoundMove == false){
+			mRoundStartPosition = mPosition;
+			mRoundEndPosition = { Stage::kStageRight - (mRadius * 3), Stage::kStageBottom - mRadius };
+			mIsRoundMove = true;
+		}
+
+		if (mIsRoundMove == true){
+			mRoundEasingt = EasingClamp(0.01f, mRoundEasingt);
+			mPosition = EasingMove(mRoundStartPosition, mRoundEndPosition, easeOutExpo(mRoundEasingt));
+
+			if (mRoundEasingt == 1.0f){
+				mRoundFrame++;
+				if (120 <= mRoundFrame){
+
+					mIsRoundMove = false;
+					mIsRoundTranslation = false;
+				}
+			}
+		}
+	}
+
+}
+
+
 //‘¬“x‚Ì‘ã“ü
 void Enemy::VelocityAssign() {
 
-	
+	//d—Í‚ð‰ÁŽZiUŒ‚‚µ‚Ä‚¢‚È‚¢j
+	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
+		mVelocity.y += kEnemyGravity;
+	}
+
+	//’n–Ê‚É‚¢‚éê‡d—Í‰ÁŽZ‚ð–³Œø
+	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
+		mVelocity.y = 0;
+	}
 
 	//‘¬“xŒ¸Š
 	if (mKnockBackVelocity.x > 0) {
@@ -1680,6 +1734,5 @@ void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 
-	Novice::ScreenPrintf(40, 40, "mAttackCount : %d", mAttackCount);
 
 }
