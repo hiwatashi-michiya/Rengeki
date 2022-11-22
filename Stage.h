@@ -41,9 +41,9 @@ public:
 	//-----ヒットストップ-----//
 	bool mIsHitStop;
 	bool mIsHeavyHitStop;
+	bool mIsWallHitStop;
 	int mHitStopFrame;
 	void HitStop(Player& player, Enemy& enemy);
-
 	void Draw(Screen& screen);
 
 private:

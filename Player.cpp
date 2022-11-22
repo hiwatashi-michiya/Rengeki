@@ -31,6 +31,7 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsGround = false;
 	mIsRolling = false;
 	mRollingFrame = 0;
+	mIsWallHit = false;
 	mDirection = RIGHT;
 	mAttackTimer = 0;
 	mIsAttack[0] = false;
@@ -322,6 +323,11 @@ void Player::Rolling() {
 //----------ここから当たり判定----------//
 void Player::Collision(Stage& stage, Enemy& enemy) {
 
+	for (int i = 0; i < kMaxAttack; i++) {
+		mIsOldHit[i] = mIsHit[i];
+	}
+	mIsOldWallHit = mIsWallHit;
+
 	//左判定
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
 		mPosition.x = Stage::kStageLeft + mRadius;
@@ -329,6 +335,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		//ノックバックして当たった場合パーティクルフラグを立てる
 		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
 
+			mIsWallHit = true;
 			mWallHitLeft.SetFlag(mPosition);
 			mIsWallHitLeftFlag = true;
 			mKnockBackVelocity.x = 0;
@@ -344,6 +351,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		//ノックバックして当たった場合パーティクルフラグを立てる
 		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
 
+			mIsWallHit = true;
 			mWallHitRight.SetFlag(mPosition);
 			mIsWallHitRightFlag = true;
 			mKnockBackVelocity.x = 0;
@@ -360,16 +368,13 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			mIsLandScaling = true;
 		}
 		mIsGround = true;
+		mIsWallHit = false;
 		mKnockBackVelocity.y = 0.0f;
 		mCanJump = true;
 		mJumpCount = kMaxJump;
 	}
 	else {
 		mIsGround = false;
-	}
-
-	for (int i = 0; i < kMaxAttack; i++) {
-		mIsOldHit[i] = mIsHit[i];
 	}
 
 	//ローリングしてない時に攻撃を受ける

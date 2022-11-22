@@ -96,7 +96,11 @@ void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
 		ScreenShake.x = RandNum(minX, maxX, NATURAL);
 		ScreenShake.y = RandNum(minY, maxY, NATURAL);
 	}
-	else {
+}
+
+void Screen::ShakeInit(bool is1, bool is2, bool is3) {
+
+	if (is1 == false && is2 == false && is3 == false){
 		ScreenShake = { 0.0f, 0.0f };
 	}
 }
@@ -111,7 +115,6 @@ void Screen::StarDropShake(Enemy& enemy) {
 	else
 	{
 		StarDropShakeValue = 0.0f;
-		ScreenShake = { 0.0f, 0.0f };
 	}
 }
 
