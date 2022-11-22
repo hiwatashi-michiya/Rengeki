@@ -329,8 +329,15 @@ private:
 	int mEnemy;
 	int mEnemySrcX;
 	int mBackStep;
-	int mAttack;
+	int mAttack1;
+	int mAttack2;
+	int mAttack3;
 	int mGuard;
+	int mWalk;
+	int mJump;
+	int mBefore_triple_attack;
+	int mFallingStarAttack;
+	int mButtobi;
 };
 
 

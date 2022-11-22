@@ -200,12 +200,6 @@ private:
 	int mAttack1;
 	int mAttack2;
 	int mAttack3;
-	int mAttack1_left;
-	int mAttack2_left;
-	int mAttack3_left;
-	int mAttack1_right;
-	int mAttack2_right;
-	int mAttack3_right;
 	int mJumpEffect;
 	int mJumpSrcX;
 	bool mIsJump;
