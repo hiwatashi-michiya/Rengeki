@@ -1637,5 +1637,4 @@ void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 
-	Novice::ScreenPrintf(0, 0, "mAttackFrame : %d", mAttackFrame);
 }
