@@ -81,6 +81,8 @@ public:
 	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 	//UŒ‚‚µ‚Ä‚¢‚é‚©
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
+	//UŒ‚‰ñ”‚Ìæ“¾
+	inline int GetAttackCount() { return mAttackCount; }
 	//Œü‚«‚Ìæ“¾
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
 	//”í’eŒã‚É•Ç‚É‚ ‚Á‚½‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é
@@ -416,6 +418,8 @@ private:
 	int mBefore_triple_attack;
 	int mFallingStarAttack;
 	int mButtobi;
+	int mEnerge;
+	int mTama;
 };
 
 
