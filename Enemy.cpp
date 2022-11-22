@@ -18,6 +18,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mFallingStarParticleRight[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
 	}
 
+	mSpecialAttackParticle = Particle(DIFFUSION, 0xFF00FF00, 500, 90, 100, 50, false);
+
 	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
 	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
 
@@ -94,7 +96,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
 	///////////////////// 強攻撃SE ///////////////////////////
-	mHeavyAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
+	mSpecialAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
+	mSpecialAttackSE = Novice::LoadAudio("./Resources/SE/specialattack.wav");
+	///////////////////// 必殺技SE ///////////////////////////
+	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
 
 }
 
@@ -110,6 +115,13 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 		for (int i = 0; i < kMaxAttack; i++) {
 			mAttackParticle[i].ChangeParticleColor(0xFF000000);
 		}
+
+		for (int i = 0; i < kFallingStarMax; i++) {
+			mFallingStarParticleLeft[i].ChangeParticleColor(0xFF000000);
+			mFallingStarParticleRight[i].ChangeParticleColor(0xFF000000);
+		}
+
+		mSpecialAttackParticle.ChangeParticleColor(0xFF000000);
 
 	}
 
@@ -157,6 +169,11 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	Attack(player);
 
 	////////////////////　ここから強攻撃　////////////////////
+
+	if (mIsSpecialAttack == true) {
+		mSpecialAttackParticle.Update(mSpecialAttackPosition);
+	}
+
 	SpecialAttack(player, particle);
 
 	////////////////////　ここから必殺技　////////////////////
@@ -849,7 +866,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 
 		//音再生
 		if (mSpecialAttackFrame == 0) {
-			Novice::PlayAudio(mHeavyAttackReserveSE, 0, 0.5f);
+			Novice::PlayAudio(mSpecialAttackReserveSE, 0, 0.5f);
 		}
 
 		mSpecialAttackFrame++;
@@ -898,7 +915,8 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 				mColor = 0x0000FF00 | static_cast<int>((1.0f - mSpecialAttackColorAlphat) * 0x00 + mSpecialAttackColorAlphat * 0xFF);
 
 				if (mSpecialAttackColorAlphat == 1.0f){
-
+					mSpecialAttackParticle.SetFlag(mSpecialAttackPosition);
+					Novice::PlayAudio(mSpecialAttackSE, 0, 0.5f);
 					mIsSpecialAttack = true;
 				}
 
@@ -908,6 +926,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 			if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true) {
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				mSpecialAttackParticle.Reset();
 				//次のステップの速さを設定
 				mStepFrame = mStepCoolTime[2];
 			}
@@ -915,6 +934,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 			if (mSpecialAttackFrame >= 420){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				mSpecialAttackParticle.Reset();
 				//次のステップの速さを設定
 				mStepFrame = mStepCoolTime[2];
 			}
@@ -950,6 +970,10 @@ void Enemy::FallingStar(Player& player) {
 
 			//地面に到達したら
 			if (mIsGround == true) {
+				//最初の衝撃波でも音を出す為にフレーム値を足す前に処理
+				if (mFallingStarFrame % 5 == 0 && mFallingStarFrame < 50) {
+					Novice::PlayAudio(mFallingStarWaveSE, 0, 0.5f);
+				}
 				mFallingStarFrame++;
 				mIsFallingStarAttack[mFallingStarStartValue] = true;
 				mFallingStarParticleLeft[mFallingStarStartValue].SetFlag(mLeftFallingStarPosition[mFallingStarStartValue]);
@@ -1324,6 +1348,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	if (mIsSpecialAttack == true){
 		screen.DrawEllipse(mSpecialAttackPosition, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+		mSpecialAttackParticle.Draw(screen);
 	}
 
 	////////////////////　ここから必殺技　////////////////////
