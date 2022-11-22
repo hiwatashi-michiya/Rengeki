@@ -119,8 +119,6 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 		mNoHitCount = 0;
 		mIsNoHit = false;
 	}
-	Novice::ScreenPrintf(200, 220, "IsNoHit%d", mIsNoHit);
-	Novice::ScreenPrintf(200, 200, "NoHitCount%d", mNoHitCount);
 }
 
 
