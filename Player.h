@@ -132,6 +132,10 @@ private:
 	//”í’eŒã‚É•Ç‚É“–‚½‚Á‚½‚©
 	bool mIsWallHit;
 	bool mIsOldWallHit;
+	
+	//•Ç“–‚½‚Á‚½Œã‚Ì–³“GŽžŠÔ
+	int mNoHitCount;
+	bool mIsNoHit;
 
 	//ƒvƒŒƒCƒ„[‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü
 	DIRECTION mDirection;

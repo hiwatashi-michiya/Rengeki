@@ -67,6 +67,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mJumpSrcX = 0;
 	mIsjumpRoll = false;
 	mJumpAnimeCount = 0;
+	mNoHitCount = 0;
+	mIsNoHit = false;
 }
 
 
@@ -106,6 +108,19 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Collision(stage, enemy);
 
+	//•Ç‚É“–‚½‚Á‚½‚Ì–³“G”»’è
+	if (mIsWallHit) {
+		mIsNoHit = true;
+	}
+	if (mIsNoHit) {
+		mNoHitCount++;
+	}
+	if (mNoHitCount >= 60) {
+		mNoHitCount = 0;
+		mIsNoHit = false;
+	}
+	Novice::ScreenPrintf(200, 220, "IsNoHit%d", mIsNoHit);
+	Novice::ScreenPrintf(200, 200, "NoHitCount%d", mNoHitCount);
 }
 
 
@@ -378,7 +393,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	}
 
 	//ƒ[ƒŠƒ“ƒO‚µ‚Ä‚È‚¢‚ÉUŒ‚‚ğó‚¯‚é
-	if (mIsRolling == false) {
+	if (mIsRolling == false && !mIsNoHit) {
 
 		if (stage.GetRound() == Round1) {
 
@@ -386,6 +401,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			for (int i = 0; i < kEnemyMaxAttack; i++) {
 
 				//UŒ‚‚ğó‚¯‚½ê‡
+
 				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[i] = true;
@@ -398,6 +414,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					mIsHit[i] = false;
 					mKnockBack[i] = false;
 				}
+				
+				
 
 				//‰½‚àUŒ‚‚ğó‚¯‚Ä‚¢‚È‚¢‚ÍF‚ğ–ß‚·
 				if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
@@ -467,6 +485,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				if (mIsHit[2] == false) {
 					mColor = 0xFFFFFFFF;
 				}
+
+				
 			}
 		}
 
@@ -475,9 +495,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		}
 
 	}
-
-
+	
 }
+
+
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 
 	int x = mPosition.x - AttackPosition.x;
