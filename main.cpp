@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			enemyParticle2.ChangeParticleColor(0xFF000000);
 		}
 
-		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false) {
+		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false && stage.mIsWallHitStop == false) {
 
 			if (Key::IsTrigger(DIK_R)) {
 				enemy.ResetPosition();
@@ -97,8 +97,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		stage.HitStop(player, enemy);
+		screen.ShakeInit(stage.mIsHitStop, stage.mIsHeavyHitStop, stage.mIsWallHitStop);
 		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
 		screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
+		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsWallHitStop);
 		screen.StarDropShake(enemy);
 
 		///
@@ -122,6 +124,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Draw(screen);
 		enemy.Draw(screen, player);
 		enemy.FrontDraw();
+
 
 		///
 		/// ↑描画処理ここまで

@@ -4,6 +4,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Rand.h"
+#include "Easing.hpp"
+#include "Function.h"
 
 Particle::Particle() : mParticleType(PLAYERDIFFUSION), mParticleColor(0xFFFFFF00), mParticleExtinction(100),
 mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
@@ -16,6 +18,8 @@ mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
 	for (int i = 0; i < mMaxParticle; i++) {
 
 		mPosition[i] = { -10000,-10000 };
+		mStartPosition[i] = { -10000,-10000 };
+		mEasingt[i] = 0;
 		mVelocity[i] = { 0,0 };
 		mColor[i] = mParticleColor;
 		mIsAlive[i] = false;
@@ -89,6 +93,8 @@ void Particle::Reset() {
 	for (int i = 0; i < mMaxParticle; i++) {
 
 		mPosition[i] = { -10000,-10000 };
+		mStartPosition[i] = { -10000,-10000 };
+		mEasingt[i] = 0;
 		mVelocity[i] = { 0,0 };
 		mColor[i] = mParticleColor;
 		mIsAlive[i] = false;
@@ -316,6 +322,23 @@ void Particle::SetFlag(Vec2 position) {
 
 			}
 
+			//星の雫
+			if (mParticleType == STARDROP) {
+
+				mPosition[i].x = position.x + RandNum(0, 100, PLUSMINUS);
+				mPosition[i].y = position.y + RandNum(0, 100, PLUSMINUS);
+				mStartPosition[i] = mPosition[i];
+				mEasingt[i] = 0.25f;
+				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
+				mVelocity[i].x = 0;
+				mVelocity[i].y = 0;
+				mRandColor[i] = RandNum(0x00000011, 0x00000033, NATURAL);
+				mColor[i] = mParticleColor;
+
+				break;
+
+			}
+
 		}
 
 	}
@@ -402,12 +425,32 @@ void Particle::Move(Vec2 position) {
 
 			}
 
+			//星の雫
+			if (mParticleType == STARDROP) {
+
+				mEasingt[i] += 0.01f;
+				mEasingt[i] = Clamp(mEasingt[i], 0.0f, 1.0f);
+				mPosition[i] = EasingMove(mStartPosition[i], position, easeInExpo(mEasingt[i]));
+				mRandColor[i] += 1;
+
+			}
+
 			mPosition[i].x += mVelocity[i].x;
 			mPosition[i].y += mVelocity[i].y;
 
 			//透明度が0になったらフラグをfalseに戻す
 			if (mRandColor[i] <= 0) {
 				mIsAlive[i] = false;
+			}
+
+			//星の雫の場合の透明度処理
+			if (mParticleType == STARDROP) {
+
+				//透明度が最大値以上になったら消す
+				if (mRandColor[i] > 0x000000FF) {
+					mIsAlive[i] = false;
+				}
+
 			}
 
 			//パーティクルが規定範囲を超えていないか判定
@@ -471,6 +514,18 @@ void Particle::Move(Vec2 position) {
 			if (mParticleType == WALLHITLEFT) {
 
 				if (mPosition[i].x < mParticleExtinction) {
+					mIsAlive[i] = false;
+				}
+
+			}
+
+			//星の雫
+			if (mParticleType == STARDROP) {
+
+				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
+					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) < mParticleExtinction ||
+					sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
+						(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 500) {
 					mIsAlive[i] = false;
 				}
 

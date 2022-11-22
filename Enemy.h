@@ -83,6 +83,9 @@ public:
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
 	//向きの取得
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
+	//被弾後に壁にあったかどうかを取得する
+	inline bool GetIsWallHit() { return mIsWallHit; }
+	inline bool GetIsOldWallHit() { return mIsOldWallHit; }
 
 
 	//-----強攻撃-----//
@@ -179,6 +182,13 @@ private:
 
 	//外積の値
 	float mCross;
+
+	//被弾後に地面についたら攻撃できる
+	bool mCanAttack;
+
+	//被弾後に壁に当たったか
+	bool mIsWallHit;
+	bool mIsOldWallHit;
 
 	//壁に当たった時のエフェクト
 	Particle mWallHitRight;
