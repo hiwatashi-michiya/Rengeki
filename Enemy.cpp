@@ -48,6 +48,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsHitPointAssign[0] = false;
 	mIsHitPointAssign[1] = false;
 	mCross = 0.0f;
+	mCanAttack = true;
+	mIsWallHit = false;
 	//////////////////// ここから攻撃関係 ////////////////////
 	mIsStart = false;
 	mStartFrame = -30;
@@ -71,6 +73,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBigJumpLeft = false;
 	mBigJumpRight = false;
 	////////////////////　ここから強攻撃　////////////////////
+	mIsSpecialAttackOnce = false;
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
@@ -79,6 +82,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+
 	mIsActive = false;
 	mIsDisplay = true;
 	mWidth = 50.0f;
@@ -100,8 +104,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mPowerRadius = 0.0f;
 	mPowerEasingt = 0.0f;
 	mPowerColor = WHITE;
-	mPowerColort = 0.0f;
 	mWhiteColor = 0xFFFFFF00;
+	mPowerColort = 0.0f;
 	mIsEasingMust = false;
 	mIsPowerDisplay = false;
 	mIsStartAttack = false;
@@ -255,7 +259,6 @@ void Enemy::Move(Player& player, Particle& particle) {
 	//地面にいる場合重力加算を無効
 	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
 		mVelocity.y = 0;
-		mKnockBackVelocity.y = 0;
 	}
 
 	//攻撃していない場合
@@ -1177,15 +1180,20 @@ void Enemy::MovePattern(Player& player) {
 	//強攻撃を行った瞬間を取得するため
 	mIsOldSpecialAttackStart = mIsSpecialAttackStart;
 
+	//被弾した時はStartFrameを0のままにする
+	if (mCanAttack == false){
+		mStartFrame = 0;
+	}
+
 	//移動開始までのフレーム
-	if (AnyAttack() == false && mIsStart == false){
+	if (AnyAttack() == false && mIsStart == false && mCanAttack == true){
 		mStartFrame++;
 		if (mStartFrame >= mStartFrameTimer){
 			mIsStart = true;
 		}
 	}
 
-	if (AnyAttack() == false && mIsStart == true){
+	if (AnyAttack() == false && mIsStart == true && mCanAttack == true){
 
 		//次の攻撃開始フレームを設定
 		mStartFrameTimer = RandNum(1, 3, NATURAL);
@@ -1259,15 +1267,23 @@ void Enemy::MovePattern(Player& player) {
 				mIsStart = false;
 			}
 
+		}
 
-		} 
-		else
+		else if (((player.GetPlayerPosition() - mPosition).length() > 600) && (mHitPoint <= (mTmpHitPointMax / 2)))
 		{
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
 			mStartFrame = 0;
 			mIsStart = false;
 		}
+	}
+
+	if ((mHitPoint <= (mTmpHitPointMax / 2)) && mIsSpecialAttackOnce == false && mCanAttack == true){
+		mSpecialAttackFrame = 0;
+		mIsSpecialAttackStart = true;
+		mStartFrame = 0;
+		mIsStart = false;
+		mIsSpecialAttackOnce = true;
 	}
 }
 
@@ -1309,6 +1325,55 @@ void Enemy::Collision(Player& player) {
 	for (int i = 0; i < kMaxAttack; i++){
 		mIsOldHit[i] = mIsHit[i];
 	}
+	mIsOldWallHit = mIsWallHit;
+
+
+	//左判定
+	if (mPosition.x - mRadius < Stage::kStageLeft) {
+		mPosition.x = Stage::kStageLeft + mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mCanAttack == false && mIsWallHitLeftFlag == false) {
+
+			mIsWallHit = true;
+			mWallHitLeft.SetFlag(mPosition);
+			mHitPoint -= kWallDamage;
+			mIsWallHitLeftFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
+	}
+
+	//右判定
+	if (mPosition.x + mRadius > Stage::kStageRight) {
+		mPosition.x = Stage::kStageRight - mRadius;
+
+		//ノックバックして当たった場合パーティクルフラグを立てる
+		if (mCanAttack == false && mIsWallHitRightFlag == false) {
+
+			mIsWallHit = true;
+			mWallHitRight.SetFlag(mPosition);
+			mHitPoint -= kWallDamage;
+			mIsWallHitRightFlag = true;
+			mKnockBackVelocity.x = 0;
+
+		}
+
+	}
+
+	//下判定
+	if (mPosition.y + mRadius >= Stage::kStageBottom) {
+		mPosition.y = Stage::kStageBottom - mRadius;
+		mIsGround = true;
+		mCanAttack = true;
+		mIsWallHit = false;
+		mKnockBackVelocity.y = 0;
+		mJumpCount = kEnemyMaxJump;
+	}
+	else {
+		mIsGround = false;
+	}
 
 	//ガード中 || 透明化の最中は無敵化
 	if ((mIsGuard == false && mIsSpecialAttackStart == false) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
@@ -1329,14 +1394,16 @@ void Enemy::Collision(Player& player) {
 				if (player.GetPlayerDirection() == RIGHT && mKnockBack[i] == false) {
 					mKnockBackVelocity.x = kKnockBackLength[i].x;
 					mKnockBackVelocity.y = -kKnockBackLength[i].y;
-					mPosition.y -= kKnockBackLength[i].y;
+					mVelocity.y = 0.0f;
+					mCanAttack = false;
 					mKnockBack[i] = true;
 				}
 
 				if (player.GetPlayerDirection() == LEFT && mKnockBack[i] == false) {
 					mKnockBackVelocity.x = -kKnockBackLength[i].x;
 					mKnockBackVelocity.y = -kKnockBackLength[i].y;
-					mPosition.y -= kKnockBackLength[i].y;
+					mVelocity.y = 0.0f;
+					mCanAttack = false;
 					mKnockBack[i] = true;
 				}
 
@@ -1355,45 +1422,6 @@ void Enemy::Collision(Player& player) {
 		}
 	}
 
-	//左判定
-	if (mPosition.x - mRadius < Stage::kStageLeft) {
-		mPosition.x = Stage::kStageLeft + mRadius;
-
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
-
-			mWallHitLeft.SetFlag(mPosition);
-			mIsWallHitLeftFlag = true;
-			mKnockBackVelocity.x = 0;
-
-		}
-
-	}
-
-	//右判定
-	if (mPosition.x + mRadius > Stage::kStageRight) {
-		mPosition.x = Stage::kStageRight - mRadius;
-
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
-
-			mWallHitRight.SetFlag(mPosition);
-			mIsWallHitRightFlag = true;
-			mKnockBackVelocity.x = 0;
-
-		}
-
-	}
-
-	//下判定
-	if (mPosition.y + mRadius >= Stage::kStageBottom) {
-		mPosition.y = Stage::kStageBottom - mRadius;
-		mIsGround = true;
-		mJumpCount = kEnemyMaxJump;
-	}
-	else {
-		mIsGround = false;
-	}
 
 }
 bool Enemy::CircleCollision(Vec2 AttackPosition, float AttackRadius) {

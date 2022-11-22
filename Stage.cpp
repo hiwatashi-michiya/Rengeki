@@ -7,6 +7,7 @@
 void Stage::Init() {
 	mIsHitStop = false;
 	mIsHeavyHitStop = false;
+	mIsWallHitStop = false;
 	mHitStopFrame = 0;
 	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
 	mIsLoadTexture = false;
@@ -19,7 +20,7 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 
 		if (mIsHitStop == false && mIsHeavyHitStop == false && ((player.GetIsOldHit(i) == false && player.GetIsHit(i) == true) || (enemy.GetIsOldHit(i) == false && enemy.GetIsHit(i) == true))) {
 
-			if (((player.GetIsOldHit(2) == false && player.GetIsHit(2) == true) || (enemy.GetIsOldHit(2) == false && enemy.GetIsHit(2) == true))){
+			if ((player.GetIsOldHit(2) == false && player.GetIsHit(2) == true) || (enemy.GetIsOldHit(2) == false && enemy.GetIsHit(2) == true)){
 
 				mIsHeavyHitStop = true;
 			}
@@ -28,6 +29,11 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 			}
 
 		}
+	}
+
+	if (mIsWallHitStop == false && ((player.GetIsOldWallHit() == false && player.GetIsWallHit() == true) || (enemy.GetIsOldWallHit() == false && enemy.GetIsWallHit() == true))) {
+
+		mIsWallHitStop = true;
 	}
 
 	if (mIsHitStop == true){
@@ -41,17 +47,18 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 
 	}
 
-	if (mIsHeavyHitStop == true){
+	if (mIsHeavyHitStop == true || mIsWallHitStop == true){
 
 		//ƒtƒŒ[ƒ€‚ð‰ÁŽZ‚·‚é
 		mHitStopFrame++;
 
 		if (mHitStopFrame >= 24){
 			mIsHeavyHitStop = false;
+			mIsWallHitStop = false;
 		}
 	}
 
-	if (mIsHitStop == false && mIsHeavyHitStop == false){
+	if (mIsHitStop == false && mIsHeavyHitStop == false && mIsWallHitStop == false){
 
 		mHitStopFrame = 0;
 
@@ -67,4 +74,5 @@ void Stage::Draw(Screen& screen) {
 	}
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
+
 }

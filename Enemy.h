@@ -18,9 +18,9 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{5,5},
-	{10,8},
-	{50,20}
+	{5,8},
+	{10,15},
+	{50,28}
 };
 
 //最大攻撃回数
@@ -83,6 +83,9 @@ public:
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
 	//向きの取得
 	inline ENEMYDIRECTION GetEnemyDirection() { return mDirection; }
+	//被弾後に壁にあったかどうかを取得する
+	inline bool GetIsWallHit() { return mIsWallHit; }
+	inline bool GetIsOldWallHit() { return mIsOldWallHit; }
 
 
 	//-----強攻撃-----//
@@ -179,6 +182,13 @@ private:
 
 	//外積の値
 	float mCross;
+
+	//被弾後に地面についたら攻撃できる
+	bool mCanAttack;
+
+	//被弾後に壁に当たったか
+	bool mIsWallHit;
+	bool mIsOldWallHit;
 
 	//壁に当たった時のエフェクト
 	Particle mWallHitRight;
@@ -278,6 +288,8 @@ private:
 
 	////////////////////　ここから強攻撃　////////////////////
 	
+	//一回攻撃したかどうか
+	bool mIsSpecialAttackOnce;
 	//攻撃が始まったかどうか
 	bool mIsSpecialAttackStart;
 	bool mIsOldSpecialAttackStart;

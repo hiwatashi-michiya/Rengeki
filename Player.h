@@ -14,7 +14,10 @@ const int kMaxJump = 2;
 const int kMaxAttack = 3;
 
 //攻撃力
-const int kAttackValue[kMaxAttack] = { 1, 3, 10 };
+const int kAttackValue[kMaxAttack] = { 1, 3, 5 };
+
+//壁に当たった時のダメージ
+const int kWallDamage = 10;
 
 //攻撃の持続時間
 const int kAttackPersistence = 30;
@@ -50,6 +53,10 @@ public:
 
 	//描画処理
 	void Draw(Screen& screen);
+
+	//被弾後に壁にあったかどうかを取得する
+	inline bool GetIsWallHit() { return mIsWallHit; }
+	inline bool GetIsOldWallHit() { return mIsOldWallHit; }
 
 	//向きの取得
 	inline DIRECTION GetPlayerDirection() { return mDirection; }
@@ -122,6 +129,10 @@ private:
 	bool mKnockBack[kMaxAttack];
 	void KnockBack(Enemy& enemy, int i);
 
+	//被弾後に壁に当たったか
+	bool mIsWallHit;
+	bool mIsOldWallHit;
+
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
 
@@ -147,6 +158,8 @@ private:
 	int mAttackSE[kMaxAttack];
 
 	//---ジャンプ---//
+	//被弾後にジャンプできるようになったか
+	bool mCanJump;
 	//ジャンプ回数
 	int mJumpCount;
 	//ジャンプ関数

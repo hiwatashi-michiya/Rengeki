@@ -26,10 +26,12 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
+	mCanJump = true;
 	mJumpCount = 0;
 	mIsGround = false;
 	mIsRolling = false;
 	mRollingFrame = 0;
+	mIsWallHit = false;
 	mDirection = RIGHT;
 	mAttackTimer = 0;
 	mIsAttack[0] = false;
@@ -117,7 +119,6 @@ void Player::Move(Enemy& enemy) {
 	//地面にいる場合重力加算を無効
 	if (mIsGround == true) {
 		mVelocity.y = 0;
-		mKnockBackVelocity.y = 0;
 	}
 
 	//攻撃フラグが立っている場合、一定時間でフラグを戻す
@@ -202,6 +203,7 @@ void Player::Move(Enemy& enemy) {
 	//ノックバック時の速度を加算
 	mPosition.x += mKnockBackVelocity.x;
 	mPosition.y += mKnockBackVelocity.y;
+
 }
 void Player::Attack() {
 
@@ -272,7 +274,7 @@ void Player::Attack() {
 void Player::Jump() {
 
 	//ジャンプ
-	if ((Key::IsTrigger(DIK_UP) || Controller::IsTriggerButton(0, Controller::bA)) && mIsRolling == false) {
+	if ((Key::IsTrigger(DIK_UP) || Controller::IsTriggerButton(0, Controller::bA)) && mIsRolling == false && mCanJump == true) {
 
 		//ジャンプ回数残り１回
 		if (mJumpCount == 1) {
@@ -321,6 +323,11 @@ void Player::Rolling() {
 //----------ここから当たり判定----------//
 void Player::Collision(Stage& stage, Enemy& enemy) {
 
+	for (int i = 0; i < kMaxAttack; i++) {
+		mIsOldHit[i] = mIsHit[i];
+	}
+	mIsOldWallHit = mIsWallHit;
+
 	//左判定
 	if (mPosition.x - mRadius < Stage::kStageLeft) {
 		mPosition.x = Stage::kStageLeft + mRadius;
@@ -328,6 +335,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		//ノックバックして当たった場合パーティクルフラグを立てる
 		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
 
+			mIsWallHit = true;
 			mWallHitLeft.SetFlag(mPosition);
 			mIsWallHitLeftFlag = true;
 			mKnockBackVelocity.x = 0;
@@ -343,6 +351,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		//ノックバックして当たった場合パーティクルフラグを立てる
 		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
 
+			mIsWallHit = true;
 			mWallHitRight.SetFlag(mPosition);
 			mIsWallHitRightFlag = true;
 			mKnockBackVelocity.x = 0;
@@ -359,14 +368,13 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			mIsLandScaling = true;
 		}
 		mIsGround = true;
+		mIsWallHit = false;
+		mKnockBackVelocity.y = 0.0f;
+		mCanJump = true;
 		mJumpCount = kMaxJump;
 	}
 	else {
 		mIsGround = false;
-	}
-
-	for (int i = 0; i < kMaxAttack; i++) {
-		mIsOldHit[i] = mIsHit[i];
 	}
 
 	//ローリングしてない時に攻撃を受ける
@@ -425,7 +433,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = -kKnockBackLength[2].x;
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mPosition.y -= kKnockBackLength[2].y;
+						mVelocity.y = 0;
+						mCanJump = false;
 						mKnockBack[2] = true;
 					}
 					break;
@@ -441,7 +450,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					if (mKnockBack[2] == false) {
 						mKnockBackVelocity.x = kKnockBackLength[2].x;
 						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mPosition.y -= kKnockBackLength[2].y;
+						mVelocity.y = 0;
+						mCanJump = false;
 						mKnockBack[2] = true;
 					}
 					break;
@@ -485,14 +495,16 @@ void Player::KnockBack(Enemy& enemy, int i) {
 	if (enemy.GetEnemyDirection() == RIGHT && mKnockBack[i] == false) {
 		mKnockBackVelocity.x = kKnockBackLength[i].x;
 		mKnockBackVelocity.y = -kKnockBackLength[i].y;
-		mPosition.y -= kKnockBackLength[i].y;
+		mVelocity.y = 0;
+		mCanJump = false;
 		mKnockBack[i] = true;
 	}
 
 	if (enemy.GetEnemyDirection() == LEFT && mKnockBack[i] == false) {
 		mKnockBackVelocity.x = -kKnockBackLength[i].x;
 		mKnockBackVelocity.y = -kKnockBackLength[i].y;
-		mPosition.y -= kKnockBackLength[i].y;
+		mVelocity.y = 0;
+		mCanJump = false;
 		mKnockBack[i] = true;
 	}
 }
@@ -580,10 +592,10 @@ void Player::Draw(Screen& screen) {
 	//ローリング
 	if (mIsRolling) {
 		if (mDirection == RIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, mColor, 0, 1);
+			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
 		}
 		if (mDirection == LEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 180, 180, 7, 5, mTextureFrame, mRolling, mColor, 0, 1);
+			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
 		}
 		
 	}
@@ -640,35 +652,22 @@ void Player::Draw(Screen& screen) {
 		if (mDirection == LEFT) {
 			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
 		}
+		mIsJump = false;
 	}
 	else if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
 		mIsJump = false;
 		mJumpAnimeCount = 0;
 		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
+		mIsJump = false;
 	}
 	else if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
 		mIsJump = false;
 		mJumpAnimeCount = 0;
 		screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
+		mIsJump = false;
 	}
 
 	//ジャンプ
-	
-
-	//if (mVelocity.y < 0) {
-	//	if (mDirection == RIGHT) {
-	//		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
-	//	}
-	//	if (mDirection == LEFT) {
-	//		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mJump, mColor);//ジャンプ
-	//	}
-	//}
-
-	/*if (Key::IsTrigger(DIK_UP) && mJumpAnimeCount == 0 && mIsRolling == false) {
-		
-		
-		
-	}*/
 	
 
 	if (Key::IsTrigger(DIK_UP) && mJumpCount == 0 && mIsRolling == false && !mIsJump) {
@@ -697,7 +696,7 @@ void Player::Draw(Screen& screen) {
 		
 	}
 	
-	Novice::ScreenPrintf(400, 400, "jumpcount%d", mJumpAnimeCount);
+	Novice::ScreenPrintf(400, 400, "mKnockBackVelocity.y : %f", mKnockBackVelocity.y);
 	
 
 	//攻撃範囲描画
