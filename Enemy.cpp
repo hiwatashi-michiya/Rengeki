@@ -93,6 +93,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarFrame = 0;
 
 	mIsActive = false;
+	mIsActiveOnce = false;
 	mIsDisplay = true;
 	mWidth = 50.0f;
 	mHeight = 100.0f;
@@ -1053,11 +1054,6 @@ void Enemy::StarDrop() {
 
 	mIsOldEasingMust = mIsEasingMust;
 
-	if (Key::IsTrigger(DIK_S)) {
-		mPowerEasingt = 0.0f;
-		mIsActive = true;
-	}
-
 	if (mIsActive == true) {
 		mFrame++;
 
@@ -1411,6 +1407,12 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 				}
 
 			}
+		}
+
+		if ((0 < mHitPoint && mHitPoint <= (mTmpHitPointMax / 2)) && mIsActiveOnce == false && mCanAttack == true) {
+			mPowerEasingt = 0.0f;
+			mIsActive = true;
+			mIsActiveOnce = true;
 		}
 	}
 	

@@ -397,6 +397,7 @@ private:
 
 	//-----ìÆçÏ-----//
 	bool mIsActive;
+	bool mIsActiveOnce;
 	bool mIsDisplay;
 	//å¥êŒ
 	Vec2 mStonePosition[3];
