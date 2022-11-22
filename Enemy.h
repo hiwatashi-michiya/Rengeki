@@ -294,8 +294,10 @@ private:
 	//関数
 	void SpecialAttack(Player& player, Particle& particle);
 	//サウンド
-	int mHeavyAttackReserveSE;
-
+	int mSpecialAttackReserveSE;
+	int mSpecialAttackSE;
+	//パーティクル
+	Particle mSpecialAttackParticle;
 
 	////////////////////　ここから必殺技　////////////////////
 
@@ -321,6 +323,9 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+	//サウンド
+	int mFallingStarWaveSE;
+
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
 	Particle mFallingStarParticleRight[kFallingStarMax];
@@ -387,8 +392,15 @@ private:
 	int mEnemy;
 	int mEnemySrcX;
 	int mBackStep;
-	int mAttack;
+	int mAttack1;
+	int mAttack2;
+	int mAttack3;
 	int mGuard;
+	int mWalk;
+	int mJump;
+	int mBefore_triple_attack;
+	int mFallingStarAttack;
+	int mButtobi;
 };
 
 
