@@ -70,6 +70,9 @@ public:
 	//体力取得
 	inline int GetEnemyHitPoint() { return mHitPoint; }
 
+	//ラウンド2の体力代入取得
+	inline bool GetIsHitPointAssign() { return mIsHitPointAssign[1]; }
+
 	////////////////////　ラウンド遷移取得関数　////////////////////
 
 	inline bool GetIsRoundTranslation() { return mIsRoundTranslation; }
