@@ -28,7 +28,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 	mKnockBackVelocity = { 0.0f, 0.0f };
 	mColor = 0x0000FFFF;
-	mAttackCount = kEnemyMaxAttack;
+	mAttackCount = 0;
 	mJumpCount = 0;
 	mIsGround = false;
 	mDirection = ENEMYRIGHT;
@@ -1193,6 +1193,15 @@ void Enemy::MovePattern(Player& player) {
 		}
 	}
 
+	if (Key::IsTrigger(DIK_A)){
+		mVelocity.x = 0.0f;
+		mAttackCount = 0;
+		mAttackTimer = kEnemyMaxAttack * 15;
+		mIsAttackStart = true;
+		mStartFrame = 0;
+		mIsStart = false;
+	}
+
 	if (AnyAttack() == false && mIsStart == true && mCanAttack == true){
 
 		//次の攻撃開始フレームを設定
@@ -1385,26 +1394,26 @@ void Enemy::Collision(Player& player) {
 
 				mColor = 0xFFFF00FF;
 				//ヒットフラグを立てる
-				if (mIsHit[i] == false) {
-					mHitPoint -= kAttackValue[i];
-					mIsHit[i] = true;
+				if (mIsHit[2 - player.GetAttackCount()] == false) {
+					mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
+					mIsHit[2 - player.GetAttackCount()] = true;
 				}
 
 				//プレイヤーの向きによってノックバックする方向を変える
-				if (player.GetPlayerDirection() == RIGHT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
+				if (player.GetPlayerDirection() == RIGHT && mKnockBack[2 - player.GetAttackCount()] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2 - player.GetAttackCount()].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
 					mVelocity.y = 0.0f;
 					mCanAttack = false;
-					mKnockBack[i] = true;
+					mKnockBack[2 - player.GetAttackCount()] = true;
 				}
 
-				if (player.GetPlayerDirection() == LEFT && mKnockBack[i] == false) {
-					mKnockBackVelocity.x = -kKnockBackLength[i].x;
-					mKnockBackVelocity.y = -kKnockBackLength[i].y;
+				if (player.GetPlayerDirection() == LEFT && mKnockBack[2 - player.GetAttackCount()] == false) {
+					mKnockBackVelocity.x = -kKnockBackLength[2 - player.GetAttackCount()].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
 					mVelocity.y = 0.0f;
 					mCanAttack = false;
-					mKnockBack[i] = true;
+					mKnockBack[2 - player.GetAttackCount()] = true;
 				}
 
 			}
@@ -1664,5 +1673,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
+
+	Novice::ScreenPrintf(40, 40, "mAttackCount : %d", mAttackCount);
 
 }

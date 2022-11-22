@@ -73,6 +73,9 @@ public:
 	//UŒ‚‚µ‚Ä‚¢‚é‚©æ“¾
 	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
 
+	//UŒ‚‰ñ”‚Ìæ“¾
+	inline int GetAttackCount() { return mAttackCount; }
+
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©æ“¾
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
 	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
