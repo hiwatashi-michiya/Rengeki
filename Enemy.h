@@ -394,6 +394,9 @@ private:
 	int mAttackFrame;
 	//関数
 	void StarDrop();
+	//サウンド
+	int mEnergyChargeSE;
+
 	//パーティクル
 	Particle mStarDropParticle;
 	Particle mStarDropAttackParticle;

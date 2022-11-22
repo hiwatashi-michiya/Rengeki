@@ -137,6 +137,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mSpecialAttackSE = Novice::LoadAudio("./Resources/SE/specialattack.wav");
 	///////////////////// ïKéEãZSE ///////////////////////////
 	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
+	//////////////////// êØÇÃé¥SE ///////////////////////////
+	mEnergyChargeSE = Novice::LoadAudio("./Resources/SE/energycharge.wav");
 
 }
 
@@ -1122,6 +1124,11 @@ void Enemy::StarDrop() {
 	}
 
 	if (mIsStartAttack == true && mIsStarDrop == false) {
+
+		if (mAttackFrame == 60) {
+			Novice::PlayAudio(mEnergyChargeSE, 0, 0.5f);
+		}
+
 		mAttackFrame++;
 		mPowerEasingt = EasingClamp(0.01f, mPowerEasingt);
 		mPowerRadius = EasingMove(mPowerStartRadius, 10.0f, easeInBack(mPowerEasingt));

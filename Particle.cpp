@@ -191,8 +191,8 @@ void Particle::SetFlag(Vec2 position) {
 				mPosition[i].x = position.x;
 				mPosition[i].y = position.y;
 				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
-				mVelocity[i].x = cosf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(13, 15, NATURAL);
-				mVelocity[i].y = sinf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(13, 15, NATURAL) + 10;
+				mVelocity[i].x = cosf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(33, 35, NATURAL);
+				mVelocity[i].y = sinf(RandNum(60, 120, NATURAL) * M_PI / 60) * RandNum(33, 35, NATURAL) + 10;
 				mRandColor[i] = RandNum(0x00000000, 0x000000FF, NATURAL);
 				mColor[i] = RandNum(1, 2, NATURAL);
 
