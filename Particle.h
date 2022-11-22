@@ -33,7 +33,7 @@ enum PARTICLETYPE {
 };
 
 //�ő吔
-const int kMaxParticle = 500;
+const int kMaxParticle = 300;
 
 class Particle
 {
