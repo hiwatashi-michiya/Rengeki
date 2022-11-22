@@ -35,7 +35,7 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 	}
 	else{
 
-		Scroll.x += ((Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom) - Scroll.x) * 0.4f;
+		Scroll.x += ((Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom) - Scroll.x) * 0.3f;
 		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
 	}
 
@@ -72,13 +72,13 @@ void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 		if (StartRoundEasing == true){
 			ZoomEasingt += 0.01f;
 			ZoomEasingt = Clamp(ZoomEasingt, 0.0f, 1.0f);
-			Zoom = EasingMove(StartZoom, 0.9f, easeOutCirc(ZoomEasingt));
+			Zoom = EasingMove(StartZoom, 1.0f, easeOutCirc(ZoomEasingt));
 			if (ZoomEasingt == 1.0f){
 				StartRoundEasing = false;
 			}
 		}
 		else {
-			Zoom = 0.9f;
+			Zoom = 1.0f;
 		}
 
 

@@ -109,6 +109,12 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Collision(stage, enemy);
 
+	//星の雫の時場所を変える
+	if (enemy.GetIsOldEasingMust() == false && enemy.GetIsEasingMust() == true){
+		mDirection = RIGHT;
+		mPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
+	}
+
 	//壁に当たった時の無敵判定
 	if (mIsWallHit) {
 		mIsNoHit = true;
@@ -154,7 +160,7 @@ void Player::Move(Enemy& enemy) {
 
 	//プレイヤーの場合の操作
 
-	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか
+	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && ラウンド遷移しているか
 	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
@@ -357,6 +363,7 @@ void Player::RoundTranslation(Enemy& enemy) {
 	if (enemy.GetIsRoundTranslation() == true) {
 
 		if (enemy.GetIsOldRoundMove() == false && enemy.GetIsRoundMove() == true) {
+			mDirection = RIGHT;
 			mRoundStartPosition = mPosition;
 			mRoundEndPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
 		}

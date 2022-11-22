@@ -135,6 +135,10 @@ public:
 	inline bool GetIsStarDropAttack() { return mIsStarDrop; }
 	//地面について拡散が始まったか
 	inline bool GetIsStarDropActive() { return mIsActiveStarDrop; }
+	//イージングすべきか
+	inline bool GetIsEasingMust() { return mIsEasingMust; }
+	inline bool GetIsOldEasingMust() { return mIsOldEasingMust; }
+
 
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
@@ -151,6 +155,8 @@ private:
 	//当たり判定
 	void Collision(Player& player);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
+	void StoneCollision(Player& player);
+	bool CircleQuadCollision(Vec2 StonePosition, Vec2 AttackPosition, float radius);
 
 	//体力処理
 	void HitPoint(Stage& stage);
@@ -233,7 +239,7 @@ private:
 	//////////////////// 敵の動きをまとめる ////////////////////
 
 	//移動関数
-	void MovePattern(Player& player);
+	void MovePattern(Stage& stage, Player& player);
 	//次の移動を開始できるか
 	bool mIsStart;
 	//移動開始するまでのフレーム
@@ -396,6 +402,7 @@ private:
 
 	//-----動作-----//
 	bool mIsActive;
+	bool mIsActiveOnce;
 	bool mIsDisplay;
 	//原石
 	Vec2 mStonePosition[3];
@@ -415,6 +422,7 @@ private:
 	float mPowerColort;
 	unsigned int mWhiteColor;
 	bool mIsEasingMust;
+	bool mIsOldEasingMust;
 
 	bool mIsStartAttack;
 	bool mIsStarDrop;
