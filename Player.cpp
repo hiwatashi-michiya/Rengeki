@@ -15,11 +15,11 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 	//パーティクル
 	for (int i = 0; i < 3; i++) {
-		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 100, false);
+		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
 	}
 
-	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 200, false);
-	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 200, false);
+	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 100, false);
 
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;
@@ -100,7 +100,7 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 		mIsWallHitLeftFlag = false;
 	}
 
-	Move();
+	Move(enemy);
 
 	Collision(stage, enemy);
 
@@ -109,7 +109,7 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 
 //----------ここから動き関係----------//
-void Player::Move() {
+void Player::Move(Enemy& enemy) {
 
 	//重力を加算
 	mVelocity.y += kGravity;
@@ -131,8 +131,8 @@ void Player::Move() {
 
 	//プレイヤーの場合の操作
 
-	//攻撃していない場合のみ行動できる || 攻撃を受けてしばらくは動けない
-	if (mIsAttack[0] == false && mHitFrame == 0) {
+	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか
+	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -174,7 +174,9 @@ void Player::Move() {
 	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
 	
 	//攻撃
-	Attack();
+	if (enemy.GetIsStarDropAttack() == false){
+		Attack();
+	}
 
 	//速度を加算
 	mPosition.y += mVelocity.y;

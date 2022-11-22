@@ -80,7 +80,7 @@ public:
 private:
 
 	//“®‚«
-	void Move();
+	void Move(Enemy& enemy);
 
 	//“–‚½‚è”»’è
 	void Collision(Stage& stage, Enemy& enemy);

@@ -12,6 +12,7 @@ Screen::Screen(){
 	IsTmpScroll = false;
 	StartSpecialAttackEasing = false;
 	ScreenShake = { 0.0f, 0.0f };
+	StarDropShakeValue = 0.0f;
 };
 
 void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
@@ -19,7 +20,7 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 	//１フレーム前のズーム量を取得
 	OldScroll = Scroll;
 
-	if (StartSpecialAttackEasing == true || Enemy.GetIsStarDropAttack() == true){
+	if (StartSpecialAttackEasing == true || Enemy.GetIsStarDrop() == true){
 		Scroll.x = kWindowWidth / (2.0f / Zoom);
 		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
 	}
@@ -63,7 +64,7 @@ void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 	if (stage.mIsHeavyHitStop == true){
 		Zoom = 3.0f;
 	}
-	else if (Enemy.GetIsStarDropAttack() == true){
+	else if (Enemy.GetIsStarDrop() == true){
 		Zoom = 1.0f;
 	}
 	else if (StartSpecialAttackEasing == true){
@@ -96,6 +97,20 @@ void Screen::Shake(int minX, int maxX, int minY, int maxY, bool is) {
 		ScreenShake.y = RandNum(minY, maxY, NATURAL);
 	}
 	else {
+		ScreenShake = { 0.0f, 0.0f };
+	}
+}
+
+void Screen::StarDropShake(Enemy& enemy) {
+
+	if (enemy.GetIsStarDropActive() == true){
+		StarDropShakeValue += 0.02f;
+		ScreenShake.x = RandNum(-StarDropShakeValue, StarDropShakeValue, NATURAL);
+		ScreenShake.y = RandNum(-StarDropShakeValue, StarDropShakeValue, NATURAL);
+	}
+	else
+	{
+		StarDropShakeValue = 0.0f;
 		ScreenShake = { 0.0f, 0.0f };
 	}
 }

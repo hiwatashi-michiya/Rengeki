@@ -32,6 +32,9 @@ public:
 	static constexpr float kShakeValue = 30.0f;
 	Vec2 ScreenShake;
 	void Shake(int mixX,int maxX,int mixY,int maxY, bool is);
+	//星の雫専用シェイク
+	float StarDropShakeValue;
+	void StarDropShake(Enemy& enemy);
 	
     /// <summary>
 	/// 四角形を描画する

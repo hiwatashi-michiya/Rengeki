@@ -53,9 +53,12 @@ public:
 
 	//描画処理
 	void Draw(Screen& screen, Player& player);
+
+	//最前面に描画する処理
+	void FrontDraw();
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 500.0f; mPosition.y = 100.0f; mHitPoint = mHitPointMax[0]; }
+	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -63,6 +66,9 @@ public:
 
 	//半径取得
 	inline float GetEnemyRadius() { return mRadius; }
+
+	//体力取得
+	inline int GetEnemyHitPoint() { return mHitPoint; }
 
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
@@ -106,8 +112,12 @@ public:
 
 	//-----星砕流奥義・星の雫-----//
 
-	//攻撃しているか
-	inline bool GetIsStarDropAttack() { return mIsActive; }
+	//攻撃を開始しているか（エネルギー溜め）
+	inline bool GetIsStarDrop() { return mIsActive; }
+	//攻撃を開始しているか（プレイヤーはこの段階で動けない）
+	inline bool GetIsStarDropAttack() { return mIsStarDrop; }
+	//地面について拡散が始まったか
+	inline bool GetIsStarDropActive() { return mIsActiveStarDrop; }
 
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
@@ -203,8 +213,14 @@ private:
 	//ステップのクールタイム処理
 	int mStepFrame;
 	int mStepCoolTime[3];
+	//第二形態時のクールタイム
+	int mNewStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
+	//大ジャンプフラグ
+	bool mBigJumpLeft;
+	bool mBigJumpRight;
+
 
 	//-----バックステップ-----//
 	//バックステップフラグ
@@ -305,6 +321,9 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+	//パーティクル
+	Particle mFallingStarParticleLeft[kFallingStarMax];
+	Particle mFallingStarParticleRight[kFallingStarMax];
 
 	////////////////////　ここから第二形態の必殺技　////////////////////
 
@@ -339,13 +358,21 @@ private:
 	float mEnergyEasingt[50];
 	//雫
 	Vec2 mPowerPosition;
+	Vec2 mPowerStartPosition;
 	bool mIsPowerDisplay;
 	float mPowerStartRadius;
 	float mPowerEasingt;
+	float mPowerColort;
+	unsigned int mWhiteColor;
+	bool mIsEasingMust;
 
 	bool mIsStartAttack;
-
+	bool mIsStarDrop;
+	bool mIsActiveStarDrop;
+	//移動時のフレーム
 	int mFrame;
+	//攻撃時のフレーム
+	int mAttackFrame;
 	//関数
 	void StarDrop();
 
