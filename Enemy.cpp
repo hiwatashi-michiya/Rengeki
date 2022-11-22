@@ -23,6 +23,9 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
 	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
 
+	mStarDropParticle = Particle(STARDROP, 0xFFFFFF00, 20, 3, 25, 100, false);
+	mStarDropAttackParticle = Particle(HALFCIRCLE, 0xFFFFFF00, 20, 3, 25, 200, false);
+
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;
 
@@ -1076,6 +1079,15 @@ void Enemy::StarDrop() {
 
 		if (300 <= mFrame) {
 
+			if (mIsStartAttack == false) {
+				mStarDropParticle.SetFlag(mPosition);
+				mStarDropParticle.Update(mPosition);
+			}
+			else {
+				mStarDropParticle.Reset();
+			}
+			
+
 			for (int i = 0; i < 50; i++) {
 
 				if (mFrame % 10 == 0 && mIsEnergyActive[i] == false && mIsStartAttack == false) {
@@ -1133,6 +1145,11 @@ void Enemy::StarDrop() {
 			mIsActiveStarDrop = true;
 		}
 
+		if (mIsActiveStarDrop == true) {
+			mStarDropAttackParticle.SetFlag({ mPowerStartPosition.x, Stage::kStageBottom });
+			mStarDropAttackParticle.Update({ mPowerStartPosition.x, Stage::kStageBottom });
+		}
+
 		if (240 <= mAttackFrame){
 			mPowerColort = EasingClamp(0.01f, mPowerColort);
 			mWhiteColor = ColorEasingMove(0xFFFFFF00, 0xFFFFFFFF, easeLinear(mPowerColort));
@@ -1167,6 +1184,7 @@ void Enemy::StarDrop() {
 		mPowerColort = EasingClamp(0.01f, mPowerColort);
 		mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
 		if (mPowerColort == 1.0f) {
+			mStarDropAttackParticle.Reset();
 			mIsActive = false;
 			mIsEasingMust = false;
 		}
@@ -1614,15 +1632,23 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	//星の雫使用時の移動中は描画しない
 	if (mIsDisplay == true){
 
-		////待機モーション
-		//if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
-		//	if (mDirection == ENEMYRIGHT) {
-		//		screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
-		//	}
-		//	if (mDirection == ENEMYLEFT) {
-		//		screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
-		//	}
-		//}
+		//エネルギーを溜めている間のパーティクル表示
+		mStarDropParticle.Draw(screen);
+
+		//星の雫が落ちたときにパーティクル表示
+		if (mIsActiveStarDrop == true) {
+			mStarDropAttackParticle.Draw(screen);
+		}
+
+		//待機モーション
+		if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
+			if (mDirection == ENEMYRIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
+			if (mDirection == ENEMYLEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
+		}
 
 	//バックステップモーション
 		if (mIsBackStep) {

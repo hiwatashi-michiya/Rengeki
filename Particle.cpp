@@ -196,10 +196,8 @@ void Particle::SetFlag(Vec2 position) {
 				mRandColor[i] = RandNum(0x00000000, 0x000000FF, NATURAL);
 				mColor[i] = RandNum(1, 2, NATURAL);
 
-				if (mColor[i] == 0) {
-					mColor[i] = 0xFF000000;
-				}
-				else if (mColor[i] == 1) {
+				
+				if (mColor[i] == 1) {
 					mColor[i] = 0x8888FF00;
 				}
 				else if (mColor[i] == 2) {
@@ -213,6 +211,11 @@ void Particle::SetFlag(Vec2 position) {
 				if (mVelocity[i].y == 0) {
 					mVelocity[i].y = 1;
 				}
+
+				if (i % 20 == 0 && i != 0) {
+					break;
+				}
+
 			}
 
 			//è’åÇîg
@@ -325,15 +328,23 @@ void Particle::SetFlag(Vec2 position) {
 			//êØÇÃé¥
 			if (mParticleType == STARDROP) {
 
-				mPosition[i].x = position.x + RandNum(0, 100, PLUSMINUS);
-				mPosition[i].y = position.y + RandNum(0, 100, PLUSMINUS);
+				mPosition[i].x = position.x + RandNum(0, 300, PLUSMINUS);
+				mPosition[i].y = position.y + RandNum(0, 300, PLUSMINUS);
 				mStartPosition[i] = mPosition[i];
 				mEasingt[i] = 0.25f;
 				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
 				mVelocity[i].x = 0;
 				mVelocity[i].y = 0;
 				mRandColor[i] = RandNum(0x00000011, 0x00000033, NATURAL);
-				mColor[i] = mParticleColor;
+				mColor[i] = RandNum(1, 2, NATURAL);
+
+
+				if (mColor[i] == 1) {
+					mColor[i] = 0x8888FF00;
+				}
+				else if (mColor[i] == 2) {
+					mColor[i] = 0xFFFFFF00;
+				}
 
 				break;
 
@@ -525,7 +536,7 @@ void Particle::Move(Vec2 position) {
 				if (sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
 					(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) < mParticleExtinction ||
 					sqrtf((mPosition[i].x - position.x) * (mPosition[i].x - position.x) +
-						(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 500) {
+						(mPosition[i].y - position.y) * (mPosition[i].y - position.y)) > 300) {
 					mIsAlive[i] = false;
 				}
 

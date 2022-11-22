@@ -422,6 +422,9 @@ private:
 	int mAttackFrame;
 	//関数
 	void StarDrop();
+	//パーティクル
+	Particle mStarDropParticle;
+	Particle mStarDropAttackParticle;
 
 	//最後に速度を代入する
 	void VelocityAssign();

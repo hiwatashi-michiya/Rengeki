@@ -135,6 +135,13 @@ private:
 	//被弾後に壁に当たったか
 	bool mIsWallHit;
 	bool mIsOldWallHit;
+	
+	//壁当たった後の無敵時間
+	int mNoHitCount;
+	bool mIsNoHit;
+
+	//無敵時間時の点滅
+	int mFlashing;
 
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
