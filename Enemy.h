@@ -18,9 +18,9 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{5,5},
-	{10,8},
-	{50,20}
+	{5,8},
+	{10,15},
+	{50,28}
 };
 
 //最大攻撃回数
@@ -278,6 +278,8 @@ private:
 
 	////////////////////　ここから強攻撃　////////////////////
 	
+	//一回攻撃したかどうか
+	bool mIsSpecialAttackOnce;
 	//攻撃が始まったかどうか
 	bool mIsSpecialAttackStart;
 	bool mIsOldSpecialAttackStart;

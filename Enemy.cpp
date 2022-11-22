@@ -71,6 +71,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBigJumpLeft = false;
 	mBigJumpRight = false;
 	////////////////////Å@Ç±Ç±Ç©ÇÁã≠çUåÇÅ@////////////////////
+	mIsSpecialAttackOnce = false;
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
@@ -79,6 +80,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+
 	mIsActive = false;
 	mIsDisplay = true;
 	mWidth = 50.0f;
@@ -100,8 +102,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mPowerRadius = 0.0f;
 	mPowerEasingt = 0.0f;
 	mPowerColor = WHITE;
-	mPowerColort = 0.0f;
 	mWhiteColor = 0xFFFFFF00;
+	mPowerColort = 0.0f;
 	mIsEasingMust = false;
 	mIsPowerDisplay = false;
 	mIsStartAttack = false;
@@ -1259,15 +1261,23 @@ void Enemy::MovePattern(Player& player) {
 				mIsStart = false;
 			}
 
+		}
 
-		} 
-		else
+		else if (mHitPoint <= (mTmpHitPointMax / 2))
 		{
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
 			mStartFrame = 0;
 			mIsStart = false;
 		}
+	}
+
+	if ((mHitPoint <= (mTmpHitPointMax / 2)) && mIsSpecialAttackOnce == false){
+		mSpecialAttackFrame = 0;
+		mIsSpecialAttackStart = true;
+		mStartFrame = 0;
+		mIsStart = false;
+		mIsSpecialAttackOnce = true;
 	}
 }
 

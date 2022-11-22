@@ -147,6 +147,8 @@ private:
 	int mAttackSE[kMaxAttack];
 
 	//---ジャンプ---//
+	//被弾後にジャンプできるようになったか
+	bool mCanJump;
 	//ジャンプ回数
 	int mJumpCount;
 	//ジャンプ関数
