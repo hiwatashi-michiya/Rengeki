@@ -95,12 +95,20 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsActive = false;
 	mIsActiveOnce = false;
 	mIsDisplay = true;
+	mIsAllBreak = false;
 	mWidth = 50.0f;
 	mHeight = 100.0f;
 	mStoneColor = WHITE;
 	for (int i = 0; i < 3; i++) {
 		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
 		mStonePosition[i].y = kWindowHeight - mHeight / 2 - (kWindowHeight - Stage::kStageBottom - 3);
+		mIsStoneHit[i] = false;
+		mIsStoneLeftHit[i] = false;
+		mIsStoneRightHit[i] = false;
+		mIsStoneBreak[i] = false;
+		mStoneKnockBackSpeed[i] = 0.0f;
+		mStoneKnockBackValue[i] = -3.0f;
+		mStoneHp[i] = mWidth;
 		mIsStoneDisplay[i] = false;
 	}
 	mEnergyColor = WHITE;
@@ -239,7 +247,7 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	FallingStar(player);
 
 
-	StarDrop();
+	StarDrop(player);
 
 
 	//速度の代入
@@ -1050,11 +1058,11 @@ void Enemy::FallingStar(Player& player) {
 	}
 }
 /*　必殺技３　星砕流奥義・星の雫　*/
-void Enemy::StarDrop() {
+void Enemy::StarDrop(Player& player) {
 
 	mIsOldEasingMust = mIsEasingMust;
 
-	if (mIsActive == true) {
+	if (mIsActive == true && mIsAllBreak == false) {
 		mFrame++;
 
 		//凝縮位置に移動
@@ -1079,6 +1087,15 @@ void Enemy::StarDrop() {
 			mIsPowerDisplay = true;
 		}
 
+		if (240 <= mFrame){
+			StoneCollision(player);
+
+			if (mIsStoneBreak[0] && mIsStoneBreak[1] && mIsStoneBreak[2]){
+				mFrame = 0;
+				mIsAllBreak = true;
+			}
+		}
+
 		if (300 <= mFrame) {
 
 			if (mIsStartAttack == false) {
@@ -1094,11 +1111,13 @@ void Enemy::StarDrop() {
 
 				if (mFrame % 10 == 0 && mIsEnergyActive[i] == false && mIsStartAttack == false) {
 					int RandTmp = RandNum(0, 100, NATURAL) % 3;
-					mEnergyStartPosition[i] = { mStonePosition[RandTmp].x, mStonePosition[RandTmp].y - (mHeight / 2) + 10.0f };
-					mEnergyEndPosition = mPosition;
-					mEnergyPosition[i] = mEnergyStartPosition[i];
-					mEnergyEasingt[i] = 0.0f;
-					mIsEnergyActive[i] = true;
+					if (mIsStoneBreak[RandTmp] == false){
+						mEnergyStartPosition[i] = { mStonePosition[RandTmp].x, mStonePosition[RandTmp].y - (mHeight / 2) + 10.0f };
+						mEnergyEndPosition = mPosition;
+						mEnergyPosition[i] = mEnergyStartPosition[i];
+						mEnergyEasingt[i] = 0.0f;
+						mIsEnergyActive[i] = true;
+					}
 					break;
 				}
 
@@ -1109,7 +1128,7 @@ void Enemy::StarDrop() {
 					if (mEnergyEasingt[i] == 1.0f) {
 
 						if (mIsStartAttack == false) {
-							mPowerRadius += 5.0f;
+							mPowerRadius += 0.1f;
 							if (220 <= mPowerRadius) {
 								mPowerStartRadius = mPowerRadius;
 								mIsStartAttack = true;
@@ -1170,10 +1189,11 @@ void Enemy::StarDrop() {
 		}
 	}
 
-	if (mIsEasingMust == true) {
+	if (mIsEasingMust == true || mIsActive == false) {
 
 		mIsDisplay = true;
 		for (int i = 0; i < 3; i++) {
+			mStoneHp[i] = mWidth;
 			mIsStoneDisplay[i] = false;
 		}
 		for (int i = 0; i < 50; i++) {
@@ -1185,22 +1205,39 @@ void Enemy::StarDrop() {
 		mIsPowerDisplay = false;
 		mIsStartAttack = false;
 		mIsActiveStarDrop = false;
+		mIsAllBreak = false;
 		mFrame = 0;
 		mAttackFrame = 0;
-
-		mPowerColort = EasingClamp(0.01f, mPowerColort);
-		mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
-		if (mPowerColort == 1.0f) {
-			mStarDropAttackParticle.Reset();
-			mIsActive = false;
-			mIsStarDrop = false;
-			mIsEasingMust = false;
+		if (mIsEasingMust == true){
+			mPowerColort = EasingClamp(0.01f, mPowerColort);
+			mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
+			if (mPowerColort == 1.0f) {
+				mStarDropAttackParticle.Reset();
+				mIsActive = false;
+				mIsStarDrop = false;
+				mIsEasingMust = false;
+			}
 		}
+
 	}
 
 	if (mIsActive == false && mIsEasingMust == false){
 
 		mPowerColort = 0.0f;
+	}
+
+	//原石を全て破壊された時
+	if (mIsAllBreak == true){
+		mFrame++;
+		for (int i = 0; i < 50; i++) {
+			mIsEnergyActive[i] = false;
+			mEnergyEasingt[i] = 0.0f;
+		}
+		mStarDropAttackParticle.Reset();
+		if (300 <= mFrame || mIsHit[2]) {
+			mIsStarDrop = false;
+			mIsActive = false;
+		}
 	}
 
 }
@@ -1225,10 +1262,8 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 	}
 
 	if (Key::IsTrigger(DIK_A)){
-		mVelocity.x = 0.0f;
-		mAttackCount = 0;
-		mAttackTimer = kEnemyMaxAttack * 15;
-		mIsAttackStart = true;
+		mPowerEasingt = 0.0f;
+		mIsActive = true;
 		mStartFrame = 0;
 		mIsStart = false;
 	}
@@ -1413,6 +1448,8 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 			mPowerEasingt = 0.0f;
 			mIsActive = true;
 			mIsActiveOnce = true;
+			mStartFrame = 0;
+			mIsStart = false;
 		}
 	}
 	
@@ -1549,17 +1586,18 @@ void Enemy::Collision(Player& player) {
 
 
 	//重力を加算（攻撃していない）
-	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
+	if ((AnyAttack() == false || mIsBackStepNoGravity == false) || (mIsActive == true && mIsAllBreak == true)) {
 		mVelocity.y += kEnemyGravity;
 	}
 
 	//地面にいる場合重力加算を無効
-	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
+	if (mIsGround == true || mIsBackStepNoGravity == true || (mIsActive == true  && mIsAllBreak == false)) {
 		mVelocity.y = 0;
+		mKnockBackVelocity.y = 0;
 	}
 
 	//ガード中 || 透明化の最中は無敵化
-	if ((mIsGuard == false && mIsSpecialAttackStart == false) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
+	if ((mIsGuard == false && mIsSpecialAttackStart == false && ((mIsActive == false) || (mIsActive == true && mIsAllBreak == true))) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
 
 		//一撃目に当たった場合
 		for (int i = 0; i < kMaxAttack; i++){
@@ -1602,6 +1640,7 @@ void Enemy::Collision(Player& player) {
 		for (int i = 0; i < kMaxAttack; i++){
 			mIsHit[i] = false;
 			mKnockBack[i] = false;
+			mIsStoneHit[i] = false;
 		}
 	}
 
@@ -1620,43 +1659,85 @@ bool Enemy::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 }
 void Enemy::StoneCollision(Player& player) {
 	for (int i = 0; i < kMaxAttack; i++) {
+		for (int j = 0; j < 3; j++) {
 
-		if (CircleQuadCollision(mStonePosition[i], player.GetAttackPosition(i), player.GetAttackRadius(i)) == true && player.GetIsAttack(i) == true) {
+			if (CircleQuadCollision(mStonePosition[j], player.GetAttackPosition(i), player.GetAttackRadius(i)) == true && player.GetIsAttack(i) == true && mIsStoneBreak[j] == false) {
 
-			//ヒットフラグを立てる
-			if (mIsHit[2 - player.GetAttackCount()] == false) {
-				mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
-				mIsHit[2 - player.GetAttackCount()] = true;
+				//プレイヤーの向きによってノックバックする方向を変える
+				if (player.GetPlayerDirection() == RIGHT && mIsStoneRightHit[j] == false && mIsStoneHit[i] == false) {
+					mIsStoneHit[i] = true;
+					mStoneHp[j] -= 5;
+					mStoneHp[j] = Clamp(mStoneHp[j], 0, mWidth);
+					if (mStoneHp[j] == 0){
+						mIsStoneBreak[j] = true;
+					}
+					mIsStoneRightHit[j] = true;
+				}
+
+				if (player.GetPlayerDirection() == LEFT && mIsStoneLeftHit[j] == false && mIsStoneHit[i] == false) {
+					mIsStoneHit[i] = true;
+					mStoneHp[j] -= 5;
+					mStoneHp[j] = Clamp(mStoneHp[j], 0, mWidth);
+					if (mStoneHp[j] == 0) {
+						mIsStoneBreak[j] = true;
+					}
+					mIsStoneLeftHit[j] = true;
+				}
+
 			}
 
-			//プレイヤーの向きによってノックバックする方向を変える
-			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2 - player.GetAttackCount()] == false) {
-				mKnockBackVelocity.x = kKnockBackLength[2 - player.GetAttackCount()].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
-				mVelocity.y = 0.0f;
-				mCanAttack = false;
-				mKnockBack[2 - player.GetAttackCount()] = true;
-			}
+		}
+	}
 
-			if (player.GetPlayerDirection() == LEFT && mKnockBack[2 - player.GetAttackCount()] == false) {
-				mKnockBackVelocity.x = -kKnockBackLength[2 - player.GetAttackCount()].x;
-				mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
-				mVelocity.y = 0.0f;
-				mCanAttack = false;
-				mKnockBack[2 - player.GetAttackCount()] = true;
-			}
+	//当たったら
+	for (int i = 0; i < 3; i++){
 
+		if (mIsStoneRightHit[i] == true) {
+			mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
+			mStoneKnockBackSpeed[i] += mStoneKnockBackValue[i];
+			mStonePosition[i].x -= mStoneKnockBackSpeed[i];
+		}
+
+		if (mIsStoneLeftHit[i] == true) {
+			mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
+			mStoneKnockBackSpeed[i] += mStoneKnockBackValue[i];
+			mStonePosition[i].x += mStoneKnockBackSpeed[i];
+		}
+
+		if (mIsStoneRightHit[i] == true || mIsStoneLeftHit[i] == true) {
+			mStoneKnockBackValue[i]++;
+			mStoneKnockBackValue[i] = Clamp(mStoneKnockBackValue[i], -3.0f, 3.0f);
+			if (mStoneKnockBackValue[i] == 3.0f) {
+				mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
+				mStoneKnockBackSpeed[i] = 0.0f;
+				mStoneKnockBackValue[i] = -3.0f;
+				mIsStoneRightHit[i] = false;
+				mIsStoneLeftHit[i] = false;
+			}
 		}
 	}
 }
 bool Enemy::CircleQuadCollision(Vec2 StonePosition, Vec2 AttackPosition, float radius) {
 
-	float x = StonePosition.x - (mWidth / 2);
-	float y = StonePosition.y - (mHeight / 2);
+	float x1 = StonePosition.x - (mWidth / 2);
+	float y1 = StonePosition.y - (mHeight / 2);
+	float x2 = x1 + mWidth;
+	float y2 = y1 + mHeight;
+	float xc = AttackPosition.x;
+	float yc = AttackPosition.y;
+	float r = radius;
 
-	float x1 = x - AttackPosition.x, x2 = (x + mWidth) - AttackPosition.x;
-	float y1 = y - AttackPosition.y, y2 = (y + mHeight) - AttackPosition.y;
-	return ((sqrtf(x1 * x1 + y1 * y1) <= radius) || (sqrtf(x2 * x2 + y1 * y1) <= radius) || (sqrtf(x1 * x1 + y2 * y2) <= radius) || (sqrtf(x2 * x2 + y2 * y2) <= radius));
+	bool A = (xc > x1) && (xc < x2) && (yc > y1 - r) && (yc < y2 + r);
+	bool B = (xc > x1 - r) && (xc < x2 + r) && (yc > y1) && (yc < y2);
+	bool C = (x1 - xc) * (x1 - xc) + (y1 - yc) * (y1 - yc) < (r * r);
+	bool D = (x2 - xc) * (x2 - xc) + (y1 - yc) * (y1 - yc) < (r * r);
+	bool E = (x2 - xc) * (x2 - xc) + (y2 - yc) * (y2 - yc) < (r * r);
+	bool F = (x1 - xc) * (x1 - xc) + (y2 - yc) * (y2 - yc) < (r * r);
+
+	if (A || B || C || D || E || F){
+		return true;
+	}
+	return false;
 }
 
 void Enemy::HitPoint(Stage& stage) {
@@ -1729,7 +1810,9 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			if (mIsStoneDisplay[i] == true) {
+			if (mIsStoneDisplay[i] == true && mIsStoneBreak[i] == false) {
+				screen.DrawArrow(mStonePosition[i], 10, 25, 0.0f, WHITE, kFillModeSolid);
+				screen.DrawBox({ mStonePosition[i].x - mWidth / 2, mStonePosition[i].y - mHeight / 2 - 20 }, mStoneHp[i], 10, 0.0f, WHITE, kFillModeSolid);
 				screen.DrawRectAngle(mStonePosition[i], mWidth, mHeight, 0, 0, 500, 1000, mStone, mEnergyColor);
 			}
 		}

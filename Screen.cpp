@@ -152,6 +152,21 @@ void Screen::DrawBox(Vec2 Position, float w, float h, float angle, unsigned int 
 	Novice::DrawBox((int)x, (int)y, w * Zoom, h * Zoom, angle, color, fillMode);
 }
 
+void Screen::DrawTriangle(Vec2 Position, float w, float h, unsigned int color, FillMode fillMode) {
+	float x1 = (Position.x - (w / 2) - 10) * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;
+	float y1 = Position.y * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y;
+	float x2 = (Position.x + (w / 2) + 10) * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;
+	float y2 = Position.y * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y;
+	float x3 = Position.x * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;
+	float y3 = (Position.y + 20) * Zoom - Scroll.y + WorldCenter.y + ScreenShake.y;
+	Novice::DrawTriangle(static_cast<int>(x1), static_cast<int>(y1), static_cast<int>(x2), static_cast<int>(y2), static_cast<int>(x3), static_cast<int>(y3), color, fillMode);
+}
+
+void Screen::DrawArrow(Vec2 Position, float w, float h, float angle, unsigned int color, FillMode fillMode) {
+	Screen::DrawBox({ Position.x - w / 2, Position.y - 130 }, w, h, angle, color, fillMode);
+	Screen::DrawTriangle({ Position.x, Position.y - 130 + h }, w, h, color, fillMode);
+}
+
 
 void Screen::DrawEllipse(Vec2 Position, float radius, float angle, unsigned int color, FillMode fillMode) {
 	float x = Position.x * Zoom - Scroll.x + WorldCenter.x + ScreenShake.x;

@@ -401,9 +401,17 @@ private:
 	bool mIsActive;
 	bool mIsActiveOnce;
 	bool mIsDisplay;
+	bool mIsAllBreak;
 	//原石
 	Vec2 mStonePosition[3];
 	bool mIsStoneDisplay[3];
+	bool mIsStoneHit[3];
+	bool mIsStoneLeftHit[3];
+	bool mIsStoneRightHit[3];
+	bool mIsStoneBreak[3];
+	float mStoneKnockBackSpeed[3];
+	float mStoneKnockBackValue[3];
+	float mStoneHp[3];
 	//エネルギー
 	Vec2 mEnergyPosition[50];
 	Vec2 mEnergyStartPosition[50];
@@ -429,7 +437,7 @@ private:
 	//攻撃時のフレーム
 	int mAttackFrame;
 	//関数
-	void StarDrop();
+	void StarDrop(Player& player);
 	//サウンド
 	int mEnergyChargeSE;
 

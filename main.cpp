@@ -70,26 +70,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		//BGMを鳴らす
-		if (Novice::IsPlayingAudio(isPlayBGM) == 0 || isPlayBGM == -1) {
+		////BGMを鳴らす
+		//if (Novice::IsPlayingAudio(isPlayBGM) == 0 || isPlayBGM == -1) {
 
-			isPlayBGM = Novice::PlayAudio(BossBGM, 1, BGMVolume);
+		//	isPlayBGM = Novice::PlayAudio(BossBGM, 1, BGMVolume);
 
-		}
+		//}
 
-		if (enemy.GetIsStarDropAttack() == true) {
-			BGMVolume = 0.0f;
-			Novice::SetAudioVolume(isPlayBGM, BGMVolume);
-		}
-		else {
+		//if (enemy.GetIsStarDropAttack() == true) {
+		//	BGMVolume = 0.0f;
+		//	Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+		//}
+		//else {
 
-			if (BGMVolume < 0.5f) {
-				BGMVolume += 0.02f;
-			}
+		//	if (BGMVolume < 0.5f) {
+		//		BGMVolume += 0.02f;
+		//	}
 
-			Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+		//	Novice::SetAudioVolume(isPlayBGM, BGMVolume);
 
-		}
+		//}
 
 		screen.ZoomUpdate(stage, player, enemy);
 		screen.ScrollUpdate(stage, player, enemy);
