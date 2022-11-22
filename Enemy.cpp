@@ -1465,16 +1465,6 @@ void Enemy::RoundTranslation() {
 //速度の代入
 void Enemy::VelocityAssign() {
 
-	//重力を加算（攻撃していない）
-	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
-		mVelocity.y += kEnemyGravity;
-	}
-
-	//地面にいる場合重力加算を無効
-	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
-		mVelocity.y = 0;
-	}
-
 	//速度減衰
 	if (mKnockBackVelocity.x > 0) {
 		mKnockBackVelocity.x -= kDecay;
@@ -1557,6 +1547,17 @@ void Enemy::Collision(Player& player) {
 		mIsGround = false;
 	}
 
+
+	//重力を加算（攻撃していない）
+	if (AnyAttack() == false || mIsBackStepNoGravity == false) {
+		mVelocity.y += kEnemyGravity;
+	}
+
+	//地面にいる場合重力加算を無効
+	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
+		mVelocity.y = 0;
+	}
+
 	//ガード中 || 透明化の最中は無敵化
 	if ((mIsGuard == false && mIsSpecialAttackStart == false) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
 
@@ -1616,6 +1617,46 @@ bool Enemy::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 	}
 	return false;
 
+}
+void Enemy::StoneCollision(Player& player) {
+	for (int i = 0; i < kMaxAttack; i++) {
+
+		if (CircleQuadCollision(mStonePosition[i], player.GetAttackPosition(i), player.GetAttackRadius(i)) == true && player.GetIsAttack(i) == true) {
+
+			//ヒットフラグを立てる
+			if (mIsHit[2 - player.GetAttackCount()] == false) {
+				mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
+				mIsHit[2 - player.GetAttackCount()] = true;
+			}
+
+			//プレイヤーの向きによってノックバックする方向を変える
+			if (player.GetPlayerDirection() == RIGHT && mKnockBack[2 - player.GetAttackCount()] == false) {
+				mKnockBackVelocity.x = kKnockBackLength[2 - player.GetAttackCount()].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
+				mVelocity.y = 0.0f;
+				mCanAttack = false;
+				mKnockBack[2 - player.GetAttackCount()] = true;
+			}
+
+			if (player.GetPlayerDirection() == LEFT && mKnockBack[2 - player.GetAttackCount()] == false) {
+				mKnockBackVelocity.x = -kKnockBackLength[2 - player.GetAttackCount()].x;
+				mKnockBackVelocity.y = -kKnockBackLength[2 - player.GetAttackCount()].y;
+				mVelocity.y = 0.0f;
+				mCanAttack = false;
+				mKnockBack[2 - player.GetAttackCount()] = true;
+			}
+
+		}
+	}
+}
+bool Enemy::CircleQuadCollision(Vec2 StonePosition, Vec2 AttackPosition, float radius) {
+
+	float x = StonePosition.x - (mWidth / 2);
+	float y = StonePosition.y - (mHeight / 2);
+
+	float x1 = x - AttackPosition.x, x2 = (x + mWidth) - AttackPosition.x;
+	float y1 = y - AttackPosition.y, y2 = (y + mHeight) - AttackPosition.y;
+	return ((sqrtf(x1 * x1 + y1 * y1) <= radius) || (sqrtf(x2 * x2 + y1 * y1) <= radius) || (sqrtf(x1 * x1 + y2 * y2) <= radius) || (sqrtf(x2 * x2 + y2 * y2) <= radius));
 }
 
 void Enemy::HitPoint(Stage& stage) {

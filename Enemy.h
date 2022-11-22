@@ -152,6 +152,8 @@ private:
 	//“–‚½‚è”»’è
 	void Collision(Player& player);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
+	void StoneCollision(Player& player);
+	bool CircleQuadCollision(Vec2 StonePosition, Vec2 AttackPosition, float radius);
 
 	//‘Ì—Íˆ—
 	void HitPoint(Stage& stage);
