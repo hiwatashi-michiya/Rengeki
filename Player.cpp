@@ -67,6 +67,9 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mJumpSrcX = 0;
 	mIsjumpRoll = false;
 	mJumpAnimeCount = 0;
+	mNoHitCount = 0;
+	mIsNoHit = false;
+	mFlashing = 1;
 }
 
 
@@ -106,6 +109,25 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Collision(stage, enemy);
 
+	//壁に当たった時の無敵判定
+	if (mIsWallHit) {
+		mIsNoHit = true;
+	}
+	if (mIsNoHit) {
+		mNoHitCount++;
+	}
+	if (mNoHitCount >= 60) {
+		mNoHitCount = 0;
+		mFlashing = 1;
+		mIsNoHit = false;
+	}
+
+	//無敵時間時の点滅
+	if (mNoHitCount % 7 == 0 && mNoHitCount != 0) {
+		mFlashing *= -1;
+	}
+
+	RoundTranslation(enemy);
 }
 
 
@@ -133,7 +155,7 @@ void Player::Move(Enemy& enemy) {
 	//プレイヤーの場合の操作
 
 	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか
-	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false) {
+	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -175,8 +197,19 @@ void Player::Move(Enemy& enemy) {
 	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
 	
 	//攻撃
-	if (enemy.GetIsStarDropAttack() == false){
+	if (enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false){
 		Attack();
+	}
+
+	//タイマーが0になったらフラグを戻す
+	if (enemy.GetIsRoundTranslation() == true) {
+
+		for (int i = 0; i < kMaxAttack; i++) {
+			mIsAttack[i] = false;
+			mAttackParticle[i].Reset();
+		}
+
+		mAttackCount = kMaxAttack;
 	}
 
 	//速度を加算
@@ -319,7 +352,20 @@ void Player::Rolling() {
 	}
 }
 
+void Player::RoundTranslation(Enemy& enemy) {
 
+	if (enemy.GetIsRoundTranslation() == true) {
+
+		if (enemy.GetIsOldRoundMove() == false && enemy.GetIsRoundMove() == true) {
+			mRoundStartPosition = mPosition;
+			mRoundEndPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
+		}
+
+		if (enemy.GetIsRoundMove() == true) {
+			mPosition = EasingMove(mRoundStartPosition, mRoundEndPosition, easeOutExpo(enemy.GetRoundEasingt()));
+		}
+	}
+}
 
 //----------ここから当たり判定----------//
 void Player::Collision(Stage& stage, Enemy& enemy) {
@@ -379,14 +425,14 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	}
 
 	//ローリングしてない時に攻撃を受ける
-	if (mIsRolling == false) {
+	if (mIsRolling == false && !mIsNoHit) {
 
-		if (stage.GetRound() == Round1) {
 
-			//-----弱攻撃当たり判定-----//
-			for (int i = 0; i < kEnemyMaxAttack; i++) {
+		//-----弱攻撃当たり判定-----//
+		for (int i = 0; i < kEnemyMaxAttack; i++) {
 
 				//攻撃を受けた場合
+
 				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
 					mColor = 0xFFFF00FF;
 					mIsHit[enemy.GetAttackCount() - 1] = true;
@@ -399,6 +445,8 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 					mIsHit[i] = false;
 					mKnockBack[i] = false;
 				}
+				
+				
 
 				//何も攻撃を受けていない時は色を戻す
 				if (mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
@@ -406,79 +454,75 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 				}
 			}
 
-			//-----強攻撃当たり判定-----
-			//攻撃を受けた場合
-			if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+		//-----強攻撃当たり判定-----
+		//攻撃を受けた場合
+		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+			mColor = 0xFFFF00FF;
+			mIsHit[2] = true;
+			mHitFrame = 10;
+
+			//敵の向きによってノックバックする方向を変える
+			KnockBack(enemy, 2);
+
+		}
+		else if (enemy.GetIsAttack(2) == false) {
+			mIsHit[2] = false;
+			mKnockBack[2] = false;
+		}
+
+		//-----星砕流・落下星当たり判定-----//
+		for (int i = 0; i < kFallingStarMax; i++) {
+
+			//左側攻撃を受けた場合
+			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 				mColor = 0xFFFF00FF;
 				mIsHit[2] = true;
 				mHitFrame = 10;
 
-				//敵の向きによってノックバックする方向を変える
-				KnockBack(enemy, 2);
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = -kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mVelocity.y = 0;
+					mCanJump = false;
+					mKnockBack[2] = true;
+				}
+				break;
 
 			}
-			else if (enemy.GetIsAttack(2) == false) {
+
+			//右側攻撃を受けた場合
+			if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
+				mColor = 0xFFFF00FF;
+				mIsHit[2] = true;
+				mHitFrame = 10;
+
+				if (mKnockBack[2] == false) {
+					mKnockBackVelocity.x = kKnockBackLength[2].x;
+					mKnockBackVelocity.y = -kKnockBackLength[2].y;
+					mVelocity.y = 0;
+					mCanJump = false;
+					mKnockBack[2] = true;
+				}
+				break;
+
+			}
+
+			else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
 				mIsHit[2] = false;
 				mKnockBack[2] = false;
 			}
 
-			//-----星砕流・落下星当たり判定-----//
-			for (int i = 0; i < kFallingStarMax; i++) {
-
-				//左側攻撃を受けた場合
-				if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
-					mColor = 0xFFFF00FF;
-					mIsHit[2] = true;
-					mHitFrame = 10;
-
-					if (mKnockBack[2] == false) {
-						mKnockBackVelocity.x = -kKnockBackLength[2].x;
-						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mVelocity.y = 0;
-						mCanJump = false;
-						mKnockBack[2] = true;
-					}
-					break;
-
-				}
-
-				//右側攻撃を受けた場合
-				if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
-					mColor = 0xFFFF00FF;
-					mIsHit[2] = true;
-					mHitFrame = 10;
-
-					if (mKnockBack[2] == false) {
-						mKnockBackVelocity.x = kKnockBackLength[2].x;
-						mKnockBackVelocity.y = -kKnockBackLength[2].y;
-						mVelocity.y = 0;
-						mCanJump = false;
-						mKnockBack[2] = true;
-					}
-					break;
-
-				}
-
-				else if (enemy.GetIsAttack(2) == false && enemy.GetIsSpecialAttack() == false) {
-					mIsHit[2] = false;
-					mKnockBack[2] = false;
-				}
-
-				//何も攻撃を受けていない時は色を戻す
-				if (mIsHit[2] == false) {
-					mColor = 0xFFFFFFFF;
-				}
+			//何も攻撃を受けていない時は色を戻す
+			if (mIsHit[2] == false) {
+				mColor = 0xFFFFFFFF;
 			}
 		}
 
-		if (stage.GetRound() == Round2) {
-
-		}
-
 	}
-
-
+	
 }
+
+
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 
 	int x = mPosition.x - AttackPosition.x;
@@ -590,123 +634,126 @@ void Player::Draw(Screen& screen) {
 
 	//プレイヤー描画
 
-	//ローリング
-	if (mIsRolling) {
+	if (mFlashing == 1) {
+		//ローリング
+		if (mIsRolling) {
+			if (mDirection == RIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+			}
+			if (mDirection == LEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+			}
+
+		}
+
+		//  攻撃
+
+		//右攻撃
 		if (mDirection == RIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+			if (mIsAttack[2] == true) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+			}
+			else if (mIsAttack[1] == true) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+			}
+			else if (mIsAttack[0] == true) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+			}
 		}
+
+		//左攻撃
 		if (mDirection == LEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+			if (mIsAttack[2] == true) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+			}
+			else if (mIsAttack[1] == true) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+			}
+			else if (mIsAttack[0] == true) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+			}
 		}
+
+
+
+
+
+		//立っている時
+		if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
+			if (mDirection == RIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+			}
+			if (mDirection == LEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+			}
+
+			mIsJump = false;
+			mJumpAnimeCount = 0;
+		}
+		//移動
+		if (Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+			if (mDirection == RIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+			}
+			if (mDirection == LEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
+			}
+			mIsJump = false;
+		}
+		else if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+			mIsJump = false;
+			mJumpAnimeCount = 0;
+			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
+			mIsJump = false;
+		}
+		else if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+			mIsJump = false;
+			mJumpAnimeCount = 0;
+			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
+			mIsJump = false;
+		}
+
+		//ジャンプ
+
+
+		if (Key::IsTrigger(DIK_UP) && mJumpCount == 0 && mIsRolling == false && !mIsJump) {
+			mJumpPosition.x = mPosition.x;
+			mJumpPosition.y = mPosition.y + 10;
+			mIsJump = true;
+			mIsjumpRoll = true;
+		}
+		if (mIsJump) {
+			mJumpAnimeCount++;
+
+			screen.DrawAnime(mJumpPosition, mRadius, mJumpSrcX, 240, 240, 6, 2, mTextureFrame, mJumpEffect, mColor, 0, 0);//ジャンプ時のエフェクト
+		}
+		if (!mIsJump) {
+			mJumpSrcX = 0;
+		}
+
+		//２回目のジャンプで回転する
+		if (mVelocity.y != 0) {
+			if (mDirection == RIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
+			}
+			if (mDirection == LEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
+			}
+
+		}
+
 		
-	}
 
-	//  攻撃
 
-	//右攻撃
-	if (mDirection == RIGHT) {
-		if (mIsAttack[2] == true) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
-		}
-		else if (mIsAttack[1] == true) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
-		}
-		else if (mIsAttack[0] == true) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
-		}
-	}
+		//攻撃範囲描画
+		for (int i = 0; i < kMaxAttack; i++) {
 
-	//左攻撃
-	if (mDirection == LEFT) {
-		if (mIsAttack[2] == true) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+			if (mIsAttack[i] == true) {
+				mAttackParticle[i].Draw(screen);
+				screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
+			}
 		}
-		else if (mIsAttack[1] == true) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
-		}
-		else if (mIsAttack[0] == true) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
-		}
-	}
-
-	
-
-	
-
-	//立っている時
-	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
-		if (mDirection == RIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
-		}
-		if (mDirection == LEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
-		}
-
-		mIsJump = false;
-		mJumpAnimeCount = 0;
-	}
-	//移動
-	if (Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		if (mDirection == RIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
-		}
-		if (mDirection == LEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
-		}
-		mIsJump = false;
-	}
-	else if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		mIsJump = false;
-		mJumpAnimeCount = 0;
-		screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
-		mIsJump = false;
-	}
-	else if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
-		mIsJump = false;
-		mJumpAnimeCount = 0;
-		screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
-		mIsJump = false;
-	}
-
-	//ジャンプ
-	
-
-	if (Key::IsTrigger(DIK_UP) && mJumpCount == 0 && mIsRolling == false && !mIsJump) {
-		mJumpPosition.x = mPosition.x;
-		mJumpPosition.y = mPosition.y + 10;
-		mIsJump = true;
-		mIsjumpRoll = true;
-	}
-	if (mIsJump) {
-		mJumpAnimeCount++;
-		
-		screen.DrawAnime(mJumpPosition, mRadius, mJumpSrcX, 240, 240, 6, 2, mTextureFrame, mJumpEffect, mColor, 0, 0);//ジャンプ時のエフェクト
-	}
-	if (!mIsJump) {
-		mJumpSrcX = 0;
-	}
-
-	//２回目のジャンプで回転する
-	if (mVelocity.y != 0) {
-		if (mDirection == RIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
-		}
-		if (mDirection == LEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 2, mTextureFrame, mJumpRoll, mColor, 0, 1);
-		}
-		
 	}
 	
-	Novice::ScreenPrintf(400, 400, "mAttackCount : %d", mAttackCount);
-	
-
-	//攻撃範囲描画
-	for (int i = 0; i < kMaxAttack; i++) {
-
-		if (mIsAttack[i] == true) {
-			mAttackParticle[i].Draw(screen);
-			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
-		}
-	}
 
 }

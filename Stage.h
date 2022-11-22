@@ -37,6 +37,8 @@ public:
 
 	//現在ラウンド取得
 	inline ROUND GetRound() { return Round; }
+	//ラウンドを変える
+	void RoundTranslation(Enemy& enemy);
 
 	//-----ヒットストップ-----//
 	bool mIsHitStop;

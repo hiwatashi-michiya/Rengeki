@@ -25,6 +25,7 @@ public:
 	float OldZoom;
 	float ZoomSpeed;
 	bool StartSpecialAttackEasing;
+	bool StartRoundEasing;
 	float ZoomEasingt;
 	float StartZoom;
 	void ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy);
