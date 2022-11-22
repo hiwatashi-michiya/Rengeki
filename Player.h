@@ -140,6 +140,9 @@ private:
 	int mNoHitCount;
 	bool mIsNoHit;
 
+	//無敵時間時の点滅
+	int mFlashing;
+
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
 
