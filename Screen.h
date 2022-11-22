@@ -32,6 +32,9 @@ public:
 	static constexpr float kShakeValue = 30.0f;
 	Vec2 ScreenShake;
 	void Shake(int mixX,int maxX,int mixY,int maxY, bool is);
+	//星の雫専用シェイク
+	float StarDropShakeValue;
+	void StarDropShake(Enemy& enemy);
 	
     /// <summary>
 	/// 四角形を描画する
@@ -63,6 +66,19 @@ public:
 	/// <param name="textureHandle">テクスチャのハンドル</param>
 	/// <param name="color">描画するスプライトの色</param>
 	void DrawQuad(Vec2 Position, float Radius, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color);
+	/// <summary>
+	/// 静止画（長方形）を描画する
+	/// </summary>
+	/// <param name="Position">中心座標</param>
+	/// <param name="Width">横幅</param>
+	/// <param name="Height">縦幅</param>
+	/// <param name="srcX">画像上の描画したい範囲左上座標 X</param>
+	/// <param name="srcY">画像上の描画したい範囲左上座標 Y</param>
+	/// <param name="srcW">画像上の描画したい範囲横幅</param>
+	/// <param name="srcH">画像上の描画したい範囲縦幅</param>
+	/// <param name="textureHandle">テクスチャのハンドル</param>
+	/// <param name="color">描画するスプライトの色</param>
+	void DrawRectAngle(Vec2 Position, float Width, float Height, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color);
 	/// <summary>
 	/// アスペクト比がウィンドウと同じ場合に使用する
 	/// </summary>

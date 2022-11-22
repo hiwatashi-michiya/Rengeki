@@ -80,7 +80,7 @@ public:
 private:
 
 	//動き
-	void Move();
+	void Move(Enemy& enemy);
 
 	//当たり判定
 	void Collision(Stage& stage, Enemy& enemy);
@@ -147,6 +147,8 @@ private:
 	int mAttackSE[kMaxAttack];
 
 	//---ジャンプ---//
+	//被弾後にジャンプできるようになったか
+	bool mCanJump;
 	//ジャンプ回数
 	int mJumpCount;
 	//ジャンプ関数

@@ -18,6 +18,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mFallingStarParticleRight[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
 	}
 
+	mSpecialAttackParticle = Particle(DIFFUSION, 0xFF00FF00, 500, 90, 100, 50, false);
+
 	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
 	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
 
@@ -69,6 +71,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBigJumpLeft = false;
 	mBigJumpRight = false;
 	////////////////////　ここから強攻撃　////////////////////
+	mIsSpecialAttackOnce = false;
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
@@ -77,6 +80,37 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+
+	mIsActive = false;
+	mIsDisplay = true;
+	mWidth = 50.0f;
+	mHeight = 100.0f;
+	mStoneColor = WHITE;
+	for (int i = 0; i < 3; i++) {
+		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
+		mStonePosition[i].y = kWindowHeight - mHeight / 2 - (kWindowHeight - Stage::kStageBottom - 3);
+		mIsStoneDisplay[i] = false;
+	}
+	mEnergyColor = WHITE;
+	mEnergyRadius = 5.0f;
+	for (int i = 0; i < 50; i++) {
+		mEnergyPosition[i].x = 0.0f;
+		mEnergyPosition[i].y = 0.0f;
+		mIsEnergyActive[i] = false;
+		mEnergyEasingt[i] = 0.0f;
+	}
+	mPowerRadius = 0.0f;
+	mPowerEasingt = 0.0f;
+	mPowerColor = WHITE;
+	mWhiteColor = 0xFFFFFF00;
+	mPowerColort = 0.0f;
+	mIsEasingMust = false;
+	mIsPowerDisplay = false;
+	mIsStartAttack = false;
+	mIsStarDrop = false;
+	mIsActiveStarDrop = false;
+	mFrame = 0;
+	mAttackFrame = 0;
 
 	///////////////////// 描画関係 ///////////////////////////
 	mIsLoadTexture = false;
@@ -94,7 +128,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
 	///////////////////// 強攻撃SE ///////////////////////////
-	mHeavyAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
+	mSpecialAttackReserveSE = Novice::LoadAudio("./Resources/SE/heavyattack.wav");
+	mSpecialAttackSE = Novice::LoadAudio("./Resources/SE/specialattack.wav");
+	///////////////////// 必殺技SE ///////////////////////////
+	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
 
 }
 
@@ -110,6 +147,13 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 		for (int i = 0; i < kMaxAttack; i++) {
 			mAttackParticle[i].ChangeParticleColor(0xFF000000);
 		}
+
+		for (int i = 0; i < kFallingStarMax; i++) {
+			mFallingStarParticleLeft[i].ChangeParticleColor(0xFF000000);
+			mFallingStarParticleRight[i].ChangeParticleColor(0xFF000000);
+		}
+
+		mSpecialAttackParticle.ChangeParticleColor(0xFF000000);
 
 	}
 
@@ -157,6 +201,11 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	Attack(player);
 
 	////////////////////　ここから強攻撃　////////////////////
+
+	if (mIsSpecialAttack == true) {
+		mSpecialAttackParticle.Update(mSpecialAttackPosition);
+	}
+
 	SpecialAttack(player, particle);
 
 	////////////////////　ここから必殺技　////////////////////
@@ -171,6 +220,7 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	}
 
 	FallingStar(player);
+	StarDrop();
 
 	//速度の代入
 	VelocityAssign();
@@ -186,7 +236,8 @@ bool Enemy::AnyAttack() {
 		mIsGuard == true ||
 		mIsAttackStart == true ||
 		mIsSpecialAttackStart == true ||
-		mIsFallingStar == true){
+		mIsFallingStar == true ||
+		mIsActive == true){
 		return true;
 	}
 	return false;
@@ -204,7 +255,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 	}
 
 	//地面にいる場合重力加算を無効
-	if (mIsGround == true || mIsBackStepNoGravity == true) {
+	if (mIsGround == true || mIsBackStepNoGravity == true || mIsActive == true) {
 		mVelocity.y = 0;
 		mKnockBackVelocity.y = 0;
 	}
@@ -849,7 +900,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 
 		//音再生
 		if (mSpecialAttackFrame == 0) {
-			Novice::PlayAudio(mHeavyAttackReserveSE, 0, 0.5f);
+			Novice::PlayAudio(mSpecialAttackReserveSE, 0, 0.5f);
 		}
 
 		mSpecialAttackFrame++;
@@ -898,7 +949,8 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 				mColor = 0x0000FF00 | static_cast<int>((1.0f - mSpecialAttackColorAlphat) * 0x00 + mSpecialAttackColorAlphat * 0xFF);
 
 				if (mSpecialAttackColorAlphat == 1.0f){
-
+					mSpecialAttackParticle.SetFlag(mSpecialAttackPosition);
+					Novice::PlayAudio(mSpecialAttackSE, 0, 0.5f);
 					mIsSpecialAttack = true;
 				}
 
@@ -908,6 +960,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 			if (mIsHit[0] == true || mIsHit[1] == true || mIsHit[2] == true) {
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				mSpecialAttackParticle.Reset();
 				//次のステップの速さを設定
 				mStepFrame = mStepCoolTime[2];
 			}
@@ -915,6 +968,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 			if (mSpecialAttackFrame >= 420){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
+				mSpecialAttackParticle.Reset();
 				//次のステップの速さを設定
 				mStepFrame = mStepCoolTime[2];
 			}
@@ -950,6 +1004,10 @@ void Enemy::FallingStar(Player& player) {
 
 			//地面に到達したら
 			if (mIsGround == true) {
+				//最初の衝撃波でも音を出す為にフレーム値を足す前に処理
+				if (mFallingStarFrame % 5 == 0 && mFallingStarFrame < 50) {
+					Novice::PlayAudio(mFallingStarWaveSE, 0, 0.5f);
+				}
 				mFallingStarFrame++;
 				mIsFallingStarAttack[mFallingStarStartValue] = true;
 				mFallingStarParticleLeft[mFallingStarStartValue].SetFlag(mLeftFallingStarPosition[mFallingStarStartValue]);
@@ -982,7 +1040,138 @@ void Enemy::FallingStar(Player& player) {
 		}
 	}
 }
+/*　必殺技３　星砕流奥義・星の雫　*/
+void Enemy::StarDrop() {
 
+	if (Key::IsTrigger(DIK_S)) {
+		mPowerEasingt = 0.0f;
+		mIsActive = true;
+	}
+
+	if (mIsActive == true) {
+		mFrame++;
+
+		//凝縮位置に移動
+		if (60 <= mFrame && mFrame < 180) {
+			mIsDisplay = false;
+		}
+		else {
+			mIsDisplay = true;
+		}
+		if (mFrame == 180) {
+			mPosition.x = kWindowWidth / 2;
+			mPosition.y = 150.0f;
+			mPowerPosition.x = mPosition.x;
+			mPowerPosition.y = mPosition.y + mRadius;
+		}
+
+		//凝縮元の白矩形
+		if (mFrame == 240) {
+			for (int i = 0; i < 3; i++) {
+				mIsStoneDisplay[i] = true;
+			}
+			mIsPowerDisplay = true;
+		}
+
+		if (300 <= mFrame) {
+
+			for (int i = 0; i < 50; i++) {
+
+				if (mFrame % 10 == 0 && mIsEnergyActive[i] == false && mIsStartAttack == false) {
+					int RandTmp = RandNum(0, 100, NATURAL) % 3;
+					mEnergyStartPosition[i] = { mStonePosition[RandTmp].x, mStonePosition[RandTmp].y - (mHeight / 2) + 10.0f };
+					mEnergyEndPosition = mPosition;
+					mEnergyPosition[i] = mEnergyStartPosition[i];
+					mEnergyEasingt[i] = 0.0f;
+					mIsEnergyActive[i] = true;
+					break;
+				}
+
+				if (mIsEnergyActive[i] == true) {
+					mEnergyEasingt[i] += 0.01f;
+					mEnergyEasingt[i] = Clamp(mEnergyEasingt[i], 0.0f, 1.0f);
+					mEnergyPosition[i] = EasingMove(mEnergyStartPosition[i], mEnergyEndPosition, easeInExpo(mEnergyEasingt[i]));
+					if (mEnergyEasingt[i] == 1.0f) {
+
+						if (mIsStartAttack == false) {
+							mPowerRadius += 5.0f;
+							if (220 <= mPowerRadius) {
+								mPowerStartRadius = mPowerRadius;
+								mIsStartAttack = true;
+							}
+						}
+						mIsEnergyActive[i] = false;
+					}
+				}
+			}
+
+		}
+	}
+
+	if (mIsStartAttack == true && mIsStarDrop == false) {
+		mAttackFrame++;
+		mPowerEasingt = EasingClamp(0.01f, mPowerEasingt);
+		mPowerRadius = EasingMove(mPowerStartRadius, 10.0f, easeInBack(mPowerEasingt));
+
+		if (240 <= mAttackFrame){
+			mPowerEasingt = 0.0f;
+			mPowerStartPosition = mPowerPosition;
+			mIsStarDrop = true;
+			mAttackFrame = 0;
+		}
+
+	}
+
+	if (mIsStarDrop == true) {
+
+		mPowerEasingt = EasingClamp(0.005f, mPowerEasingt);
+		mPowerPosition = EasingMove(mPowerStartPosition, { mPowerStartPosition.x, Stage::kStageBottom }, easeLinear(mPowerEasingt));
+
+		if (mPowerEasingt == 1.0f){
+			mAttackFrame++;
+			mIsActiveStarDrop = true;
+		}
+
+		if (240 <= mAttackFrame){
+			mPowerColort = EasingClamp(0.01f, mPowerColort);
+			mWhiteColor = ColorEasingMove(0xFFFFFF00, 0xFFFFFFFF, easeLinear(mPowerColort));
+		}
+
+		if (480 <= mAttackFrame){
+			mIsEasingMust = true;
+			mPowerColort = 0.0f;
+		}
+	}
+
+	if (mIsEasingMust == true) {
+
+		mIsActive = false;
+		mIsDisplay = true;
+		for (int i = 0; i < 3; i++) {
+			mIsStoneDisplay[i] = false;
+		}
+		for (int i = 0; i < 50; i++) {
+			mIsEnergyActive[i] = false;
+			mEnergyEasingt[i] = 0.0f;
+		}
+		mPowerRadius = 0.0f;
+		mPowerEasingt = 0.0f;
+		mIsPowerDisplay = false;
+		mIsStartAttack = false;
+		mIsStarDrop = false;
+		mIsActiveStarDrop = false;
+		mFrame = 0;
+		mAttackFrame = 0;
+
+		mPowerColort = EasingClamp(0.01f, mPowerColort);
+		mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
+		if (mPowerColort == 1.0f) {
+			mIsActive = false;
+			mIsEasingMust = false;
+		}
+	}
+
+}
 
 
 void Enemy::MovePattern(Player& player) {
@@ -1072,9 +1261,9 @@ void Enemy::MovePattern(Player& player) {
 				mIsStart = false;
 			}
 
+		}
 
-		} 
-		else
+		else if (mHitPoint <= (mTmpHitPointMax / 2))
 		{
 			mSpecialAttackFrame = 0;
 			mIsSpecialAttackStart = true;
@@ -1082,63 +1271,14 @@ void Enemy::MovePattern(Player& player) {
 			mIsStart = false;
 		}
 	}
-	////攻撃していない時 && 攻撃できる時
-	//if (AnyAttack() == false && mIsStart == true){
-	//	RandAttack = RandNum(1, 100, OFF);
-	//	int a = RandAttack % 10;
-	//	//int a = 1;
-	//	if (0 <= a && a <= 1){
 
-	//		mVelocity.x = 0.0f;
-	//		mAttackCount = 0;
-	//		mAttackTimer = kEnemyMaxAttack * 15;
-	//		mIsAttackStart = true;
-	//		mStartFrame = 0;
-	//		mIsStart = false;
-	//	}
-	//	else if (a == 2){
-
-	//		mGuardFrame = 0;
-	//		mIsGuard = true;
-	//		mStartFrame = 0;
-	//		mIsStart = false;
-	//	}
-	//	else if (3 <= a && a <= 4){
-
-	//		mBackStepEasingt = 0.0f;
-	//		mBackStepStartPosition = mPosition;
-	//		if (mDirection == ENEMYLEFT) {
-	//			mBackStepEndPosition = { mPosition.x + 400, mPosition.y - 150 };
-	//		}
-	//		else {
-	//			mBackStepEndPosition = { mPosition.x - 400, mPosition.y - 150 };
-	//		}
-	//		mIsBackStepNoGravity = true;
-	//		mIsBackStep = true;
-	//		mStartFrame = 0;
-	//		mIsStart = false;
-	//	}
-	//	else if (5 <= a && a <= 7){
-
-	//		mSpecialAttackFrame = 0;
-	//		mIsSpecialAttackStart = true;
-	//		mStartFrame = 0;
-	//		mIsStart = false;
-	//	}
-	//	else if (a == 9){
-
-	//		mVelocity.x = 0.0f;
-	//		mFallingStarStartPosition = mPosition;
-	//		mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
-	//		for (int i = 0; i < kFallingStarMax; i++) {
-	//			mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-	//			mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-	//		}
-	//		mIsFallingStar = true;
-	//		mStartFrame = 0;
-	//		mIsStart = false;
-	//	}
-	//}
+	if ((mHitPoint <= (mTmpHitPointMax / 2)) && mIsSpecialAttackOnce == false){
+		mSpecialAttackFrame = 0;
+		mIsSpecialAttackStart = true;
+		mStartFrame = 0;
+		mIsStart = false;
+		mIsSpecialAttackOnce = true;
+	}
 }
 
 
@@ -1324,6 +1464,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	if (mIsSpecialAttack == true){
 		screen.DrawEllipse(mSpecialAttackPosition, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+		mSpecialAttackParticle.Draw(screen);
 	}
 
 	////////////////////　ここから必殺技　////////////////////
@@ -1335,6 +1476,25 @@ void Enemy::Draw(Screen& screen, Player& player) {
 			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
 			mFallingStarParticleLeft[i].Draw(screen);
 			mFallingStarParticleRight[i].Draw(screen);
+		}
+	}
+
+	/*　必殺技３　星砕流奥義・星の雫　*/
+	if (mIsEasingMust == false){
+		for (int i = 0; i < 50; i++) {
+			if (mIsEnergyActive[i] == true) {
+				screen.DrawQuad(mEnergyPosition[i], mEnergyRadius, 0, 0, 0, 0, 0, mStoneColor);
+			}
+		}
+
+		for (int i = 0; i < 3; i++) {
+			if (mIsStoneDisplay[i] == true) {
+				screen.DrawRectAngle(mStonePosition[i], mWidth, mHeight, 0, 0, 500, 1000, mStone, mEnergyColor);
+			}
+		}
+
+		if (mIsPowerDisplay == true) {
+			screen.DrawEllipse(mPowerPosition, mPowerRadius, 0.0f, mPowerColor, kFillModeWireFrame);
 		}
 	}
 
@@ -1364,18 +1524,22 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mAttack2 = Novice::LoadTexture("./Resources/Enemy/Enemy_attack2.png");
 		mAttack3 = Novice::LoadTexture("./Resources/Enemy/Enemy_attack3.png");
 		mButtobi = Novice::LoadTexture("./Resources/Enemy/Enemy_buttobi.png");
+		mStone = Novice::LoadTexture("./Resources/Enemy/Stone.png");
 		mIsLoadTexture = true;
 	}
 
-	//待機モーション
-	/*if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
-		if (mDirection == ENEMYRIGHT) {
-			screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+	//星の雫使用時の移動中は描画しない
+	if (mIsDisplay == true){
+
+		//待機モーション
+		if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
+			if (mDirection == ENEMYRIGHT) {
+				screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
+			if (mDirection == ENEMYLEFT) {
+				screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
+			}
 		}
-		if (mDirection == ENEMYLEFT) {
-			screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
-		}
-	}*/
 
 	//バックステップモーション
 	if (mIsBackStep) {
@@ -1387,15 +1551,15 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 	}
 
-	//ガードモーション
-	if (mIsGuard) {
-		if (mDirection == ENEMYRIGHT) {
-			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
+		//ガードモーション
+		if (mIsGuard) {
+			if (mDirection == ENEMYRIGHT) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
+			}
+			if (mDirection == ENEMYLEFT) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
+			}
 		}
-		if (mDirection == ENEMYLEFT) {
-			screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mGuard, mColor);
-		}
-	}
 
 	//歩くモーション
 	if (AnyAttack() == false && mVelocity.y == 0 && mKnockBackVelocity.x == 0) {
@@ -1474,4 +1638,13 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 	}
 
-}	
+	}
+
+
+}
+
+void Enemy::FrontDraw() {
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
+
+}

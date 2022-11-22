@@ -99,6 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stage.HitStop(player, enemy);
 		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
 		screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
+		screen.StarDropShake(enemy);
 
 		///
 		/// ↑更新処理ここまで
@@ -120,6 +121,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerParticle2.Draw(screen);
 		player.Draw(screen);
 		enemy.Draw(screen, player);
+		enemy.FrontDraw();
 
 		///
 		/// ↑描画処理ここまで

@@ -18,9 +18,9 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{5,5},
-	{10,8},
-	{50,20}
+	{5,8},
+	{10,15},
+	{50,28}
 };
 
 //最大攻撃回数
@@ -53,6 +53,9 @@ public:
 
 	//描画処理
 	void Draw(Screen& screen, Player& player);
+
+	//最前面に描画する処理
+	void FrontDraw();
 	
 	//ポジションリセット
 	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
@@ -106,6 +109,15 @@ public:
 	inline float GetFallingStarRadius() { return mFallingStarRadius; }
 	//攻撃しているか
 	inline bool GetIsFallingStarAttack(int i) { return mIsFallingStarAttack[i]; }
+
+	//-----星砕流奥義・星の雫-----//
+
+	//攻撃を開始しているか（エネルギー溜め）
+	inline bool GetIsStarDrop() { return mIsActive; }
+	//攻撃を開始しているか（プレイヤーはこの段階で動けない）
+	inline bool GetIsStarDropAttack() { return mIsStarDrop; }
+	//地面について拡散が始まったか
+	inline bool GetIsStarDropActive() { return mIsActiveStarDrop; }
 
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
@@ -266,6 +278,8 @@ private:
 
 	////////////////////　ここから強攻撃　////////////////////
 	
+	//一回攻撃したかどうか
+	bool mIsSpecialAttackOnce;
 	//攻撃が始まったかどうか
 	bool mIsSpecialAttackStart;
 	bool mIsOldSpecialAttackStart;
@@ -282,8 +296,10 @@ private:
 	//関数
 	void SpecialAttack(Player& player, Particle& particle);
 	//サウンド
-	int mHeavyAttackReserveSE;
-
+	int mSpecialAttackReserveSE;
+	int mSpecialAttackSE;
+	//パーティクル
+	Particle mSpecialAttackParticle;
 
 	////////////////////　ここから必殺技　////////////////////
 
@@ -309,9 +325,63 @@ private:
 	int mFallingStarEndValue;
 	//関数
 	void FallingStar(Player& player);
+	//サウンド
+	int mFallingStarWaveSE;
+
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
 	Particle mFallingStarParticleRight[kFallingStarMax];
+
+	////////////////////　ここから第二形態の必殺技　////////////////////
+
+	//-----必殺技２　星砕流・落下星改-----//
+
+	//-----必殺技３　星砕流奥義・星の雫-----//
+	//-----ステータス-----//
+	//原石
+	float mWidth;
+	float mHeight;
+	const float kStoneInterval = 350.0f;
+	unsigned int mStoneColor;
+	int mStone;
+	//エネルギー
+	float mEnergyRadius;
+	unsigned int mEnergyColor;
+	//雫
+	float mPowerRadius;
+	unsigned int mPowerColor;
+
+	//-----動作-----//
+	bool mIsActive;
+	bool mIsDisplay;
+	//原石
+	Vec2 mStonePosition[3];
+	bool mIsStoneDisplay[3];
+	//エネルギー
+	Vec2 mEnergyPosition[50];
+	Vec2 mEnergyStartPosition[50];
+	Vec2 mEnergyEndPosition;
+	bool mIsEnergyActive[50];
+	float mEnergyEasingt[50];
+	//雫
+	Vec2 mPowerPosition;
+	Vec2 mPowerStartPosition;
+	bool mIsPowerDisplay;
+	float mPowerStartRadius;
+	float mPowerEasingt;
+	float mPowerColort;
+	unsigned int mWhiteColor;
+	bool mIsEasingMust;
+
+	bool mIsStartAttack;
+	bool mIsStarDrop;
+	bool mIsActiveStarDrop;
+	//移動時のフレーム
+	int mFrame;
+	//攻撃時のフレーム
+	int mAttackFrame;
+	//関数
+	void StarDrop();
 
 	//最後に速度を代入する
 	void VelocityAssign();
