@@ -302,6 +302,8 @@ private:
 	int mStepSE;
 	//ジャンプサウンド
 	int mJumpSE;
+	//壁当てサウンド
+	int mWallHitSE;
 
 	//大ジャンプフラグ
 	bool mBigJumpLeft;

@@ -217,7 +217,8 @@ private:
 	void Rolling();
 	//サウンド
 	int mRollingSE;
-
+	//壁当てサウンド
+	int mWallHitSE;
 
 	//----------描画関係----------//
 

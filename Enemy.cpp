@@ -180,6 +180,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 	//‚»‚Ì‘¼SE
 	mLitningSE = Novice::LoadAudio("./Resources/SE/litning.wav");
+	mWallHitSE = Novice::LoadAudio("./Resources/SE/wallhit.wav");
 
 }
 
@@ -2359,6 +2360,7 @@ void Enemy::Collision(Player& player) {
 			mHitPoint -= kWallDamage;
 			mIsWallHitLeftFlag = true;
 			mKnockBackVelocity.x = 0;
+			Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
 		}
 
@@ -2376,6 +2378,7 @@ void Enemy::Collision(Player& player) {
 			mHitPoint -= kWallDamage;
 			mIsWallHitRightFlag = true;
 			mKnockBackVelocity.x = 0;
+			Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
 		}
 
