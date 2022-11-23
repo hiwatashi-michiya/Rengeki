@@ -560,6 +560,8 @@ void Player::HitPoint() {
 		mIsHitPointAssign = true;
 	}
 
+	mHitPoint = Clamp(mHitPoint, 0, mHitPointMax);
+
 }
 
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
