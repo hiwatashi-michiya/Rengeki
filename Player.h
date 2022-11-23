@@ -201,7 +201,9 @@ private:
 	int mJumpCount;
 	//ジャンプ関数
 	void Jump();
-	
+	//サウンド
+	int mJumpSE;
+
 	//---ローリング---//
 	//ローリングしているかどうか
 	bool mIsRolling;

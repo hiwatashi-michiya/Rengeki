@@ -62,10 +62,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vec2 stageParticlePosition = { 0,800 };
 
 	//BGM
-	int BossBGM = Novice::LoadAudio("./Resources/BGM/BossBGM.wav");
-	int isPlayBGM = -1;
+	int BossBGM1 = Novice::LoadAudio("./Resources/BGM/BossBGM1.wav");
+	int isPlayBGM1 = -1;
 	//音量
-	float BGMVolume = 0.5f;
+	float BGM1Volume = 0.5f;
+
+	//BGM
+	int BossBGM2 = Novice::LoadAudio("./Resources/BGM/BossBGM2.wav");
+	int isPlayBGM2 = -1;
+	//音量
+	float BGM2Volume = 0.0f;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -89,8 +95,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 		case TITLE:
 
-			if (Novice::IsPlayingAudio(isPlayBGM)) {
-				Novice::StopAudio(isPlayBGM);
+			if (Novice::IsPlayingAudio(isPlayBGM1)) {
+				Novice::StopAudio(isPlayBGM1);
+			}
+
+			if (Novice::IsPlayingAudio(isPlayBGM2)) {
+				Novice::StopAudio(isPlayBGM2);
 			}
 
 			title.Update();
@@ -110,29 +120,49 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				enemyParticle.ChangeParticleColor(0xFF00FF00);
 				enemyParticle2.ChangeParticleColor(0xFF00FF00);
 				stage.ResetAll();
+				BGM2Volume = 0.0f;
 			}
 
 			break;
 		case INGAME:
 
 			//BGMを鳴らす
-			if (Novice::IsPlayingAudio(isPlayBGM) == 0 || isPlayBGM == -1) {
+			if (Novice::IsPlayingAudio(isPlayBGM1) == 0 || isPlayBGM1 == -1) {
 
-				isPlayBGM = Novice::PlayAudio(BossBGM, 1, BGMVolume);
+				isPlayBGM1 = Novice::PlayAudio(BossBGM1, 1, BGM1Volume);
 
 			}
 
+			//BGMを鳴らす
+			if (Novice::IsPlayingAudio(isPlayBGM2) == 0 || isPlayBGM2 == -1) {
+
+				isPlayBGM2 = Novice::PlayAudio(BossBGM2, 1, BGM2Volume);
+
+			}
+
+			//星の雫攻撃時に音を消す
 			if (enemy.GetIsStarDropAttack() == true) {
-				BGMVolume = 0.0f;
-				Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+				BGM1Volume = 0.0f;
+				BGM2Volume = 0.0f;
+				Novice::SetAudioVolume(isPlayBGM1, BGM1Volume);
+				Novice::SetAudioVolume(isPlayBGM2, BGM2Volume);
 			}
 			else {
 
-				if (BGMVolume < 0.5f) {
-					BGMVolume += 0.02f;
+				if (BGM1Volume < 0.5f) {
+					BGM1Volume += 0.02f;
+					Novice::SetAudioVolume(isPlayBGM1, BGM1Volume);
 				}
 
-				Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+				//第二形態でBGM2追加
+				if (enemy.GetIsHitPointAssign() == true) {
+
+					if (BGM2Volume < 0.5f) {
+						BGM2Volume += 0.02f;
+						Novice::SetAudioVolume(isPlayBGM2, BGM2Volume);
+					}
+
+				}
 
 			}
 

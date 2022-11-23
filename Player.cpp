@@ -60,9 +60,6 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mKnockBack[0] = false;
 	mKnockBack[1] = false;
 	mKnockBack[2] = false;
-	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
-	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
-	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
 	mScaling = { 1.0f, 1.0f };
 	mIsJumpScaling = false;
 	mIsLandScaling = false;
@@ -77,6 +74,12 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mNoHitCount = 0;
 	mIsNoHit = false;
 	mFlashing = 1;
+	//////////// SE /////////////////
+	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
+	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
+	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
+	mJumpSE = Novice::LoadAudio("./Resources/SE/jump.wav");
+
 }
 
 //リセット
@@ -400,6 +403,7 @@ void Player::Jump() {
 			mVelocity.y = 0;
 			mVelocity.y -= 15.0f;
 			mJumpCount -= 1;
+			Novice::PlayAudio(mJumpSE, 0, 0.5f);
 		}
 
 		//ジャンプ回数残り２回
@@ -407,6 +411,7 @@ void Player::Jump() {
 			mVelocity.y = 0;
 			mVelocity.y -= 20.0f;
 			mJumpCount -= 1;
+			Novice::PlayAudio(mJumpSE, 0, 0.5f);
 		}
 
 	}
