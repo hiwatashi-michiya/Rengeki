@@ -107,10 +107,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			screen.Zoom = 1.0f;
 			screen.Scroll = { kWindowWidth / 2.0f, (Stage::kStageBottom + 20.0f) };
 
-			title.Update();
+			title.Update(player);
+			stageParticle.SetFlag(stageParticlePosition);
+			stageParticle.Update(stageParticlePosition);
 
 			//タイトル画面でのプレイヤー
-			player.Update(stage, enemy);
+			player.Update(title, stage, enemy);
 			playerParticle.SetFlag(player.GetPlayerPosition());
 			playerParticle.Update(player.GetPlayerPosition());
 			playerParticle2.SetFlag(player.GetPlayerPosition());
@@ -200,7 +202,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 
 				enemy.Update(stage, player, stageParticle);
-				player.Update(stage, enemy);
+				player.Update(title, stage, enemy);
 				stage.RoundTranslation(enemy);
 				stageParticle.SetFlag(stageParticlePosition);
 				stageParticle.Update(stageParticlePosition);
@@ -274,6 +276,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		switch (scene)
 		{
 		case TITLE:
+
+			Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
+			stageParticle.Draw(screen);
 
 			title.Draw();
 
