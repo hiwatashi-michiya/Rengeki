@@ -253,6 +253,7 @@ private:
 	int mPlayer_right;
 	int mPlayer_left;
 	int mPlayerSrcX;
+	int mPlayerSrcRollX;
 	int mRolling;
 	int mDash;
 	int mAttack1;
