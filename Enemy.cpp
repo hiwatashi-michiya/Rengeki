@@ -2251,7 +2251,7 @@ void Enemy::ToBattle(Title& title) {
 		mIsStay = true;
 	}
 
-	if (mIsStay == true){
+	if (mIsStay == true && mIsStartBattle == false){
 		mAlphat = EasingClamp(0.01f, mAlphat);
 		mBlack = ColorEasingMove(0x000000FF, 0x00000000, easeLinear(mAlphat));
 		mDirection = ENEMYLEFT;
