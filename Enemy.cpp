@@ -415,7 +415,7 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
 	HitPoint(stage);
 
-	RoundTranslation();
+	RoundTranslation(stage);
 
 	if (stage.GetRound() == Round2 && mHitPoint == 0) {
 		mIsGameClear = true;
@@ -1785,9 +1785,13 @@ void Enemy::StarDrop(Player& player) {
 			}
 			
 			//É`ÉÉÅ[ÉWâπçƒê∂
-			if (Novice::IsPlayingAudio(mIsPlayEnergySE) == 0 || mIsPlayEnergySE == -1) {
+			if (mIsStarDrop == false) {
 
-				mIsPlayEnergySE = Novice::PlayAudio(mEnergySE, 1, 0.5f);
+				if (Novice::IsPlayingAudio(mIsPlayEnergySE) == 0 || mIsPlayEnergySE == -1) {
+
+					mIsPlayEnergySE = Novice::PlayAudio(mEnergySE, 1, 0.5f);
+
+				}
 
 			}
 
@@ -2146,7 +2150,7 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 }
 
 
-void Enemy::RoundTranslation() {
+void Enemy::RoundTranslation(Stage& stage) {
 
 	mIsOldRoundTranslation = mIsRoundTranslation;
 	mIsOldRoundMove = mIsRoundMove;
@@ -2158,7 +2162,7 @@ void Enemy::RoundTranslation() {
 		mCanRoundTranslation = false;
 	}
 
-	if (mHitPoint == 0 && mIsRoundTranslation == false){
+	if (mHitPoint == 0 && mIsRoundTranslation == false && stage.GetRound() != Round2){
 		mIsRoundTranslation = true;
 	}
 
