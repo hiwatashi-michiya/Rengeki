@@ -3,6 +3,7 @@
 #include <Novice.h>
 #include "Key.h"
 #include <math.h>
+#include "Title.h"
 #include "Enemy.h"
 #include "Quad.h"
 #include "MatVec.h"
@@ -145,10 +146,10 @@ void Player::ResetAll() {
 	mNoHitCount = 0;
 	mIsNoHit = false;
 	mFlashing = 1;
-
+	mIsHitCount = false;
 }
 
-void Player::Update(Stage &stage, Enemy &enemy) {
+void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
 
 	//１フレーム前の座標を取得する
 	mOldPosition = mPosition;
@@ -181,7 +182,7 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 	Move(enemy);
 
-	Collision(stage, enemy);
+	Collision(title, stage, enemy);
 
 	//星の雫の時場所を変える
 	if (enemy.GetIsOldEasingMust() == false && enemy.GetIsEasingMust() == true){
@@ -459,46 +460,52 @@ void Player::RoundTranslation(Enemy& enemy) {
 }
 
 //----------ここから当たり判定----------//
-void Player::Collision(Stage& stage, Enemy& enemy) {
+void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
 	for (int i = 0; i < kMaxAttack; i++) {
 		mIsOldHit[i] = mIsHit[i];
 	}
 	mIsOldWallHit = mIsWallHit;
 
-	//左判定
-	if (mPosition.x - mRadius < Stage::kStageLeft) {
-		mPosition.x = Stage::kStageLeft + mRadius;
+	if (title.GetIsTitleClear() == false){
+		mPosition.x = Clamp(mPosition.x, mRadius, 2000);
+	}
+	else if (title.GetIsTitleClear() == true){
+		//左判定
+		if (mPosition.x - mRadius < Stage::kStageLeft) {
+			mPosition.x = Stage::kStageLeft + mRadius;
 
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
+			//ノックバックして当たった場合パーティクルフラグを立てる
+			if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
 
-			mIsWallHit = true;
-			mWallHitLeft.SetFlag(mPosition);
-			mHitPoint -= kEnemyWallDamage;
-			mIsWallHitLeftFlag = true;
-			mKnockBackVelocity.x = 0;
+				mIsWallHit = true;
+				mWallHitLeft.SetFlag(mPosition);
+				mHitPoint -= kEnemyWallDamage;
+				mIsWallHitLeftFlag = true;
+				mKnockBackVelocity.x = 0;
+
+			}
 
 		}
 
-	}
+		//右判定
+		if (mPosition.x + mRadius > Stage::kStageRight) {
+			mPosition.x = Stage::kStageRight - mRadius;
 
-	//右判定
-	if (mPosition.x + mRadius > Stage::kStageRight) {
-		mPosition.x = Stage::kStageRight - mRadius;
+			//ノックバックして当たった場合パーティクルフラグを立てる
+			if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
 
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
+				mIsWallHit = true;
+				mWallHitRight.SetFlag(mPosition);
+				mHitPoint -= kEnemyWallDamage;
+				mIsWallHitRightFlag = true;
+				mKnockBackVelocity.x = 0;
 
-			mIsWallHit = true;
-			mWallHitRight.SetFlag(mPosition);
-			mHitPoint -= kEnemyWallDamage;
-			mIsWallHitRightFlag = true;
-			mKnockBackVelocity.x = 0;
+			}
 
 		}
-
 	}
+
 
 	//下判定
 	if (mPosition.y + mRadius >= Stage::kStageBottom) {
@@ -724,6 +731,9 @@ void Player::Draw(Screen& screen) {
 
 	mTextureFrame++;
 
+	
+	
+
 	//リソースの読み込み
 	if (mIsLoadTexture == false) {
 		mPlayer_right = Novice::LoadTexture("./Resources/Player/Player.png");
@@ -737,6 +747,7 @@ void Player::Draw(Screen& screen) {
 		mJump = Novice::LoadTexture("./Resources/Player/Player_jump.png");
 		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
 		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
+		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}
@@ -754,7 +765,8 @@ void Player::Draw(Screen& screen) {
 
 	//プレイヤー描画
 
-	if (mFlashing == 1) {
+
+	if (mFlashing == 1 && mKnockBackVelocity.x == 0) {
 		//ローリング
 		if (mIsRolling) {
 			if (mDirection == RIGHT) {
@@ -874,7 +886,14 @@ void Player::Draw(Screen& screen) {
 			}
 		}
 	}
-	
+
+
+	if (mKnockBackVelocity.x < 0) {
+		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
+	}
+	if (mKnockBackVelocity.x > 0) {
+		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
+	}
 
 }
 

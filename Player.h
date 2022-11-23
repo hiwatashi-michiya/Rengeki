@@ -31,6 +31,7 @@ enum DIRECTION {
 	RIGHT
 };
 
+class Title;
 class Enemy;
 
 class Player
@@ -49,7 +50,7 @@ public:
 	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Stage& stage, Enemy &enemy);
+	void Update(Title& title, Stage& stage, Enemy& enemy);
 
 	//描画処理
 	void Draw(Screen& screen);
@@ -109,7 +110,7 @@ private:
 	void Move(Enemy& enemy);
 
 	//当たり判定
-	void Collision(Stage& stage, Enemy& enemy);
+	void Collision(Title& title, Stage& stage, Enemy& enemy);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 
@@ -264,6 +265,11 @@ private:
 	bool mIsjumpRoll;
 	int mFall;
 	int mJumpAnimeCount;
+	int mHit;
+
+	//当たった後のカウント
+	bool mIsWallCount;
+	bool mIsHitCount;
 	int mPlayerHpFlame;
 };
 
