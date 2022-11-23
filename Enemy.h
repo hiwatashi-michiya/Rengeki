@@ -538,6 +538,12 @@ private:
 	int mLightning;
 	int mWing;
 	int mHadou;
+	int mKobusi;
+	int mAsi;
+	int mDoragon;
+	float mAtackBairitu;
+	int mSyougeki;
+	float mSyougekiSrcX[kFallingStarMax];
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
