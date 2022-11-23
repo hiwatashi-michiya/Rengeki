@@ -54,6 +54,15 @@ public:
 	//描画処理
 	void Draw(Screen& screen);
 
+	//ポジションリセット
+	void ResetPosition() { mPosition.x = 0.0f; mPosition.y = 800.0f; }
+
+	//プレイヤーのステータスリセット
+	void ResetAll();
+
+	//ゲームオーバーか取得する
+	inline bool GetIsGameOver() { return mIsGameOver; }
+
 	//被弾後に壁にあったかどうかを取得する
 	inline bool GetIsWallHit() { return mIsWallHit; }
 	inline bool GetIsOldWallHit() { return mIsOldWallHit; }
@@ -89,6 +98,10 @@ public:
 
 private:
 
+	//体力がゼロになった（プレイヤーの敗北）
+	bool mIsGameOver;
+
+
 	//動き
 	void Move(Enemy& enemy);
 
@@ -97,7 +110,14 @@ private:
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 
-	
+	//体力
+	int mHitPoint;
+	//体力の最大値
+	int mHitPointMax;
+	//体力を代入したか
+	bool mIsHitPointAssign;
+	//体力処理
+	void HitPoint();
 
 	//座標
 	Vec2 mPosition;
@@ -146,6 +166,13 @@ private:
 	//プレイヤーの向いている方向
 	DIRECTION mDirection;
 
+	//////////////////// ラウンド遷移用 ////////////////////
+
+	//移動の始点と終点
+	Vec2 mRoundStartPosition;
+	Vec2 mRoundEndPosition;
+	//遷移関数
+	void RoundTranslation(Enemy& enemy);
 
 	//----------動き関係----------//
 	//---攻撃---//
@@ -174,7 +201,9 @@ private:
 	int mJumpCount;
 	//ジャンプ関数
 	void Jump();
-	
+	//サウンド
+	int mJumpSE;
+
 	//---ローリング---//
 	//ローリングしているかどうか
 	bool mIsRolling;

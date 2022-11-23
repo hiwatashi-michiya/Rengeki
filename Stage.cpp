@@ -28,6 +28,17 @@ void Stage::Init() {
 	
 }
 
+void Stage::ResetAll() {
+
+	mIsHitStop = false;
+	mIsHeavyHitStop = false;
+	mIsWallHitStop = false;
+	mHitStopFrame = 0;
+	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
+	Round = Round1;
+
+}
+
 void Stage::HitStop(Player& player, Enemy& enemy) {
 
 	//攻撃を受けた時ヒットストップフラグをtrueにする
@@ -81,6 +92,13 @@ void Stage::HitStop(Player& player, Enemy& enemy) {
 
 }
 
+void Stage::RoundTranslation(Enemy& enemy) {
+
+	if (120 <= enemy.GetRoundFrame()){
+		Round = Round2;
+	}
+}
+
 void Stage::Draw(Screen& screen) {
 
 	if (mIsLoadTexture == false){
@@ -99,7 +117,7 @@ void Stage::Draw(Screen& screen) {
 		mRTText = Novice::LoadTexture("./Resources/UI/kaihi.png");
 		mIsLoadTexture = true;
 	}
-	
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
 

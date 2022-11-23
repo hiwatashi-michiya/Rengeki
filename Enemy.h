@@ -26,6 +26,12 @@ const Vec2 kKnockBackLength[3] = {
 //最大攻撃回数
 const int kEnemyMaxAttack = 3;
 
+//攻撃力
+const int kEnemyAttackValue[kEnemyMaxAttack] = { 1,3,5 };
+
+//壁に当たった時のダメージ
+const int kEnemyWallDamage = 10;
+
 //星砕流・落下星の攻撃数
 static constexpr int kFallingStarMax = 10;
 
@@ -54,11 +60,17 @@ public:
 	//描画処理
 	void Draw(Screen& screen, Player& player);
 
+	//敵情報のリセット
+	void ResetAll();
+
 	//最前面に描画する処理
 	void FrontDraw();
+
+	//ゲームクリアか取得する
+	inline bool GetIsGameClear() { return mIsGameClear; }
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
+	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -69,6 +81,18 @@ public:
 
 	//体力取得
 	inline int GetEnemyHitPoint() { return mHitPoint; }
+
+	//ラウンド2の体力代入取得
+	inline bool GetIsHitPointAssign() { return mIsHitPointAssign[1]; }
+
+	////////////////////　ラウンド遷移取得関数　////////////////////
+
+	inline bool GetIsRoundTranslation() { return mIsRoundTranslation; }
+	inline bool GetIsOldRoundTranslation() { return mIsOldRoundTranslation; }
+	inline bool GetIsRoundMove() { return mIsRoundMove; }
+	inline bool GetIsOldRoundMove() { return mIsOldRoundMove; }
+	inline int GetRoundFrame() { return mRoundFrame; }
+	inline float GetRoundEasingt() { return mRoundEasingt; }
 
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
 	
@@ -123,6 +147,10 @@ public:
 	inline bool GetIsStarDropAttack() { return mIsStarDrop; }
 	//地面について拡散が始まったか
 	inline bool GetIsStarDropActive() { return mIsActiveStarDrop; }
+	//イージングすべきか
+	inline bool GetIsEasingMust() { return mIsEasingMust; }
+	inline bool GetIsOldEasingMust() { return mIsOldEasingMust; }
+
 
 	//攻撃を受けているか
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
@@ -130,7 +158,8 @@ public:
 
 private:
 
-	
+	//敵を倒したか（プレイヤーの勝利）
+	bool mIsGameClear;
 
 
 	//何か攻撃しているか
@@ -139,6 +168,8 @@ private:
 	//当たり判定
 	void Collision(Player& player);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
+	void StoneCollision(Player& player);
+	bool CircleQuadCollision(Vec2 StonePosition, Vec2 AttackPosition, float radius);
 
 	//体力処理
 	void HitPoint(Stage& stage);
@@ -199,10 +230,29 @@ private:
 	bool mIsWallHitRightFlag;
 	bool mIsWallHitLeftFlag;
 
+	//////////////////// ラウンド遷移用 ////////////////////
+
+	//ラウンド遷移を開始するか && できるか
+	bool mIsRoundTranslation;
+	bool mIsOldRoundTranslation;
+	bool mCanRoundTranslation;
+	//遷移時に移動を開始するか
+	bool mIsRoundMove;
+	bool mIsOldRoundMove;
+	//ラウンド遷移のフレーム
+	int mRoundFrame;
+	//イージング値
+	float mRoundEasingt;
+	//移動の始点と終点
+	Vec2 mRoundStartPosition;
+	Vec2 mRoundEndPosition;
+	//遷移関数
+	void RoundTranslation(Stage& stage);
+
 	//////////////////// 敵の動きをまとめる ////////////////////
 
 	//移動関数
-	void MovePattern(Player& player);
+	void MovePattern(Stage& stage, Player& player);
 	//次の移動を開始できるか
 	bool mIsStart;
 	//移動開始するまでのフレーム
@@ -365,10 +415,19 @@ private:
 
 	//-----動作-----//
 	bool mIsActive;
+	bool mIsActiveOnce;
 	bool mIsDisplay;
+	bool mIsAllBreak;
 	//原石
 	Vec2 mStonePosition[3];
 	bool mIsStoneDisplay[3];
+	bool mIsStoneHit[3];
+	bool mIsStoneLeftHit[3];
+	bool mIsStoneRightHit[3];
+	bool mIsStoneBreak[3];
+	float mStoneKnockBackSpeed[3];
+	float mStoneKnockBackValue[3];
+	float mStoneHp[3];
 	//エネルギー
 	Vec2 mEnergyPosition[50];
 	Vec2 mEnergyStartPosition[50];
@@ -384,6 +443,7 @@ private:
 	float mPowerColort;
 	unsigned int mWhiteColor;
 	bool mIsEasingMust;
+	bool mIsOldEasingMust;
 
 	bool mIsStartAttack;
 	bool mIsStarDrop;
@@ -393,7 +453,12 @@ private:
 	//攻撃時のフレーム
 	int mAttackFrame;
 	//関数
-	void StarDrop();
+	void StarDrop(Player& player);
+	//サウンド
+	int mIsPlayEnergySE;
+	int mEnergySE;
+	int mEnergyChargeSE;
+
 	//パーティクル
 	Particle mStarDropParticle;
 	Particle mStarDropAttackParticle;

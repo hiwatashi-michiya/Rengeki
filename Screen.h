@@ -25,6 +25,7 @@ public:
 	float OldZoom;
 	float ZoomSpeed;
 	bool StartSpecialAttackEasing;
+	bool StartRoundEasing;
 	float ZoomEasingt;
 	float StartZoom;
 	void ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy);
@@ -47,6 +48,28 @@ public:
 	/// <param name="color">描画する四角形の色</param>
 	/// <param name="fillMode">塗りつぶしモード</param>
 	void DrawBox(Vec2 Position, float w, float h, float angle, unsigned int color, FillMode fillMode);
+	/// <summary>
+	/// 三角形を描画する
+	/// </summary>
+	/// <param name="x1">描画する三角形の頂点1 X</param>
+	/// <param name="y1">描画する三角形の頂点1 Y</param>
+	/// <param name="x2">描画する三角形の頂点2 X</param>
+	/// <param name="y2">描画する三角形の頂点2 Y</param>
+	/// <param name="x3">描画する三角形の頂点3 X</param>
+	/// <param name="y3">描画する三角形の頂点3 Y</param>
+	/// <param name="color">描画する三角形の色</param>
+	/// <param name="fillMode">塗りつぶしモード</param>
+	void DrawTriangle(Vec2 Position, float w, float h, unsigned int color, FillMode fillMode);
+	/// <summary>
+	/// 矢印を描画する
+	/// </summary>
+	/// <param name="Position">描画する四角形の左上座標</param>
+	/// <param name="w">描画する四角形の横幅</param>
+	/// <param name="h">描画する四角形の縦幅</param>
+	/// <param name="angle">描画する四角形の回転角</param>
+	/// <param name="color">描画する四角形の色</param>
+	/// <param name="fillMode">塗りつぶしモード</param>
+	void DrawArrow(Vec2 Position, float w, float h, float angle, unsigned int color, FillMode fillMode);
 	/// <summary>
 	/// 楕円を描画する
 	/// </summary>

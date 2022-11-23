@@ -35,8 +35,13 @@ public:
 	//ステージ数
 	static constexpr int kStageMax = 2;
 
+	//リセット
+	void ResetAll();
+
 	//現在ラウンド取得
 	inline ROUND GetRound() { return Round; }
+	//ラウンドを変える
+	void RoundTranslation(Enemy& enemy);
 
 	//-----ヒットストップ-----//
 	bool mIsHitStop;
