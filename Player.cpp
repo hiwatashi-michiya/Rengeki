@@ -624,6 +624,11 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		}
 
 	}
+
+	//êØÇÃé¥ÇÃÉ_ÉÅÅ[ÉW
+	if (enemy.GetOldStarDropDamage() == false && enemy.GetStarDropDamage() == true) {
+		mHitPoint = (mHitPoint / 2);
+	}
 	
 }
 void Player::HitPoint() {
@@ -736,6 +741,7 @@ void Player::Draw(Screen& screen) {
 		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
 		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
 		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
+		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}
 
@@ -882,8 +888,11 @@ void Player::Draw(Screen& screen) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
 	}
 
+}
+
+void Player::DrawUI() {
+
 	//ëÃóÕï`âÊ
-	Novice::DrawBox(20, 40, mHitPoint * (200 / mHitPointMax), 10, 0.0f, RED, kFillModeSolid);
-
-
+	Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, GREEN, kFillModeSolid);
+	Novice::DrawQuad(20, 10, 420, 10, 20, 110, 420, 110, 0, 0, 2000, 500, mPlayerHpFlame, WHITE);
 }

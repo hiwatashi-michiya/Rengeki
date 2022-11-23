@@ -23,7 +23,7 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 
 	if (StartSpecialAttackEasing == true || Enemy.GetIsStarDrop() == true || Enemy.GetIsRoundTranslation() == true){
 		Scroll.x = kWindowWidth / (2.0f / Zoom);
-		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+		Scroll.y = (Stage::kStageBottom + 20.0f) / (1.0f / Zoom);
 	}
 	else if (stage.mIsHeavyHitStop == true) {
 		if (IsTmpScroll == false){
@@ -31,12 +31,12 @@ void Screen::ScrollUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 			IsTmpScroll = true;
 		}
 		Scroll.x = (Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom);
-		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+		Scroll.y = (Stage::kStageBottom + 20.0f) / (1.0f / Zoom);
 	}
 	else{
 
 		Scroll.x += ((Player.GetPlayerPosition().x + Enemy.GetEnemyPosition().x) / (2.0f / Zoom) - Scroll.x) * 0.3f;
-		Scroll.y = Stage::kStageBottom / (1.0f / Zoom);
+		Scroll.y = (Stage::kStageBottom + 20.0f) / (1.0f / Zoom);
 	}
 
 	if (stage.mIsHeavyHitStop == false){

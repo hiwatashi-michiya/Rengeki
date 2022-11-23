@@ -150,6 +150,9 @@ public:
 	//イージングすべきか
 	inline bool GetIsEasingMust() { return mIsEasingMust; }
 	inline bool GetIsOldEasingMust() { return mIsOldEasingMust; }
+	//攻撃を受けるようになったか
+	inline bool GetStarDropDamage() { return mIsStarDropDamage;}
+	inline bool GetOldStarDropDamage() { return mIsOldStarDropDamage;}
 
 
 	//攻撃を受けているか
@@ -279,6 +282,9 @@ private:
 	int mNewStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
+	//ジャンプサウンド
+	int mJumpSE;
+
 	//大ジャンプフラグ
 	bool mBigJumpLeft;
 	bool mBigJumpRight;
@@ -302,10 +308,14 @@ private:
 	//-----ガード-----//
 	//ガードフラグ
 	bool mIsGuard;
+	//ガード中の当たり判定
+	bool mIsGuardHit[3];
 	//ガード時間
 	int mGuardFrame;
 	//ガード関数
 	void Guard();
+	//サウンド
+	int mGuardSE;
 
 	//-----左右瞬間移動（使わない可能性あり）-----//
 	//左右瞬間移動フラグ
@@ -389,6 +399,7 @@ private:
 	void FallingStar(Player& player);
 	//サウンド
 	int mFallingStarWaveSE;
+	int mFallingStarJumpSE;
 
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
@@ -448,6 +459,8 @@ private:
 	bool mIsStartAttack;
 	bool mIsStarDrop;
 	bool mIsActiveStarDrop;
+	bool mIsStarDropDamage;
+	bool mIsOldStarDropDamage;
 	//移動時のフレーム
 	int mFrame;
 	//攻撃時のフレーム
@@ -458,6 +471,8 @@ private:
 	int mIsPlayEnergySE;
 	int mEnergySE;
 	int mEnergyChargeSE;
+	int mStarDropSE1;
+	int mStarDropSE2;
 	int mLitningSE;
 
 	//パーティクル
@@ -486,6 +501,10 @@ private:
 	int mButtobi;
 	int mEnerge;
 	int mTama;
+	int mEnemyHp;
+	int mEnemyHpFlame;
+	int mEnemyName;
+	Vec2 mEnemyUIPosition;
 	int mAttack4;
 	int mSizuku1;
 	int mSizuku2;

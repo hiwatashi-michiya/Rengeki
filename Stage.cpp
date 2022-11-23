@@ -13,12 +13,12 @@ void Stage::Init() {
 	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
 	mIsLoadTexture = false;
 	mIsLoadUI = false;
-	mRadius = 32;
+	mRadius = 24;
 
-	mPositionStick = { mRadius * 1.5f,kWindowHeight - mRadius };
+	mPositionStick = { 950 - (mRadius * 5), mRadius};
 	mPositionStickText = { mPositionStick.x + mRadius * 2,mPositionStick.y };
 
-	mPositionX = { 800,mPositionStick.y };
+	mPositionX = { 950,mPositionStick.y };
 	mPositionXText = { mPositionX.x + mRadius * 2,mPositionStick.y };
 
 	mPositionA = { mPositionX.x + mRadius * 5,mPositionStick.y };
@@ -100,7 +100,7 @@ void Stage::RoundTranslation(Enemy& enemy) {
 	}
 }
 
-void Stage::Draw(Screen& screen) {
+void Stage::Draw(Player& player, Enemy& enemy, Screen& screen) {
 
 	if (mIsLoadTexture == false){
 		mFlame = Novice::LoadTexture("./Resources/Stage/Flame.png");
@@ -111,8 +111,8 @@ void Stage::Draw(Screen& screen) {
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
 	screen.DrawWindowQuad({ mFlamePosition.x, mFlamePosition.y - kWindowHeight }, 0, 0, kWindowWidth, kWindowHeight, mLongFlame, WHITE);
-
 }
+
 
 void Stage::FrontDraw(Screen& screen) {
 	if (!mIsLoadUI) {
