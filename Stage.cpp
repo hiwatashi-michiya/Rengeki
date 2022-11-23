@@ -115,11 +115,13 @@ void Stage::Draw(Screen& screen) {
 		mXText = Novice::LoadTexture("./Resources/UI/kougeki.png");
 		mAText= Novice::LoadTexture("./Resources/UI/jump.png");
 		mRTText = Novice::LoadTexture("./Resources/UI/kaihi.png");
+		mLongFlame = Novice::LoadTexture("./Resources/Stage/LongFlame.png");
 		mIsLoadTexture = true;
 	}
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
+	screen.DrawWindowQuad({ mFlamePosition.x, mFlamePosition.y - kWindowHeight }, 0, 0, kWindowWidth, kWindowHeight, mLongFlame, WHITE);
 
 }
 
