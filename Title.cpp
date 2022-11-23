@@ -13,12 +13,17 @@ void Title::Init() {
 	mIsPlayerMoveClear = false;
 	mIsTitleClear = false; 
 	mIsLoadTexture = false;
+	mFirstAlphat = 0.0f;
+	mFirstBlack = BLACK;
 	mAlphat = 0.0f;
 	mBlack = 0x00000000;
 	mTheta = 0.0f;
 	mArrowPosition = { 1180, 610 };
 }
 void Title::Update(Player& player) {
+
+	mFirstAlphat = EasingClamp(0.01f, mFirstAlphat);
+	mFirstBlack = ColorEasingMove(BLACK, 0x00000000, easeLinear(mFirstAlphat));
 
 	mIsOldTitleClear = mIsTitleClear;
 
@@ -58,6 +63,7 @@ void Title::Draw() {
 
 void Title::FrontDraw() {
 
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mFirstBlack, kFillModeSolid);
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 
 }

@@ -21,6 +21,9 @@ public:
 
 private:
 
+	float mFirstAlphat;
+	unsigned int mFirstBlack;
+
 	float mAlphat;
 	unsigned int mBlack;
 
