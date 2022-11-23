@@ -279,6 +279,9 @@ private:
 	int mNewStepCoolTime[3];
 	//ステップサウンド
 	int mStepSE;
+	//ジャンプサウンド
+	int mJumpSE;
+
 	//大ジャンプフラグ
 	bool mBigJumpLeft;
 	bool mBigJumpRight;
@@ -302,10 +305,14 @@ private:
 	//-----ガード-----//
 	//ガードフラグ
 	bool mIsGuard;
+	//ガード中の当たり判定
+	bool mIsGuardHit[3];
 	//ガード時間
 	int mGuardFrame;
 	//ガード関数
 	void Guard();
+	//サウンド
+	int mGuardSE;
 
 	//-----左右瞬間移動（使わない可能性あり）-----//
 	//左右瞬間移動フラグ
