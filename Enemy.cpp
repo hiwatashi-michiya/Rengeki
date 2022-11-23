@@ -154,6 +154,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBackStepRing = -1;
 	////////////////////// ガードSE //////////////////////////
 	mGuardSE = Novice::LoadAudio("./Resources/SE/guard.wav");
+	mGuard2SE = Novice::LoadAudio("./Resources/SE/guard2.wav");
 	//////////////////////  弱攻撃SE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -164,6 +165,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	///////////////////// 必殺技SE ///////////////////////////
 	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
 	mFallingStarJumpSE = Novice::LoadAudio("./Resources/SE/fallingstarjump.wav");
+	mFallingStarFallSE = Novice::LoadAudio("./Resources/SE/fallingstarfall.wav");
+	mIsPlayFallingStarFallSE = -1;
 	//////////////////// 星の雫SE ///////////////////////////
 	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
 	mIsPlayEnergySE = -1;
@@ -1542,6 +1545,10 @@ void Enemy::Guard() {
 
 	if (mIsGuard == true){
 
+		if (mGuardFrame == 0) {
+			Novice::PlayAudio(mGuard2SE, 0, 0.5f);
+		}
+
 		mGuardFrame++;
 
 		if (mGuardFrame >= 120){
@@ -1754,8 +1761,21 @@ void Enemy::FallingStar(Player& player) {
 		if (mFallingStarEasingt >= 1.0f){
 			mVelocity.y += 12.0f;
 
+			if ((Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 0 || mIsPlayFallingStarFallSE == -1) &&
+				mIsGround == false) {
+
+				mIsPlayFallingStarFallSE = Novice::PlayAudio(mFallingStarFallSE, 0, 0.5f);
+
+			}
+
 			//地面に到達したら
 			if (mIsGround == true) {
+
+				//音停止
+				if (Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 1) {
+					Novice::StopAudio(mIsPlayFallingStarFallSE);
+				}
+
 				//最初の衝撃波でも音を出す為にフレーム値を足す前に処理
 				if (mFallingStarFrame % 5 == 0 && mFallingStarFrame < 50) {
 					Novice::PlayAudio(mFallingStarWaveSE, 0, 0.5f);
