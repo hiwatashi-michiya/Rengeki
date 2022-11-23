@@ -523,6 +523,7 @@ private:
 	int mEnemyName;
 	Vec2 mEnemyUIPosition;
 	int mAttack4;
+	int mAttack4_1;
 	int mSizuku1;
 	int mSizuku2;
 	int mLightning;
