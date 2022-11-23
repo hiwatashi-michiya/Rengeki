@@ -4,8 +4,8 @@
 #include "Key.h"
 #include "Function.h"
 #include "Easing.hpp"
+#include "ControllerInput.h"
 #include "MatVec.h"
-
 
 void InGame::Init() {
 

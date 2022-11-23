@@ -415,11 +415,13 @@ private:
 	Vec2 mRightFallingStarPosition[kFallingStarMax];
 	//攻撃フラグ
 	bool mIsFallingStarAttack[kFallingStarMax];
+	//第二ラウンド時の連続攻撃カウント
+	int mFallingStarCount;
 	//攻撃数
 	int mFallingStarStartValue;
 	int mFallingStarEndValue;
 	//関数
-	void FallingStar(Player& player);
+	void FallingStar(Player& player, Stage& stage);
 	//サウンド
 	int mFallingStarWaveSE;
 	int mFallingStarJumpSE;
@@ -538,6 +540,12 @@ private:
 	int mLightning;
 	int mWing;
 	int mHadou;
+	int mKobusi;
+	int mAsi;
+	int mDoragon;
+	float mAtackBairitu;
+	int mSyougeki;
+	float mSyougekiSrcX[kFallingStarMax];
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
