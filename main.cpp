@@ -107,9 +107,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			screen.Zoom = 1.0f;
 			screen.Scroll = { kWindowWidth / 2.0f, 0.0f };
 
-			screen.ZoomUpdate(stage, player, enemy);
-			screen.ScrollUpdate(stage, player, enemy);
-
 			title.Update();
 
 			//タイトル画面でのプレイヤー
