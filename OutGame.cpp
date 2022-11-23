@@ -4,6 +4,7 @@
 #include "Key.h"
 #include "Function.h"
 #include "Easing.hpp"
+#include "MatVec.h"
 
 
 void InGame::Init() {
@@ -53,7 +54,14 @@ void GameClear::Init() {
 	mBlack = 0x00000000;
 	mIsEndBlack = false;
 	mIsEndGameClear = false;
+	mIsAgain = false;
 	mIsLoadTexture = false;
+	mSelectPosition = { 640.0f, 450.0f };
+	mScale = 1.0f;
+	mWidth = 480;
+	mHeight = 80;
+	mSelectAlphat = 0.0f;
+	mSelectColor = WHITE;
 }
 void GameClear::ToGameClear() {
 
@@ -72,21 +80,69 @@ void GameClear::ToGameClear() {
 }
 void GameClear::Update() {
 
-	if (Key::IsTrigger(DIK_C)){
-		mIsEndGameClear = true;
+	mScale += 0.01f;
+	if (mScale >= 1.5f){
+		mScale = 1.0f;
 	}
+
+	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
+	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
+	if (mSelectAlphat == 1.0f){
+		mSelectAlphat = 0.0f;
+	}
+
+	switch (select)
+	{
+	case GameClear::ToTitle:
+
+		if (Key::IsTrigger(DIK_C)) {
+			mIsEndGameClear = true;
+		}
+
+		mSelectPosition.y = 450.0f;
+
+		if (Key::IsTrigger(DIK_DOWN)){
+			mScale = 1.0f;
+			mSelectAlphat = 0.0f;
+			select = Again;
+		}
+
+		break;
+	case GameClear::Again:
+
+		if (Key::IsTrigger(DIK_C)) {
+			mIsAgain = true;
+		}
+
+		mSelectPosition.y = 570.0f;
+
+		if (Key::IsTrigger(DIK_UP)) {
+			mScale = 1.0f;
+			mSelectAlphat = 0.0f;
+			select = ToTitle;
+		}
+
+		break;
+	}
+
 
 }
 void GameClear::Draw() {
 
 	if (mIsLoadTexture == false){
 		mGameClear = Novice::LoadTexture("./Resources/GameClear/Gameclear.png");
+		mSelectFlame = Novice::LoadTexture("./Resources/GameClear/SelectFlame.png");
 		mIsLoadTexture = true;
 	}
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
 
 	Novice::DrawSprite(0, 0, mGameClear, 1, 1, 0.0f, WHITE);
+
+	Quad OriginalPosition = RectAssign(mWidth, mHeight);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ mScale, mScale }, 0.0f, mSelectPosition));
+	Novice::DrawQuad(Rect.LeftTop.x, Rect.LeftTop.y, Rect.RightTop.x, Rect.RightTop.y, Rect.LeftBottom.x, Rect.LeftBottom.y, Rect.RightBottom.x, Rect.RightBottom.y, 0, 0, mWidth, mHeight, mSelectFlame, mSelectColor);
+
 }
 
 void GameClear::IngameDraw() {
@@ -112,7 +168,14 @@ void GameOver::Init() {
 	mBlack = 0x00000000;
 	mIsEndBlack = false;
 	mIsEndGameOver = false;
+	mIsAgain = false;
 	mIsLoadTexture = false;
+	mSelectPosition = { 640.0f, 570.0f };
+	mScale = 1.0f;
+	mWidth = 480;
+	mHeight = 80;
+	mSelectAlphat = 0.0f;
+	mSelectColor = WHITE;
 
 }
 void GameOver::ToGameOver() {
@@ -132,8 +195,49 @@ void GameOver::ToGameOver() {
 }
 void GameOver::Update() {
 
-	if (Key::IsTrigger(DIK_C)) {
-		mIsEndGameOver = true;
+	mScale += 0.01f;
+	if (mScale >= 1.5f) {
+		mScale = 1.0f;
+	}
+
+	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
+	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
+	if (mSelectAlphat == 1.0f) {
+		mSelectAlphat = 0.0f;
+	}
+
+	switch (select)
+	{
+	case GameOver::ToTitle:
+
+		if (Key::IsTrigger(DIK_C)) {
+			mIsEndGameOver = true;
+		}
+
+		mSelectPosition.y = 450.0f;
+
+		if (Key::IsTrigger(DIK_DOWN)) {
+			mScale = 1.0f;
+			mSelectAlphat = 0.0f;
+			select = Again;
+		}
+
+		break;
+	case GameOver::Again:
+
+		if (Key::IsTrigger(DIK_C)) {
+			mIsAgain = true;
+		}
+
+		mSelectPosition.y = 570.0f;
+
+		if (Key::IsTrigger(DIK_UP)) {
+			mScale = 1.0f;
+			mSelectAlphat = 0.0f;
+			select = ToTitle;
+		}
+
+		break;
 	}
 
 }
@@ -141,12 +245,17 @@ void GameOver::Draw() {
 
 	if (mIsLoadTexture == false) {
 		mGameOver = Novice::LoadTexture("./Resources/GameOver/Gameover.png");
+		mSelectFlame = Novice::LoadTexture("./Resources/GameOver/SelectFlame.png");
 		mIsLoadTexture = true;
 	}
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
 
 	Novice::DrawSprite(0, 0, mGameOver, 1, 1, 0.0f, WHITE);
+
+	Quad OriginalPosition = RectAssign(mWidth, mHeight);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ mScale, mScale }, 0.0f, mSelectPosition));
+	Novice::DrawQuad(Rect.LeftTop.x, Rect.LeftTop.y, Rect.RightTop.x, Rect.RightTop.y, Rect.LeftBottom.x, Rect.LeftBottom.y, Rect.RightBottom.x, Rect.RightBottom.y, 0, 0, mWidth, mHeight, mSelectFlame, mSelectColor);
 
 }
 

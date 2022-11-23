@@ -406,7 +406,7 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 	//É^ÉCÉgÉãå„ÇÕÇµÇŒÇÁÇ≠å©çáÇ§
 	ToBattle(title);
 
-	if (mIsStartBattle == true && mIsRoundTranslation == false) {
+	if (mIsStartBattle == true && mIsRoundTranslation == false && mIsGameClear == false && player.GetIsGameOver() == false) {
 
 		Move(player, particle);
 

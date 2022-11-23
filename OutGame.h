@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec2.h"
+#include "Quad.h"
 
 class InGame
 {
@@ -43,6 +44,7 @@ public:
 
 	inline bool IsEndBlack() { return mIsEndBlack; }
 	inline bool IsEndGameClear() { return mIsEndGameClear; }
+	inline bool IsAgain() { return mIsAgain; }
 
 private:
 
@@ -57,10 +59,24 @@ private:
 	unsigned int mBlack;
 	bool mIsEndBlack;
 
+	enum Select
+	{
+		ToTitle,
+		Again
+	};
+	Select select = ToTitle;
+
 	bool mIsEndGameClear;
+	bool mIsAgain;
 	bool mIsLoadTexture;
 	int mGameClear;
-
+	int mSelectFlame;
+	Vec2 mSelectPosition;
+	float mScale;
+	int mWidth;
+	int mHeight;
+	float mSelectAlphat;
+	unsigned int mSelectColor;
 };
 
 class GameOver
@@ -78,6 +94,7 @@ public:
 
 	inline bool IsEndBlack() { return mIsEndBlack; }
 	inline bool IsEndGameOver() { return mIsEndGameOver; }
+	inline bool IsAgain() { return mIsAgain; }
 
 private:
 
@@ -92,10 +109,23 @@ private:
 	unsigned int mBlack;
 	bool mIsEndBlack;
 
+	enum Select
+	{
+		ToTitle,
+		Again
+	};
+	Select select = Again;
 
 	bool mIsEndGameOver;
+	bool mIsAgain;
 	bool mIsLoadTexture;
 	int mGameOver;
-
+	int mSelectFlame;
+	Vec2 mSelectPosition;
+	float mScale;
+	int mWidth;
+	int mHeight;
+	float mSelectAlphat;
+	unsigned int mSelectColor;
 };
 

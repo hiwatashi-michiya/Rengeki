@@ -248,6 +248,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (enemy.GetIsGameClear() == true){
 				gameclear.ToGameClear();
 				if (gameclear.IsEndBlack() == true){
+					title.Init();
 					scene = GAMECLEAR;
 				}
 			}
@@ -255,6 +256,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (player.GetIsGameOver() == true){
 				gameover.ToGameOver();
 				if (gameover.IsEndBlack() == true){
+					title.Init();
 					scene = GAMEOVER;
 				}
 			}
@@ -263,6 +265,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case GAMECLEAR:
 
 			gameclear.Update();
+
+			//再戦する
+			if (gameclear.IsAgain() == true){
+				scene = INGAME;
+				ingame.Init();
+				player.ResetAll();
+				player.ResetPosition();
+				enemy.ResetAll();
+				enemy.ResetPosition();
+				enemyParticle.Reset();
+				enemyParticle2.Reset();
+				enemyParticle.ChangeParticleColor(0xFF00FF00);
+				enemyParticle2.ChangeParticleColor(0xFF00FF00);
+				stage.ResetAll();
+				BGM2Volume = 0.0f;
+				gameclear.Init();
+				gameover.Init();
+				title.mIsOldTitleClear = false;
+				title.mIsTitleClear = true;
+			}
 
 			if (gameclear.IsEndGameClear() == true){
 				title.Init();
@@ -274,6 +296,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				stageParticle.SetRandSize(1, 3);
 				stageParticle.ChangeParticleColor(0xFFFFFF00);
 				gameclear.Init();
+				gameover.Init();
 				scene = TITLE;
 			}
 
@@ -281,6 +304,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case GAMEOVER:
 
 			gameover.Update();
+
+
+			//再戦する
+			if (gameover.IsAgain() == true) {
+				scene = INGAME;
+				ingame.Init();
+				player.ResetAll();
+				player.ResetPosition();
+				enemy.ResetAll();
+				enemy.ResetPosition();
+				enemyParticle.Reset();
+				enemyParticle2.Reset();
+				enemyParticle.ChangeParticleColor(0xFF00FF00);
+				enemyParticle2.ChangeParticleColor(0xFF00FF00);
+				stage.ResetAll();
+				BGM2Volume = 0.0f;
+				gameclear.Init();
+				gameover.Init();
+				title.mIsOldTitleClear = false;
+				title.mIsTitleClear = true;
+			}
 
 			if (gameover.IsEndGameOver() == true) {
 				title.Init();
@@ -291,6 +335,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				stageParticle.Reset();
 				stageParticle.SetRandSize(1, 3);
 				stageParticle.ChangeParticleColor(0xFFFFFF00);
+				gameclear.Init();
 				gameover.Init();
 				scene = TITLE;
 			}
