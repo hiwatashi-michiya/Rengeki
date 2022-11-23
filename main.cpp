@@ -34,7 +34,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		GAMECLEAR,
 		GAMEOVER
 	};
-	Scene scene = TITLE;
+	Scene scene = GAMEOVER;
 
 	Screen screen;
 	Title title;
@@ -249,6 +249,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gameclear.ToGameClear();
 				if (gameclear.IsEndBlack() == true){
 					title.Init();
+					gameclear.Init();
+					gameover.Init();
 					scene = GAMECLEAR;
 				}
 			}
@@ -257,6 +259,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				gameover.ToGameOver();
 				if (gameover.IsEndBlack() == true){
 					title.Init();
+					gameclear.Init();
+					gameover.Init();
 					scene = GAMEOVER;
 				}
 			}
@@ -402,11 +406,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case GAMECLEAR:
 
 			gameclear.Draw();
+			gameclear.FrontDraw();
 
 			break;
 		case GAMEOVER:
 
 			gameover.Draw();
+			gameover.FrontDraw();
 
 			break;
 		}

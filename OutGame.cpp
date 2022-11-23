@@ -62,6 +62,8 @@ void GameClear::Init() {
 	mHeight = 80;
 	mSelectAlphat = 0.0f;
 	mSelectColor = WHITE;
+	mIsStartBlackToTitle = false;
+	mIsStartBlackAgain = false;
 }
 void GameClear::ToGameClear() {
 
@@ -95,32 +97,51 @@ void GameClear::Update() {
 	{
 	case GameClear::ToTitle:
 
-		if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
-			mIsEndGameClear = true;
+		if (mIsStartBlackToTitle == false){
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackToTitle = true;
+			}
+			if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = Again;
+			}
+		}
+		else if (mIsStartBlackToTitle == true) {
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsEndGameClear = true;
+			}
 		}
 
 		mSelectPosition.y = 450.0f;
 
-		if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)){
-			mScale = 1.0f;
-			mSelectAlphat = 0.0f;
-			select = Again;
-		}
+
 
 		break;
 	case GameClear::Again:
 
-		if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
-			mIsAgain = true;
+		if (mIsStartBlackAgain == false){
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackAgain = true;
+			}
+
+			if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = ToTitle;
+			}
+		}
+		else if (mIsStartBlackAgain == true) {
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsAgain = true;
+			}
 		}
 
 		mSelectPosition.y = 570.0f;
-
-		if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
-			mScale = 1.0f;
-			mSelectAlphat = 0.0f;
-			select = ToTitle;
-		}
 
 		break;
 	}
@@ -156,6 +177,9 @@ void GameClear::IngameDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
+void GameClear::FrontDraw() {
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
+}
 
 //------------------------------------------------//
 
@@ -176,6 +200,8 @@ void GameOver::Init() {
 	mHeight = 80;
 	mSelectAlphat = 0.0f;
 	mSelectColor = WHITE;
+	mIsStartBlackToTitle = false;
+	mIsStartBlackAgain = false;
 
 }
 void GameOver::ToGameOver() {
@@ -210,32 +236,49 @@ void GameOver::Update() {
 	{
 	case GameOver::ToTitle:
 
-		if (Key::IsTrigger(DIK_C)) {
-			mIsEndGameOver = true;
+		if (mIsStartBlackToTitle == false) {
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackToTitle = true;
+			}
+			if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = Again;
+			}
+		}
+		else if (mIsStartBlackToTitle == true){
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsEndGameOver = true;
+			}
 		}
 
 		mSelectPosition.y = 450.0f;
 
-		if (Key::IsTrigger(DIK_DOWN)) {
-			mScale = 1.0f;
-			mSelectAlphat = 0.0f;
-			select = Again;
-		}
-
 		break;
 	case GameOver::Again:
 
-		if (Key::IsTrigger(DIK_C)) {
-			mIsAgain = true;
+		if (mIsStartBlackAgain == false) {
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackAgain = true;
+			}
+
+			if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = ToTitle;
+			}
+		}
+		else if (mIsStartBlackAgain == true){
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f){
+				mIsAgain = true;
+			}
 		}
 
 		mSelectPosition.y = 570.0f;
-
-		if (Key::IsTrigger(DIK_UP)) {
-			mScale = 1.0f;
-			mSelectAlphat = 0.0f;
-			select = ToTitle;
-		}
 
 		break;
 	}
@@ -270,4 +313,7 @@ void GameOver::IngameDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 
+}
+void GameOver::FrontDraw() {
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }

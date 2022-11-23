@@ -41,6 +41,7 @@ public:
 	void IngameDraw();
 	void Update();
 	void Draw();
+	void FrontDraw();
 
 	inline bool IsEndBlack() { return mIsEndBlack; }
 	inline bool IsEndGameClear() { return mIsEndGameClear; }
@@ -77,6 +78,8 @@ private:
 	int mHeight;
 	float mSelectAlphat;
 	unsigned int mSelectColor;
+	bool mIsStartBlackToTitle;
+	bool mIsStartBlackAgain;
 };
 
 class GameOver
@@ -91,6 +94,7 @@ public:
 	void IngameDraw();
 	void Update();
 	void Draw();
+	void FrontDraw();
 
 	inline bool IsEndBlack() { return mIsEndBlack; }
 	inline bool IsEndGameOver() { return mIsEndGameOver; }
@@ -127,5 +131,7 @@ private:
 	int mHeight;
 	float mSelectAlphat;
 	unsigned int mSelectColor;
+	bool mIsStartBlackToTitle;
+	bool mIsStartBlackAgain;
 };
 
