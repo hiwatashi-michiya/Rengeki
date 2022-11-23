@@ -69,6 +69,12 @@ public:
 	//出現フラグを戻す
 	inline bool ResetParticleAppear() { mParticleAppear = false; return mParticleAppear; }
 
+	//パーティクルの大きさ変更
+	inline void SetRandSize(int newMin, int newMax) { mRandMin = newMin; mRandMax = newMax; }
+
+	//パーティクル速度変更
+	inline void SetRandSpeed(int newMin, int newMax) { mRandSpeedMin = newMin; mRandSpeedMax = newMax; }
+
 	//パーティクルの色を確認し、一つでも指定した色と違えばfalseを返す
 	inline bool GetParticleColor(int color) {
 
@@ -108,24 +114,8 @@ public:
 
 			if (mColor[i] != mParticleColor) {
 
-				if (mColor[i] > mParticleColor) {
+				mColor[i] = mParticleColor;
 
-					mColor[i] -= 0x04040400;
-
-					if (mColor[i] < mParticleColor) {
-						mColor[i] = mParticleColor;
-					}
-
-				}
-				else if (mColor[i] < mParticleColor) {
-
-					mColor[i] += 0x04040400;
-
-					if (mColor[i] > mParticleColor) {
-						mColor[i] = mParticleColor;
-					}
-
-				}
 
 			}
 
@@ -195,6 +185,10 @@ private:
 
 	//衝撃波の移動時間
 	int mShockWaveTimer;
+
+	//背景用速度
+	int mRandSpeedMin;
+	int mRandSpeedMax;
 
 };
 
