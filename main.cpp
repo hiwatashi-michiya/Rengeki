@@ -93,6 +93,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Novice::StopAudio(isPlayBGM);
 			}
 
+			//ズームとスクロールの設定
+			screen.Zoom = 1.0f;
+			screen.Scroll = { kWindowWidth / 2.0f, 0.0f };
+
 			title.Update();
 
 			//タイトル画面でのプレイヤー
