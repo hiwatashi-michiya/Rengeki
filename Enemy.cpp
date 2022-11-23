@@ -93,6 +93,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -265,6 +266,7 @@ void Enemy::ResetAll() {
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -1688,6 +1690,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x - (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYLEFT;
+						mAttackDirection = mDirection;
 					}
 					if (player.GetPlayerDirection() == RIGHT) {
 						mPosition.x = player.GetPlayerPosition().x - 50;
@@ -1695,6 +1698,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x + (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYRIGHT;
+						mAttackDirection = mDirection;
 					}
 				}
 
@@ -2683,6 +2687,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mSizuku2 = Novice::LoadTexture("./Resources/Enemy/Enemy_sizuku2.png");
 		mLightning = Novice::LoadTexture("./Resources/Enemy/lightning_strike.png");
 		mWing = Novice::LoadTexture("./Resources/Enemy/wing.png");
+		mHadou = Novice::LoadTexture("./Resources/Enemy/hadou.png");
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
 		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
@@ -2720,10 +2725,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 					screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 7, 2, mTextureFrame, mJump, mColor, 0, 1);
 				}
 
-			}
+		}
 
 		//バックステップモーション
-		if (mIsBackStep || mRoundEasingt < 1 && mIsRoundTranslation) {
+		else if (mIsBackStep || mRoundEasingt < 1 && mIsRoundTranslation) {
 			if (mDirection == ENEMYRIGHT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mBackStep, mColor);
 			}
@@ -2793,12 +2798,14 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 		//強攻撃
-		if (mIsSpecialAttack) {
-			if (mDirection == ENEMYLEFT) {
+		if (mIsSpecialAttack || (mIsSpecialAttackStart == true && mIsSpecialAttack == false)) {
+			if (mAttackDirection == ENEMYLEFT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}
-			if (mDirection == ENEMYRIGHT) {
+			if (mAttackDirection == ENEMYRIGHT) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}
 		}
 

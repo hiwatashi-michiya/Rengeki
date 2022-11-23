@@ -372,6 +372,8 @@ private:
 	bool mIsSpecialAttack;
 	//攻撃時間
 	int mSpecialAttackFrame;
+	//攻撃時用の向き保存
+	ENEMYDIRECTION mAttackDirection;
 	//攻撃の当たり判定の座標
 	Vec2 mSpecialAttackPosition;
 	//攻撃の当たり判定の半径
@@ -525,6 +527,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mHadou;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
