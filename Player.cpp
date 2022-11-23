@@ -470,6 +470,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 			mIsWallHit = true;
 			mWallHitLeft.SetFlag(mPosition);
+			mHitPoint -= kEnemyWallDamage;
 			mIsWallHitLeftFlag = true;
 			mKnockBackVelocity.x = 0;
 
@@ -486,6 +487,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 			mIsWallHit = true;
 			mWallHitRight.SetFlag(mPosition);
+			mHitPoint -= kEnemyWallDamage;
 			mIsWallHitRightFlag = true;
 			mKnockBackVelocity.x = 0;
 
@@ -568,7 +570,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			//ç∂ë§çUåÇÇéÛÇØÇΩèÍçá
 			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 				mColor = 0xFFFF00FF;
-
+				if (mIsHit[2] == false) {
+					mHitPoint -= kEnemyAttackValue[2];
+					mIsHit[2] = true;
+				}
 				mHitFrame = 10;
 
 				if (mKnockBack[2] == false) {
@@ -623,6 +628,8 @@ void Player::HitPoint() {
 		mHitPoint = mHitPointMax;
 		mIsHitPointAssign = true;
 	}
+
+	mHitPoint = Clamp(mHitPoint, 0, mHitPointMax);
 
 }
 
