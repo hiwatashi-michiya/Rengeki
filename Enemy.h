@@ -546,6 +546,8 @@ private:
 	float mAtackBairitu;
 	int mSyougeki;
 	float mSyougekiSrcX[kFallingStarMax];
+	int mTaoreru;
+	int mTaoreta;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;

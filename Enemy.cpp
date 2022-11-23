@@ -2687,8 +2687,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 			
 			screen.DrawQuad(mLeftFallingStarPosition[i], mFallingStarRadius, mSyougekiSrcX[i], 0, 64, 64, mSyougeki, WHITE);
 			screen.DrawQuadReverse(mRightFallingStarPosition[i], mFallingStarRadius, mSyougekiSrcX[i], 0, 64, 64, mSyougeki, WHITE);
-			/*screen.DrawEllipse(mLeftFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
-			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);*/
 			mFallingStarParticleLeft[i].Draw(screen);
 			mFallingStarParticleRight[i].Draw(screen);
 			if (mTextureFrame % 1 == 0) {
@@ -2763,6 +2761,8 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mAsi = Novice::LoadTexture("./Resources/Enemy/asi.png");
 		mDoragon = Novice::LoadTexture("./Resources/Enemy/doragon.png");
 		mSyougeki = Novice::LoadTexture("./Resources/Enemy/syougeki.png");
+		mTaoreru = Novice::LoadTexture("./Resources/Enemy/taoreru.png");
+		mTaoreta = Novice::LoadTexture("./Resources/Enemy/taoreta.png");
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
 		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
@@ -2961,6 +2961,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mButtobi, mColor);
 	}
 
+	
 
 }
 
