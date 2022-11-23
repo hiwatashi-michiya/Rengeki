@@ -72,7 +72,7 @@ void GameClear::ToGameClear() {
 	mAlphat = EasingClamp(0.01f, mAlphat);
 	mWinColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
 
-	if (240 < mFrame){
+	if (90 < mFrame){
 		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
 		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
 		if (mBlackAlphat == 1.0f){
@@ -211,7 +211,7 @@ void GameOver::ToGameOver() {
 	mAlphat = EasingClamp(0.01f, mAlphat);
 	mLoseColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
 
-	if (240 < mFrame) {
+	if (90 < mFrame) {
 		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
 		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
 		if (mBlackAlphat == 1.0f) {
