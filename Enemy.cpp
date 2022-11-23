@@ -2565,6 +2565,8 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mEnerge = Novice::LoadTexture("./Resources/Enemy/Enemy_ounosizuku.png");
 		mTama = Novice::LoadTexture("./Resources/Enemy/Enemy_tama.png");
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
+		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
+		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
 		mIsLoadTexture = true;
 	}
 
@@ -2691,6 +2693,13 @@ void Enemy::Draw(Screen& screen, Player& player) {
 void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
-	Novice::DrawQuad(140, 20, 140 + mHitPoint * (1000 / mTmpHitPointMax), 20, 140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
+	if (mIsHitPointAssign[1] == true){
+		Novice::DrawQuad(140, 10, 300, 10, 140, 40, 300, 40, 1000, 0, 1000, 200, mEnemyName, WHITE);
+	}
+	else{
+		Novice::DrawQuad(140, 10, 300, 10, 140, 40, 300, 40, 0, 0, 1000, 200, mEnemyName, WHITE);
+	}
+	Novice::DrawQuad(140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 140, 60, 140 + mHitPoint * (1000 / mTmpHitPointMax), 60, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
+	Novice::DrawQuad(140, 40, 1140, 40, 140, 60, 1140, 60, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
 
 }
