@@ -89,6 +89,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 		case TITLE:
 
+			if (Novice::IsPlayingAudio(isPlayBGM)) {
+				Novice::StopAudio(isPlayBGM);
+			}
+
 			title.Update();
 
 			//タイトル画面でのプレイヤー
@@ -97,6 +101,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Cキーを押したらシーンが変わる(ここでINGAMEに関わるものの初期化)
 			if (title.GetIsTitleClear() == true){
 				scene = INGAME;
+				player.ResetAll();
+				player.ResetPosition();
+				enemy.ResetAll();
+				enemy.ResetPosition();
+				enemyParticle.Reset();
+				enemyParticle2.Reset();
+				enemyParticle.ChangeParticleColor(0xFF00FF00);
+				enemyParticle2.ChangeParticleColor(0xFF00FF00);
+				stage.ResetAll();
 			}
 
 			break;

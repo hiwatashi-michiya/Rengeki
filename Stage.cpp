@@ -13,6 +13,17 @@ void Stage::Init() {
 	mIsLoadTexture = false;
 }
 
+void Stage::ResetAll() {
+
+	mIsHitStop = false;
+	mIsHeavyHitStop = false;
+	mIsWallHitStop = false;
+	mHitStopFrame = 0;
+	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
+	Round = Round1;
+
+}
+
 void Stage::HitStop(Player& player, Enemy& enemy) {
 
 	//攻撃を受けた時ヒットストップフラグをtrueにする

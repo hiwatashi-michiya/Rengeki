@@ -60,6 +60,9 @@ public:
 	//描画処理
 	void Draw(Screen& screen, Player& player);
 
+	//敵情報のリセット
+	void ResetAll();
+
 	//最前面に描画する処理
 	void FrontDraw();
 
@@ -67,7 +70,7 @@ public:
 	inline bool GetIsGameClear() { return mIsGameClear; }
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
+	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
