@@ -494,6 +494,9 @@ private:
 	int mButtobi;
 	int mEnerge;
 	int mTama;
+	int mEnemyHp;
+	int mEnemyHpFlame;
+	int mEnemyName;
 };
 
 

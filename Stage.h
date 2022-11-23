@@ -72,8 +72,6 @@ private:
 	bool mIsLoadUI;
 	int mFlame;
 	int mLongFlame;
-	//‘Ì—ÍŠÖŒW
-	int mEnemyHp;
 	//•`‰æŠÖŒW
 	int mX;
 	int mY;
