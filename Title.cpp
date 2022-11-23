@@ -5,11 +5,16 @@
 #include "Stage.h"
 #include "Key.h"
 #include "Player.h"
+#include "Function.h"
+#include "Easing.hpp"
 
 
 void Title::Init() {
-	mIsTitleClear = false;
+	mIsPlayerMoveClear = false;
+	mIsTitleClear = false; 
 	mIsLoadTexture = false;
+	mAlphat = 0.0f;
+	mBlack = 0x00000000;
 	mTheta = 0.0f;
 	mArrowPosition = { 1180, 610 };
 }
@@ -21,8 +26,19 @@ void Title::Update(Player& player) {
 	mArrowPosition.x = sinf(mTheta) * 10 + 1180;
 
 	if ((kWindowWidth + player.GetPlayerRadius()) < player.GetPlayerPosition().x) {
-		mIsTitleClear = true;
+		mIsPlayerMoveClear = true;
 	}
+
+	if (mIsPlayerMoveClear == true){
+		mAlphat = EasingClamp(0.01f, mAlphat);
+		mBlack = ColorEasingMove(0x00000000, 0x000000FF, easeLinear(mAlphat));
+		if (mAlphat == 1.0f){
+			mIsTitleClear = true;
+		}
+	}
+
+
+
 
 }
 void Title::Draw() {
@@ -40,3 +56,8 @@ void Title::Draw() {
 
 }
 
+void Title::FrontDraw() {
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
+
+}

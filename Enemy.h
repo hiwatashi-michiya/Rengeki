@@ -67,6 +67,9 @@ public:
 	//最前面に描画する処理
 	void FrontDraw();
 
+	//タイトル後の黒い画面描画
+	void BlackDraw();
+
 	//ゲームクリアか取得する
 	inline bool GetIsGameClear() { return mIsGameClear; }
 	
@@ -238,6 +241,9 @@ private:
 
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
 
+	//黒
+	float mAlphat;
+	unsigned int mBlack;
 	//タイトル後か
 	bool mIsStay;
 	//タイトル後に移動開始できるか
@@ -491,6 +497,7 @@ private:
 	int mStarDropSE1;
 	int mStarDropSE2;
 	int mLitningSE;
+	int mBreakSE;
 
 	//パーティクル
 	Particle mStarDropParticle;

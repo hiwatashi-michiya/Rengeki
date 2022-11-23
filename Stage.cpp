@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include"Key.h"
+#include "ControllerInput.h"
 
 
 
@@ -15,7 +16,7 @@ void Stage::Init() {
 	mIsLoadUI = false;
 	mRadius = 24;
 
-	mPositionStick = { 950 - (mRadius * 5), mRadius};
+	mPositionStick = { 950 - (mRadius * 5), mRadius + 5 };
 	mPositionStickText = { mPositionStick.x + mRadius * 2,mPositionStick.y };
 
 	mPositionX = { 950,mPositionStick.y };
@@ -30,6 +31,7 @@ void Stage::Init() {
 }
 
 void Stage::ResetAll() {
+
 
 	mIsHitStop = false;
 	mIsHeavyHitStop = false;
@@ -132,24 +134,104 @@ void Stage::FrontDraw(Screen& screen) {
 	}
 
 
-	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) || Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT)) {
-		screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick, mColor);
+
+	if (Controller::IsUseController() == false) {
+
+		if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) || Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT)) {
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick, 0xFFFFFF50);
+			if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT)) {
+				mStickColor = 0xFFFFFF50;
+			}
+			else {
+				mStickColor = WHITE;
+			}
+		}
+		else if (Key::IsPress(DIK_RIGHT)) {
+			mStickColor = WHITE;
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_R, WHITE);
+		}
+		else if (Key::IsPress(DIK_LEFT)) {
+			mStickColor = WHITE;
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_L, WHITE);
+		}
+
+		if (Key::IsPress(DIK_C)) {
+			mXColor = WHITE;
+		}
+		else {
+			mXColor = 0xFFFFFF50;
+		}
+
+		if (Key::IsPress(DIK_UP)) {
+			mAColor = WHITE;
+		}
+		else {
+			mAColor = 0xFFFFFF50;
+		}
+
+		if (Key::IsPress(DIK_X)) {
+			mRTColor = WHITE;
+		}
+		else {
+			mRTColor = 0xFFFFFF50;
+		}
 	}
-	else if (Key::IsPress(DIK_RIGHT)) {
-		screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_R, mColor);
+	else{
+
+		if (!Controller::IsStickDirection(0, Controller::lsdRIGHT) && !Controller::IsStickDirection(0, Controller::lsdLEFT) || Controller::IsStickDirection(0, Controller::lsdRIGHT) && Controller::IsStickDirection(0, Controller::lsdLEFT)) {
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick, 0xFFFFFF50);
+			if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT)) {
+				mStickColor = 0xFFFFFF50;
+			}
+			else {
+				mStickColor = WHITE;
+			}
+		}
+		else if (Controller::IsStickDirection(0, Controller::lsdRIGHT)) {
+			mStickColor = WHITE;
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_R, WHITE);
+		}
+		else if (Controller::IsStickDirection(0, Controller::lsdLEFT)) {
+			mStickColor = WHITE;
+			screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_L, WHITE);
+		}
+
+		if (Controller::IsPressedButton(0, Controller::bX)) {
+			mXColor = WHITE;
+		}
+		else {
+			mXColor = 0xFFFFFF50;
+		}
+
+		if (Controller::IsPressedButton(0, Controller::bA)) {
+			mAColor = WHITE;
+		}
+		else {
+			mAColor = 0xFFFFFF50;
+		}
+
+		if (Controller::IsPressedButton(0, Controller::rTrigger)) {
+			mRTColor = WHITE;
+		}
+		else {
+			mRTColor = 0xFFFFFF50;
+		}
 	}
-	else if (Key::IsPress(DIK_LEFT)) {
-		screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick_L, mColor);
-	}
 
-	screen.DrawUI(mPositionStickText, mRadius, 0, 0, 128, 64, mStickText, mColor);
 
-	screen.DrawUI(mPositionX, mRadius, 0, 0, 64, 64, mX, mColor);
-	screen.DrawUI(mPositionXText, mRadius, 0, 0, 128, 64, mXText, mColor);
+	screen.DrawUI(mPositionStickText, mRadius, 0, 0, 128, 64, mStickText, mStickColor);
 
-	screen.DrawUI(mPositionA, mRadius, 0, 0, 64, 64, mA, mColor);
-	screen.DrawUI(mPositionAText, mRadius, 0, 0, 256, 64, mAText, mColor);
 
-	screen.DrawUI(mPositionRT, mRadius, 0, 0, 64, 64, mRT, mColor);
-	screen.DrawUI(mPositionRTText, mRadius, 0, 0, 128, 64, mRTText, mColor);
+	screen.DrawUI(mPositionX, mRadius, 0, 0, 64, 64, mX, mXColor);
+	screen.DrawUI(mPositionXText, mRadius, 0, 0, 128, 64, mXText, mXColor);
+
+
+
+	screen.DrawUI(mPositionA, mRadius, 0, 0, 64, 64, mA, mAColor);
+	screen.DrawUI(mPositionAText, mRadius, 0, 0, 256, 64, mAText, mAColor);
+
+
+
+	screen.DrawUI(mPositionRT, mRadius, 0, 0, 64, 64, mRT, mRTColor);
+	screen.DrawUI(mPositionRTText, mRadius, 0, 0, 128, 64, mRTText, mRTColor);
 }
