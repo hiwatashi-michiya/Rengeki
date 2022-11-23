@@ -61,6 +61,6 @@ private:
 
 	bool mIsLoadTexture;
 	int mFlame;
-
+	int mLongFlame;
 };
 
