@@ -73,6 +73,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//音量
 	float BGM2Volume = 0.0f;
 
+	//タイトルBGM
+	int TITLEBGM = Novice::LoadAudio("./Resources/BGM/title.wav");
+	int isPlayTitleBGM = -1;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -95,12 +99,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 		case TITLE:
 
+			//BGM停止
 			if (Novice::IsPlayingAudio(isPlayBGM1)) {
 				Novice::StopAudio(isPlayBGM1);
 			}
 
 			if (Novice::IsPlayingAudio(isPlayBGM2)) {
 				Novice::StopAudio(isPlayBGM2);
+			}
+
+			//BGMを鳴らす
+			if (Novice::IsPlayingAudio(isPlayTitleBGM) == 0 || isPlayTitleBGM == -1) {
+
+				isPlayTitleBGM = Novice::PlayAudio(TITLEBGM, 1, 0.5f);
+
 			}
 
 			//ズームとスクロールの設定
@@ -135,6 +147,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			break;
 		case INGAME:
+
+			if (Novice::IsPlayingAudio(isPlayTitleBGM)) {
+				Novice::StopAudio(isPlayTitleBGM);
+			}
 
 			//BGMを鳴らす
 			if (Novice::IsPlayingAudio(isPlayBGM1) == 0 || isPlayBGM1 == -1) {

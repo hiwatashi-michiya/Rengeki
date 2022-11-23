@@ -150,6 +150,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBackStepRing = -1;
 	////////////////////// ÉKÅ[ÉhSE //////////////////////////
 	mGuardSE = Novice::LoadAudio("./Resources/SE/guard.wav");
+	mGuard2SE = Novice::LoadAudio("./Resources/SE/guard2.wav");
 	//////////////////////  é„çUåÇSE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -1533,6 +1534,10 @@ void Enemy::BackStep() {
 void Enemy::Guard() {
 
 	if (mIsGuard == true){
+
+		if (mGuardFrame == 0) {
+			Novice::PlayAudio(mGuard2SE, 0, 0.5f);
+		}
 
 		mGuardFrame++;
 

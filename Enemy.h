@@ -316,6 +316,7 @@ private:
 	void Guard();
 	//サウンド
 	int mGuardSE;
+	int mGuard2SE;
 
 	//-----左右瞬間移動（使わない可能性あり）-----//
 	//左右瞬間移動フラグ
