@@ -93,6 +93,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////Å@Ç±Ç±Ç©ÇÁïKéEãZÅ@////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -265,6 +266,7 @@ void Enemy::ResetAll() {
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////Å@Ç±Ç±Ç©ÇÁïKéEãZÅ@////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -1688,6 +1690,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x - (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYLEFT;
+						mAttackDirection = mDirection;
 					}
 					if (player.GetPlayerDirection() == RIGHT) {
 						mPosition.x = player.GetPlayerPosition().x - 50;
@@ -1695,6 +1698,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x + (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYRIGHT;
+						mAttackDirection = mDirection;
 					}
 				}
 
@@ -2794,10 +2798,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 		//ã≠çUåÇ
 		if (mIsSpecialAttack) {
-			if (mDirection == ENEMYLEFT) {
+			if (mAttackDirection == ENEMYLEFT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
 			}
-			if (mDirection == ENEMYRIGHT) {
+			if (mAttackDirection == ENEMYRIGHT) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
 			}
 		}

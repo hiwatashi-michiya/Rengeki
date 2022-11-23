@@ -372,6 +372,8 @@ private:
 	bool mIsSpecialAttack;
 	//UŒ‚ŠÔ
 	int mSpecialAttackFrame;
+	//UŒ‚—p‚ÌŒü‚«•Û‘¶
+	ENEMYDIRECTION mAttackDirection;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚ÌÀ•W
 	Vec2 mSpecialAttackPosition;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ì”¼Œa
