@@ -396,6 +396,7 @@ private:
 	void FallingStar(Player& player);
 	//サウンド
 	int mFallingStarWaveSE;
+	int mFallingStarJumpSE;
 
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];

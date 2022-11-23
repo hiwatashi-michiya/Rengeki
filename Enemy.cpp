@@ -158,6 +158,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mSpecialAttackSE = Novice::LoadAudio("./Resources/SE/specialattack.wav");
 	///////////////////// 必殺技SE ///////////////////////////
 	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
+	mFallingStarJumpSE = Novice::LoadAudio("./Resources/SE/fallingstarjump.wav");
 	//////////////////// 星の雫SE ///////////////////////////
 	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
 	mIsPlayEnergySE = -1;
@@ -1721,6 +1722,11 @@ void Enemy::FallingStar(Player& player) {
 		//次のステップの速さを設定
 		if (mStepFrame != mStepCoolTime[2]) {
 			mStepFrame = mStepCoolTime[2];
+		}
+
+		//音再生
+		if (mFallingStarEasingt == 0.0f) {
+			Novice::PlayAudio(mFallingStarJumpSE, 0, 0.5f);
 		}
 
 		//移動
