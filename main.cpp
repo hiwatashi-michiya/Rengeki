@@ -242,6 +242,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				title.Init();
 				player.ResetAll();
 				player.ResetPosition();
+				enemy.ResetAll();
 				enemy.ResetPosition();
 				scene = TITLE;
 			}
@@ -255,6 +256,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				title.Init();
 				player.ResetAll();
 				player.ResetPosition();
+				enemy.ResetAll();
 				enemy.ResetPosition();
 				scene = TITLE;
 			}

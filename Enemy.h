@@ -400,6 +400,8 @@ private:
 	//サウンド
 	int mFallingStarWaveSE;
 	int mFallingStarJumpSE;
+	int mFallingStarFallSE;
+	int mIsPlayFallingStarFallSE;
 
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
