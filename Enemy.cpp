@@ -2685,15 +2685,12 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	}
 
-	//‘Ì—Í•`‰æ
-	Novice::DrawBox(140, 700, mHitPoint* (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
-
 
 }
 
 void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
-	Novice::DrawQuad(140, 20, 140 + mHitPoint * (1000 / mTmpHitPointMax), 20, 140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 0, 0, 1000, 20, mEnemyHp, WHITE);
+	Novice::DrawQuad(140, 20, 140 + mHitPoint * (1000 / mTmpHitPointMax), 20, 140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
 
 }
