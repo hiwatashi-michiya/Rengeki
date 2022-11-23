@@ -284,6 +284,7 @@ void Enemy::ResetAll() {
 	mFallingStarEndValue = 0;
 	for (int i = 0; i < 10; i++) {
 		mIsFallingStarAttack[i] = false;
+		mSyougekiSrcX[i] = 0;
 	}
 
 
@@ -327,6 +328,8 @@ void Enemy::ResetAll() {
 	mFrame = 0;
 	mAttackFrame = 0;
 	mIsRound2 = false;
+	mAtackBairitu = 0;
+	
 
 	//ƒ`ƒƒ[ƒW‰¹‚ðŽ~‚ß‚é
 	Novice::StopAudio(mIsPlayEnergySE);
@@ -2666,7 +2669,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 		if (mIsAttack[i] == true) {
 			mAttackParticle[i].Draw(screen);
-			screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF000055, kFillModeSolid);
+			
 		}
 	}
 
@@ -2680,12 +2683,22 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	////////////////////@‚±‚±‚©‚ç•KŽE‹Z@////////////////////
 
 	/*@•KŽE‹Z‚P@¯Ó—¬E—Ž‰º¯@*/
+
 	for (int i = 0; i < kFallingStarMax; i++) {
 		if (mIsFallingStarAttack[i] == true) {
-			screen.DrawEllipse(mLeftFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
-			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			
+			screen.DrawQuad(mLeftFallingStarPosition[i], mFallingStarRadius, mSyougekiSrcX[i], 0, 64, 64, mSyougeki, WHITE);
+			screen.DrawQuadReverse(mRightFallingStarPosition[i], mFallingStarRadius, mSyougekiSrcX[i], 0, 64, 64, mSyougeki, WHITE);
+			/*screen.DrawEllipse(mLeftFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);
+			screen.DrawEllipse(mRightFallingStarPosition[i], mFallingStarRadius, 0.0f, RED, kFillModeSolid);*/
 			mFallingStarParticleLeft[i].Draw(screen);
 			mFallingStarParticleRight[i].Draw(screen);
+			if (mTextureFrame % 1 == 0) {
+				mSyougekiSrcX[i] += 3;
+			}
+		}
+		else {
+			mSyougekiSrcX[i] = 0;
 		}
 	}
 
@@ -2748,6 +2761,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mLightning = Novice::LoadTexture("./Resources/Enemy/lightning_strike.png");
 		mWing = Novice::LoadTexture("./Resources/Enemy/wing.png");
 		mHadou = Novice::LoadTexture("./Resources/Enemy/hadou.png");
+		mKobusi = Novice::LoadTexture("./Resources/Enemy/kobusi.png");
+		mAsi = Novice::LoadTexture("./Resources/Enemy/asi.png");
+		mDoragon = Novice::LoadTexture("./Resources/Enemy/doragon.png");
+		mSyougeki = Novice::LoadTexture("./Resources/Enemy/syougeki.png");
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
 		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
@@ -2830,18 +2847,25 @@ void Enemy::Draw(Screen& screen, Player& player) {
 			}
 		}
 
+		//—Ž‰º¯ÕŒ‚”g
 		
+
+		
+		mAtackBairitu = 3;
 
 		//‰EUŒ‚
 		if (mDirection == ENEMYRIGHT) {
 			if (mIsAttack[2] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+				screen.DrawQuad(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
 			else if (mIsAttack[1] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuad(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
 			}
 			else if (mIsAttack[0] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuad(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 		}
 
@@ -2849,12 +2873,15 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		if (mDirection == ENEMYLEFT) {
 			if (mIsAttack[2] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+				screen.DrawQuadReverse(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
 			else if (mIsAttack[1] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuadReverse(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
 			}
 			else if (mIsAttack[0] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuadReverse(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 		}
 
