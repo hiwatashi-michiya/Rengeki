@@ -2284,6 +2284,8 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 		if ((0 < mHitPoint && mHitPoint <= (mTmpHitPointMax / 2)) && mIsActiveOnce == false && mCanAttack == true) {
 			mPowerEasingt = 0.0f;
 			mIsActive = true;
+			mIsFallingStar = false;
+			mFallingStarCount = 2;
 			mIsActiveOnce = true;
 			mStartFrame = 0;
 			mIsStart = false;
