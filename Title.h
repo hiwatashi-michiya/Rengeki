@@ -17,6 +17,7 @@ private:
 	bool mIsTitleClear;
 	bool mIsLoadTexture;
 	int mTitle;
+	int mTitleGround;
 
 
 };
