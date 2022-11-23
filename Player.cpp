@@ -741,6 +741,8 @@ void Player::Draw(Screen& screen) {
 		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
 		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
 		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
+		mKobusi = Novice::LoadTexture("./Resources/Player/kobusi.png");
+		mAsi = Novice::LoadTexture("./Resources/Player/asi.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}

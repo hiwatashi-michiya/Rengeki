@@ -510,6 +510,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mHadou;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
