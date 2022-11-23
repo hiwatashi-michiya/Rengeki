@@ -107,10 +107,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			screen.Zoom = 1.0f;
 			screen.Scroll = { kWindowWidth / 2.0f, 0.0f };
 
+			screen.ZoomUpdate(stage, player, enemy);
+			screen.ScrollUpdate(stage, player, enemy);
+
 			title.Update();
 
 			//タイトル画面でのプレイヤー
 			player.Update(stage, enemy);
+			playerParticle.SetFlag(player.GetPlayerPosition());
+			playerParticle.Update(player.GetPlayerPosition());
+			playerParticle2.SetFlag(player.GetPlayerPosition());
+			playerParticle2.Update(player.GetPlayerPosition());
 
 			//Cキーを押したらシーンが変わる(ここでINGAMEに関わるものの初期化)
 			if (title.GetIsTitleClear() == true){
@@ -236,6 +243,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (gameclear.IsEndGameClear() == true){
 				title.Init();
+				player.ResetAll();
+				player.ResetPosition();
+				enemy.ResetPosition();
 				scene = TITLE;
 			}
 
@@ -246,6 +256,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			if (gameover.IsEndGameOver() == true) {
 				title.Init();
+				player.ResetAll();
+				player.ResetPosition();
+				enemy.ResetPosition();
 				scene = TITLE;
 			}
 

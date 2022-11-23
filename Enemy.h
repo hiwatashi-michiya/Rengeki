@@ -247,7 +247,7 @@ private:
 	Vec2 mRoundStartPosition;
 	Vec2 mRoundEndPosition;
 	//‘JˆÚŠÖ”
-	void RoundTranslation();
+	void RoundTranslation(Stage& stage);
 
 	//////////////////// “G‚Ì“®‚«‚ğ‚Ü‚Æ‚ß‚é ////////////////////
 
