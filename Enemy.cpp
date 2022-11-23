@@ -2625,7 +2625,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	////////////////////　ここから強攻撃　////////////////////
 
 	if (mIsSpecialAttack == true){
-		screen.DrawEllipse(mSpecialAttackPosition, mSpecialAttackRadius, 0.0f, RED, kFillModeSolid);
+		
 		mSpecialAttackParticle.Draw(screen);
 	}
 
@@ -2694,6 +2694,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mEnerge = Novice::LoadTexture("./Resources/Enemy/Enemy_ounosizuku.png");
 		mTama = Novice::LoadTexture("./Resources/Enemy/Enemy_tama.png");
 		mAttack4 = Novice::LoadTexture("./Resources/Enemy/Enemy_attack4.png");
+		mAttack4_1 = Novice::LoadTexture("./Resources/Enemy/Enemy_attack4_1.png");
 		mSizuku1 = Novice::LoadTexture("./Resources/Enemy/Enemy_sizuku1.png");
 		mSizuku2 = Novice::LoadTexture("./Resources/Enemy/Enemy_sizuku2.png");
 		mLightning = Novice::LoadTexture("./Resources/Enemy/lightning_strike.png");
@@ -2709,7 +2710,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	if (mIsDisplay && mKnockBackVelocity.x == 0){
 
 		//待機モーション
-		if (mIsRoundTranslation && mRoundEasingt == 1 || mIsEasingMust) {
+		if (mIsRoundTranslation && mRoundEasingt == 1 || mIsEasingMust || !mIsStartBattle) {
 			if (mDirection == ENEMYRIGHT) {
 				screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 4, mTextureFrame, mEnemy, mColor, 0, 1);
 			}
@@ -2719,7 +2720,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 		//歩くモーション
-		if (AnyAttack() == false && mIsGround && mKnockBackVelocity.x <= 0.01f && !mIsRoundTranslation) {
+		if (AnyAttack() == false && mIsGround && mKnockBackVelocity.x <= 0.01f && !mIsRoundTranslation && mIsStartBattle) {
 			if (mDirection == ENEMYRIGHT) {
 				screen.DrawAnime(mPosition, mRadius, mEnemySrcX, 140, 140, 4, 6, mTextureFrame, mWalk, mColor, 0, 1);
 			}
@@ -2736,6 +2737,15 @@ void Enemy::Draw(Screen& screen, Player& player) {
 					screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 7, 2, mTextureFrame, mJump, mColor, 0, 1);
 				}
 
+		}
+		// 3連撃前
+		else if (mIsAttackStart && mIsAttack[0] == false && mKnockBackVelocity.x == 0) {
+			if (mDirection == ENEMYRIGHT) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mBefore_triple_attack, mColor);
+			}
+			if (mDirection == ENEMYLEFT) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mBefore_triple_attack, mColor);
+			}
 		}
 
 		//バックステップモーション
@@ -2772,15 +2782,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 			}
 		}
 
-		// 3連撃前
-		if (mIsAttackStart && mIsAttack[0] == false && mKnockBackVelocity.x == 0) {
-			if (mDirection == ENEMYRIGHT) {
-				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mBefore_triple_attack, mColor);
-			}
-			if (mDirection == ENEMYLEFT) {
-				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mBefore_triple_attack, mColor);
-			}
-		}
+		
 
 		//右攻撃
 		if (mDirection == ENEMYRIGHT) {
@@ -2811,12 +2813,23 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		//強攻撃
 		if (mIsSpecialAttack || (mIsSpecialAttackStart == true && mIsSpecialAttack == false)) {
 			if (mAttackDirection == ENEMYLEFT) {
-				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
-				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
+				if (mSpecialAttackFrame <= 290) {
+					screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4_1, mColor);
+				}
+				else {
+					screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+					screen.DrawQuadReverse(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, 0, 0, 140, 140, mHadou, WHITE);
+				}
+			
 			}
 			if (mAttackDirection == ENEMYRIGHT) {
-				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
-				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
+				if (mSpecialAttackFrame <= 290) {
+					screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4_1, mColor);
+				}
+				else {
+					screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+					screen.DrawQuad(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, 0, 0, 140, 140, mHadou, WHITE);
+				}
 			}
 		}
 
