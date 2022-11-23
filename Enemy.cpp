@@ -174,6 +174,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mEnergyChargeSE = Novice::LoadAudio("./Resources/SE/energycharge.wav");
 	mStarDropSE1 = Novice::LoadAudio("./Resources/SE/stardrop1.wav");
 	mStarDropSE2 = Novice::LoadAudio("./Resources/SE/stardrop2.wav");
+	mBreakSE = Novice::LoadAudio("./Resources/SE/break.wav");
 
 	//‚»‚Ì‘¼SE
 	mLitningSE = Novice::LoadAudio("./Resources/SE/litning.wav");
@@ -2494,6 +2495,7 @@ void Enemy::StoneCollision(Player& player) {
 					mStoneHp[j] -= 5;
 					mStoneHp[j] = Clamp(mStoneHp[j], 0, mWidth);
 					if (mStoneHp[j] == 0){
+						Novice::PlayAudio(mBreakSE, 0, 0.8f);
 						mIsStoneBreak[j] = true;
 					}
 					mIsStoneRightHit[j] = true;
@@ -2504,6 +2506,7 @@ void Enemy::StoneCollision(Player& player) {
 					mStoneHp[j] -= 5;
 					mStoneHp[j] = Clamp(mStoneHp[j], 0, mWidth);
 					if (mStoneHp[j] == 0) {
+						Novice::PlayAudio(mBreakSE, 0, 0.8f);
 						mIsStoneBreak[j] = true;
 					}
 					mIsStoneLeftHit[j] = true;

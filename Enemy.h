@@ -491,6 +491,7 @@ private:
 	int mStarDropSE1;
 	int mStarDropSE2;
 	int mLitningSE;
+	int mBreakSE;
 
 	//パーティクル
 	Particle mStarDropParticle;
