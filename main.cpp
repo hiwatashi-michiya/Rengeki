@@ -73,6 +73,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//音量
 	float BGM2Volume = 0.0f;
 
+	//タイトルBGM
+	int TITLEBGM = Novice::LoadAudio("./Resources/BGM/title.wav");
+	int isPlayTitleBGM = -1;
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -95,6 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 		case TITLE:
 
+			//BGM停止
 			if (Novice::IsPlayingAudio(isPlayBGM1)) {
 				Novice::StopAudio(isPlayBGM1);
 			}
@@ -103,14 +108,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Novice::StopAudio(isPlayBGM2);
 			}
 
+			//BGMを鳴らす
+			if (Novice::IsPlayingAudio(isPlayTitleBGM) == 0 || isPlayTitleBGM == -1) {
+
+				isPlayTitleBGM = Novice::PlayAudio(TITLEBGM, 1, 0.5f);
+
+			}
+
 			//ズームとスクロールの設定
 			screen.Zoom = 1.0f;
 			screen.Scroll = { kWindowWidth / 2.0f, (Stage::kStageBottom + 20.0f) };
 
-			title.Update();
+			title.Update(player);
+			stageParticle.SetFlag(stageParticlePosition);
+			stageParticle.Update(stageParticlePosition);
 
 			//タイトル画面でのプレイヤー
-			player.Update(stage, enemy);
+			player.Update(title, stage, enemy);
 			playerParticle.SetFlag(player.GetPlayerPosition());
 			playerParticle.Update(player.GetPlayerPosition());
 			playerParticle2.SetFlag(player.GetPlayerPosition());
@@ -133,6 +147,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			break;
 		case INGAME:
+
+			if (Novice::IsPlayingAudio(isPlayTitleBGM)) {
+				Novice::StopAudio(isPlayTitleBGM);
+			}
 
 			//BGMを鳴らす
 			if (Novice::IsPlayingAudio(isPlayBGM1) == 0 || isPlayBGM1 == -1) {
@@ -199,8 +217,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.ResetPosition();
 				}
 
-				enemy.Update(stage, player, stageParticle);
-				player.Update(stage, enemy);
+				enemy.Update(title, stage, player, stageParticle);
+				player.Update(title, stage, enemy);
 				stage.RoundTranslation(enemy);
 				stageParticle.SetFlag(stageParticlePosition);
 				stageParticle.Update(stageParticlePosition);
@@ -242,6 +260,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				title.Init();
 				player.ResetAll();
 				player.ResetPosition();
+				enemy.ResetAll();
 				enemy.ResetPosition();
 				scene = TITLE;
 			}
@@ -255,6 +274,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				title.Init();
 				player.ResetAll();
 				player.ResetPosition();
+				enemy.ResetAll();
 				enemy.ResetPosition();
 				scene = TITLE;
 			}
@@ -274,6 +294,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		switch (scene)
 		{
 		case TITLE:
+
+			Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
+			stageParticle.Draw(screen);
 
 			title.Draw();
 

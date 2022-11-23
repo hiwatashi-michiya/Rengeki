@@ -3,6 +3,7 @@
 #include <Novice.h>
 #include "Key.h"
 #include <math.h>
+#include "Title.h"
 #include "Enemy.h"
 #include "Quad.h"
 #include "MatVec.h"
@@ -148,7 +149,7 @@ void Player::ResetAll() {
 	mIsHitCount = false;
 }
 
-void Player::Update(Stage &stage, Enemy &enemy) {
+void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
 
 	//１フレーム前の座標を取得する
 	mOldPosition = mPosition;
@@ -179,11 +180,11 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 		mIsWallHitLeftFlag = false;
 	}
 
-	Move(enemy);
+	Move(title, enemy);
 
-	Collision(stage, enemy);
+	Collision(title, stage, enemy);
 
-	//星の雫の時場所を変える
+	//星の雫の時、場所を変える
 	if (enemy.GetIsOldEasingMust() == false && enemy.GetIsEasingMust() == true){
 		mDirection = RIGHT;
 		mPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
@@ -221,7 +222,7 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 
 
 //----------ここから動き関係----------//
-void Player::Move(Enemy& enemy) {
+void Player::Move(Title& title, Enemy& enemy) {
 
 	//重力を加算
 	mVelocity.y += kGravity;
@@ -242,8 +243,8 @@ void Player::Move(Enemy& enemy) {
 
 	//プレイヤーの場合の操作
 
-	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && ラウンド遷移しているか
-	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false) {
+	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && タイトル後の硬直は終わったか && ラウンド遷移しているか
+	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -285,7 +286,7 @@ void Player::Move(Enemy& enemy) {
 	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
 	
 	//攻撃
-	if (enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false){
+	if (enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false){
 		Attack();
 	}
 
@@ -444,6 +445,8 @@ void Player::Rolling() {
 
 void Player::RoundTranslation(Enemy& enemy) {
 
+	
+
 	if (enemy.GetIsRoundTranslation() == true) {
 
 		if (enemy.GetIsOldRoundMove() == false && enemy.GetIsRoundMove() == true) {
@@ -459,46 +462,52 @@ void Player::RoundTranslation(Enemy& enemy) {
 }
 
 //----------ここから当たり判定----------//
-void Player::Collision(Stage& stage, Enemy& enemy) {
+void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
 	for (int i = 0; i < kMaxAttack; i++) {
 		mIsOldHit[i] = mIsHit[i];
 	}
 	mIsOldWallHit = mIsWallHit;
 
-	//左判定
-	if (mPosition.x - mRadius < Stage::kStageLeft) {
-		mPosition.x = Stage::kStageLeft + mRadius;
+	if (title.GetIsTitleClear() == false){
+		mPosition.x = Clamp(mPosition.x, mRadius, 2000);
+	}
+	else if (title.GetIsTitleClear() == true){
+		//左判定
+		if (mPosition.x - mRadius < Stage::kStageLeft) {
+			mPosition.x = Stage::kStageLeft + mRadius;
 
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
+			//ノックバックして当たった場合パーティクルフラグを立てる
+			if (mKnockBackVelocity.x < -0.001f && mIsWallHitLeftFlag == false) {
 
-			mIsWallHit = true;
-			mWallHitLeft.SetFlag(mPosition);
-			mHitPoint -= kEnemyWallDamage;
-			mIsWallHitLeftFlag = true;
-			mKnockBackVelocity.x = 0;
+				mIsWallHit = true;
+				mWallHitLeft.SetFlag(mPosition);
+				mHitPoint -= kEnemyWallDamage;
+				mIsWallHitLeftFlag = true;
+				mKnockBackVelocity.x = 0;
+
+			}
 
 		}
 
-	}
+		//右判定
+		if (mPosition.x + mRadius > Stage::kStageRight) {
+			mPosition.x = Stage::kStageRight - mRadius;
 
-	//右判定
-	if (mPosition.x + mRadius > Stage::kStageRight) {
-		mPosition.x = Stage::kStageRight - mRadius;
+			//ノックバックして当たった場合パーティクルフラグを立てる
+			if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
 
-		//ノックバックして当たった場合パーティクルフラグを立てる
-		if (mKnockBackVelocity.x > 0.001f && mIsWallHitRightFlag == false) {
+				mIsWallHit = true;
+				mWallHitRight.SetFlag(mPosition);
+				mHitPoint -= kEnemyWallDamage;
+				mIsWallHitRightFlag = true;
+				mKnockBackVelocity.x = 0;
 
-			mIsWallHit = true;
-			mWallHitRight.SetFlag(mPosition);
-			mHitPoint -= kEnemyWallDamage;
-			mIsWallHitRightFlag = true;
-			mKnockBackVelocity.x = 0;
+			}
 
 		}
-
 	}
+
 
 	//下判定
 	if (mPosition.y + mRadius >= Stage::kStageBottom) {

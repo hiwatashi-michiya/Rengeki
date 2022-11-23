@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Title.h"
 #include "Vec2.h"
 #include <Novice.h>
 #include "Player.h"
@@ -56,7 +57,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mCross = 0.0f;
 	mCanAttack = true;
 	mIsWallHit = false;
-	//////////////////// ラウンド遷移用 ////////////////////
+	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+	mIsStay = false;
+	mIsStartBattle = false;
+	mToBattleFrame = 0;
 	mIsRoundTranslation = false;
 	mIsRoundMove = false;
 	mCanRoundTranslation = false;
@@ -89,6 +93,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -150,6 +155,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mBackStepRing = -1;
 	////////////////////// ガードSE //////////////////////////
 	mGuardSE = Novice::LoadAudio("./Resources/SE/guard.wav");
+	mGuard2SE = Novice::LoadAudio("./Resources/SE/guard2.wav");
 	//////////////////////  弱攻撃SE  ////////////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -160,6 +166,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	///////////////////// 必殺技SE ///////////////////////////
 	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
 	mFallingStarJumpSE = Novice::LoadAudio("./Resources/SE/fallingstarjump.wav");
+	mFallingStarFallSE = Novice::LoadAudio("./Resources/SE/fallingstarfall.wav");
+	mIsPlayFallingStarFallSE = -1;
 	//////////////////// 星の雫SE ///////////////////////////
 	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
 	mIsPlayEnergySE = -1;
@@ -223,6 +231,9 @@ void Enemy::ResetAll() {
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// ラウンド遷移用 ////////////////////
+	mIsStay = false;
+	mIsStartBattle = false;
+	mToBattleFrame = 0;
 	mIsRoundTranslation = false;
 	mIsRoundMove = false;
 	mCanRoundTranslation = false;
@@ -255,6 +266,7 @@ void Enemy::ResetAll() {
 	mIsSpecialAttackStart = false;
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
+	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mFallingStarRadius = 15;
@@ -309,7 +321,7 @@ void Enemy::ResetAll() {
 	mIsRound2 = false;
 }
 
-void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
+void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
 
 	//デバッグ用、体力を10減らす
 	if (Key::IsTrigger(DIK_Q)) {
@@ -376,7 +388,10 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	//１フレーム前の座標取得
 	mOldPosition = mPosition;
 
-	if (mIsRoundTranslation == false) {
+	//タイトル後はしばらく見合う
+	ToBattle(title);
+
+	if (mIsStartBattle == true && mIsRoundTranslation == false) {
 
 		Move(player, particle);
 
@@ -1532,6 +1547,10 @@ void Enemy::Guard() {
 
 	if (mIsGuard == true){
 
+		if (mGuardFrame == 0) {
+			Novice::PlayAudio(mGuard2SE, 0, 0.5f);
+		}
+
 		mGuardFrame++;
 
 		if (mGuardFrame >= 120){
@@ -1561,11 +1580,11 @@ void Enemy::Attack(Player& player) {
 		//移動
 		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
-				mVelocity.x = -10.0f;
+				mVelocity.x = -9.0f;
 				mDirection = ENEMYLEFT;
 			}
 			else {
-				mVelocity.x = 10.0f;
+				mVelocity.x = 9.0f;
 				mDirection = ENEMYRIGHT;
 			}
 		}
@@ -1671,6 +1690,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x - (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYLEFT;
+						mAttackDirection = mDirection;
 					}
 					if (player.GetPlayerDirection() == RIGHT) {
 						mPosition.x = player.GetPlayerPosition().x - 50;
@@ -1678,6 +1698,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 						mSpecialAttackPosition.x = mPosition.x + (mSpecialAttackRadius + mRadius);
 						mSpecialAttackPosition.y = mPosition.y;
 						mDirection = ENEMYRIGHT;
+						mAttackDirection = mDirection;
 					}
 				}
 
@@ -1744,8 +1765,21 @@ void Enemy::FallingStar(Player& player) {
 		if (mFallingStarEasingt >= 1.0f){
 			mVelocity.y += 12.0f;
 
+			if ((Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 0 || mIsPlayFallingStarFallSE == -1) &&
+				mIsGround == false) {
+
+				mIsPlayFallingStarFallSE = Novice::PlayAudio(mFallingStarFallSE, 0, 0.5f);
+
+			}
+
 			//地面に到達したら
 			if (mIsGround == true) {
+
+				//音停止
+				if (Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 1) {
+					Novice::StopAudio(mIsPlayFallingStarFallSE);
+				}
+
 				//最初の衝撃波でも音を出す為にフレーム値を足す前に処理
 				if (mFallingStarFrame % 5 == 0 && mFallingStarFrame < 50) {
 					Novice::PlayAudio(mFallingStarWaveSE, 0, 0.5f);
@@ -2207,6 +2241,24 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 }
 
 
+void Enemy::ToBattle(Title& title) {
+
+	if (title.GetIsOldTitleClear() == false && title.GetIsTitleClear() == true){
+		mIsStay = true;
+	}
+
+	if (mIsStay == true){
+
+		mDirection = ENEMYLEFT;
+		mVelocity.x = 0;
+
+		mToBattleFrame++;
+		if (120 < mToBattleFrame){
+			mIsStartBattle = true;
+		}
+	}
+
+}
 void Enemy::RoundTranslation(Stage& stage) {
 
 	mIsOldRoundTranslation = mIsRoundTranslation;
@@ -2746,12 +2798,12 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 		//強攻撃
-		if (mIsSpecialAttack) {
-			if (mDirection == ENEMYLEFT) {
+		if (mIsSpecialAttack || (mIsSpecialAttackStart == true && mIsSpecialAttack == false)) {
+			if (mAttackDirection == ENEMYLEFT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}
-			if (mDirection == ENEMYRIGHT) {
+			if (mAttackDirection == ENEMYRIGHT) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}

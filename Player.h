@@ -31,6 +31,7 @@ enum DIRECTION {
 	RIGHT
 };
 
+class Title;
 class Enemy;
 
 class Player
@@ -49,7 +50,7 @@ public:
 	Player(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//XVˆ—
-	void Update(Stage& stage, Enemy &enemy);
+	void Update(Title& title, Stage& stage, Enemy& enemy);
 
 	//•`‰æˆ—
 	void Draw(Screen& screen);
@@ -106,10 +107,10 @@ private:
 
 
 	//“®‚«
-	void Move(Enemy& enemy);
+	void Move(Title & title, Enemy& enemy);
 
 	//“–‚½‚è”»’è
-	void Collision(Stage& stage, Enemy& enemy);
+	void Collision(Title& title, Stage& stage, Enemy& enemy);
 	bool CircleCollision(Vec2 AttackPosition, float AttackRadius);
 
 

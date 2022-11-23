@@ -44,6 +44,7 @@ enum ENEMYDIRECTION {
 	ENEMYRIGHT
 };
 
+class Title;
 class Player;
 
 class Particle;
@@ -55,7 +56,7 @@ public:
 	Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Stage& stage, Player& player, Particle& particle);
+	void Update(Title& title, Stage& stage, Player& player, Particle& particle);
 
 	//描画処理
 	void Draw(Screen& screen, Player& player);
@@ -70,7 +71,7 @@ public:
 	inline bool GetIsGameClear() { return mIsGameClear; }
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; }
+	inline void ResetPosition() { mPosition.x = 1280.0f; mPosition.y = 800.0f; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -85,7 +86,9 @@ public:
 	//ラウンド2の体力代入取得
 	inline bool GetIsHitPointAssign() { return mIsHitPointAssign[1]; }
 
-	////////////////////　ラウンド遷移取得関数　////////////////////
+	////////////////////　タイトル後とラウンド遷移取得関数　////////////////////
+
+	inline bool GetIsStartBattle() { return mIsStartBattle; }
 
 	inline bool GetIsRoundTranslation() { return mIsRoundTranslation; }
 	inline bool GetIsOldRoundTranslation() { return mIsOldRoundTranslation; }
@@ -233,7 +236,16 @@ private:
 	bool mIsWallHitRightFlag;
 	bool mIsWallHitLeftFlag;
 
-	//////////////////// ラウンド遷移用 ////////////////////
+	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+
+	//タイトル後か
+	bool mIsStay;
+	//タイトル後に移動開始できるか
+	bool mIsStartBattle;
+	//移動開始までのフレーム
+	int mToBattleFrame;
+	//関数
+	void ToBattle(Title& title);
 
 	//ラウンド遷移を開始するか && できるか
 	bool mIsRoundTranslation;
@@ -316,6 +328,7 @@ private:
 	void Guard();
 	//サウンド
 	int mGuardSE;
+	int mGuard2SE;
 
 	//-----左右瞬間移動（使わない可能性あり）-----//
 	//左右瞬間移動フラグ
@@ -359,6 +372,8 @@ private:
 	bool mIsSpecialAttack;
 	//攻撃時間
 	int mSpecialAttackFrame;
+	//攻撃時用の向き保存
+	ENEMYDIRECTION mAttackDirection;
 	//攻撃の当たり判定の座標
 	Vec2 mSpecialAttackPosition;
 	//攻撃の当たり判定の半径
@@ -400,6 +415,8 @@ private:
 	//サウンド
 	int mFallingStarWaveSE;
 	int mFallingStarJumpSE;
+	int mFallingStarFallSE;
+	int mIsPlayFallingStarFallSE;
 
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
