@@ -325,6 +325,10 @@ void Enemy::ResetAll() {
 	mFrame = 0;
 	mAttackFrame = 0;
 	mIsRound2 = false;
+
+	//チャージ音を止める
+	Novice::StopAudio(mIsPlayEnergySE);
+
 }
 
 void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
@@ -371,6 +375,11 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 		}
 
 		mSpecialAttackParticle.ChangeParticleColor(0xFFFFFF00);
+
+		//背景パーティクル変更
+		particle.SetRandSize(3, 5);
+		particle.SetRandSpeed(-8, -4);
+
 	}
 
 	//パーティクル表示
@@ -444,7 +453,7 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 	FallingStar(player);
 
 
-	StarDrop(player);
+	StarDrop(player, particle);
 
 
 	//速度の代入
@@ -1823,7 +1832,7 @@ void Enemy::FallingStar(Player& player) {
 	}
 }
 /*　必殺技３　星砕流奥義・星の雫　*/
-void Enemy::StarDrop(Player& player) {
+void Enemy::StarDrop(Player& player, Particle& particle) {
 
 	mIsOldEasingMust = mIsEasingMust;
 	mIsOldStarDropDamage = mIsStarDropDamage;
@@ -1865,6 +1874,8 @@ void Enemy::StarDrop(Player& player) {
 		if (300 <= mFrame) {
 
 			if (mIsStartAttack == false) {
+				particle.SetRandSize(5, 20);
+				particle.SetRandSpeed(-25, -15);
 				mStarDropParticle.SetFlag(mPosition);
 				mStarDropParticle.Update(mPosition);
 			}
@@ -2000,6 +2011,8 @@ void Enemy::StarDrop(Player& player) {
 			mPowerColort = EasingClamp(0.01f, mPowerColort);
 			mWhiteColor = ColorEasingMove(0xFFFFFFFF, 0xFFFFFF00, easeLinear(mPowerColort));
 			if (mPowerColort == 1.0f) {
+				particle.SetRandSize(3, 5);
+				particle.SetRandSpeed(-8, -4);
 				mStarDropAttackParticle.Reset();
 				mIsActive = false;
 				mIsStarDrop = false;
@@ -2022,6 +2035,8 @@ void Enemy::StarDrop(Player& player) {
 			mEnergyEasingt[i] = 0.0f;
 		}
 		Novice::StopAudio(mIsPlayEnergySE);
+		particle.SetRandSize(3, 5);
+		particle.SetRandSpeed(-8, -4);
 		//全てのパーティクルを消す
 		mStarDropParticle.Reset();
 		mStarDropAttackParticle.Reset();
@@ -2260,7 +2275,7 @@ void Enemy::ToBattle(Title& title) {
 		mVelocity.x = 0;
 
 		mToBattleFrame++;
-		if (180 < mToBattleFrame){
+		if (300 < mToBattleFrame){
 			mIsStartBattle = true;
 		}
 	}

@@ -491,7 +491,7 @@ private:
 	//攻撃時のフレーム
 	int mAttackFrame;
 	//関数
-	void StarDrop(Player& player);
+	void StarDrop(Player& player, Particle& particle);
 	//サウンド
 	int mIsPlayEnergySE;
 	int mEnergySE;

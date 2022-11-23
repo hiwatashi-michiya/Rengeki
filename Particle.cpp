@@ -36,6 +36,9 @@ mRandMin(1), mRandMax(2), mMaxParticle(100), mParticleAppear(false) {
 
 	mShockWaveTimer = 0;
 
+	mRandSpeedMin = -4;
+	mRandSpeedMax = -2;
+
 }
 
 Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mParticleExtinction,
@@ -66,6 +69,9 @@ Particle::Particle(PARTICLETYPE mParticleType, int mParticleColor, float mPartic
 	mTheta = 0;
 
 	mShockWaveTimer = 0;
+
+	mRandSpeedMin = -4;
+	mRandSpeedMax = -2;
 
 }
 
@@ -110,6 +116,9 @@ void Particle::Reset() {
 	mTheta = 0;
 
 	mShockWaveTimer = 0;
+
+	mRandSpeedMin = -4;
+	mRandSpeedMax = -2;
 
 }
 
@@ -242,7 +251,7 @@ void Particle::SetFlag(Vec2 position) {
 				mPosition[i].y = position.y;
 				mRadius[i] = RandNum(mRandMin, mRandMax, NATURAL);
 				mVelocity[i].x = cosf(mTheta + ((i * M_PI) / 120)) * 3;
-				mVelocity[i].y = RandNum(-4, -2, NATURAL);
+				mVelocity[i].y = RandNum(mRandSpeedMin, mRandSpeedMax, NATURAL);
 				mRandColor[i] = RandNum(0x00000066, 0x000000FF, NATURAL);
 				mColor[i] = mParticleColor;
 

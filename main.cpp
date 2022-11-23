@@ -38,6 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Screen screen;
 	Title title;
+	InGame ingame;
 	GameClear gameclear;
 	GameOver gameover;
 
@@ -133,6 +134,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Cキーを押したらシーンが変わる(ここでINGAMEに関わるものの初期化)
 			if (title.GetIsTitleClear() == true){
 				scene = INGAME;
+				ingame.Init();
 				player.ResetAll();
 				player.ResetPosition();
 				enemy.ResetAll();
@@ -192,6 +194,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			}
 
+			ingame.Update();
+
 			screen.ZoomUpdate(stage, player, enemy);
 			screen.ScrollUpdate(stage, player, enemy);
 
@@ -242,13 +246,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//ゲームクリア
 			if (enemy.GetIsGameClear() == true){
-				gameclear.Init();
-				scene = GAMECLEAR;
+				gameclear.ToGameClear();
+				if (gameclear.IsEndBlack() == true){
+					scene = GAMECLEAR;
+				}
 			}
 			//ゲームオーバー
 			if (player.GetIsGameOver() == true){
-				gameover.Init();
-				scene = GAMEOVER;
+				gameover.ToGameOver();
+				if (gameover.IsEndBlack() == true){
+					scene = GAMEOVER;
+				}
 			}
 
 			break;
@@ -262,6 +270,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
+				gameclear.Init();
 				scene = TITLE;
 			}
 
@@ -276,6 +288,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
+				gameover.Init();
 				scene = TITLE;
 			}
 
@@ -311,7 +327,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case INGAME:
 
 			stage.Draw(player, enemy, screen);
+			if (enemy.GetIsStarDrop() == true) {
+				Novice::SetBlendMode(BlendMode::kBlendModeAdd);
+			}
 			stageParticle.Draw(screen);
+			if (enemy.GetIsStarDrop() == true) {
+				Novice::SetBlendMode(BlendMode::kBlendModeNormal);
+			}
 			//透明の間表示しない
 			if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
 				enemyParticle.Draw(screen);
@@ -326,6 +348,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			stage.FrontDraw(screen);
 
 			enemy.BlackDraw();
+
+			ingame.Draw();
+			gameclear.IngameDraw();
+			gameover.IngameDraw();
 
 			break;
 		case GAMECLEAR:
