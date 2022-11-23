@@ -284,6 +284,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				enemyParticle2.ChangeParticleColor(0xFF00FF00);
 				stage.ResetAll();
 				BGM2Volume = 0.0f;
+				Novice::SetAudioVolume(isPlayBGM2, BGM2Volume);
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
 				gameclear.Init();
 				gameover.Init();
 				title.mIsOldTitleClear = false;
@@ -324,6 +328,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				enemyParticle2.ChangeParticleColor(0xFF00FF00);
 				stage.ResetAll();
 				BGM2Volume = 0.0f;
+				Novice::SetAudioVolume(isPlayBGM2, BGM2Volume);
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
 				gameclear.Init();
 				gameover.Init();
 				title.mIsOldTitleClear = false;

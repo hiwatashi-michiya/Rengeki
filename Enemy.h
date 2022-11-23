@@ -363,7 +363,7 @@ private:
 	//攻撃の当たり判定の半径
 	float mAttackRadius[kEnemyMaxAttack];
 	//関数
-	void Attack(Player& player);
+	void Attack(Player& player, Stage& stage);
 	//パーティクル
 	Particle mAttackParticle[kEnemyMaxAttack];
 	//サウンド
