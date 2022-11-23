@@ -709,7 +709,7 @@ void Player::ScalingInit() {
 void Player::Animation() {
 
 	//ジャンプ時の拡縮フラグと値の初期化
-	if (Key::IsTrigger(DIK_UP) != 0 && mIsJumpScaling == false) {
+	if ((Key::IsTrigger(DIK_UP) != 0 || Controller::IsTriggerButton(0, Controller::bA) != 0) && mIsJumpScaling == false) {
 
 		ScalingInit();
 		mIsLandScaling = false;
@@ -834,7 +834,9 @@ void Player::Draw(Screen& screen) {
 
 
 		//立っている時
-		if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) && !mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
+		if (((!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT)) &&
+			(!Controller::IsStickDirection(0, Controller::lsdRIGHT) && !Controller::IsStickDirection(0, Controller::lsdLEFT))) &&
+			!mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
 			if (mDirection == RIGHT) {
 				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
 			}
@@ -855,13 +857,15 @@ void Player::Draw(Screen& screen) {
 			}
 			mIsJump = false;
 		}
-		else if (Key::IsPress(DIK_RIGHT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		else if ((Key::IsPress(DIK_RIGHT) || Controller::IsStickDirection(0, Controller::lsdRIGHT)) &&
+			mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
 			mIsJump = false;
 			mJumpAnimeCount = 0;
 			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
 			mIsJump = false;
 		}
-		else if (Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		else if ((Key::IsPress(DIK_LEFT) || Controller::IsStickDirection(0, Controller::lsdLEFT)) &&
+			mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
 			mIsJump = false;
 			mJumpAnimeCount = 0;
 			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
@@ -871,7 +875,8 @@ void Player::Draw(Screen& screen) {
 		//ジャンプ
 
 
-		if (Key::IsTrigger(DIK_UP) && mJumpCount == 0 && mIsRolling == false && !mIsJump) {
+		if ((Key::IsTrigger(DIK_UP) || Controller::IsTriggerButton(0, Controller::bA)) &&
+			mJumpCount == 0 && mIsRolling == false && !mIsJump) {
 			mJumpPosition.x = mPosition.x;
 			mJumpPosition.y = mPosition.y + 10;
 			mIsJump = true;
