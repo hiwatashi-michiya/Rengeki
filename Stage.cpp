@@ -12,10 +12,10 @@ void Stage::Init() {
 	mHitStopFrame = 0;
 	mFlamePosition = { kWindowWidth / 2, kWindowHeight / 2 };
 	mIsLoadTexture = false;
-	mIsFirstLoadTexture = false;
+	mIsLoadUI = false;
 	mRadius = 32;
 
-	mPositionStick = { mRadius * 1.5f,680 };
+	mPositionStick = { mRadius * 1.5f,kWindowHeight - mRadius };
 	mPositionStickText = { mPositionStick.x + mRadius * 2,mPositionStick.y };
 
 	mPositionX = { 800,mPositionStick.y };
@@ -115,8 +115,7 @@ void Stage::Draw(Screen& screen) {
 }
 
 void Stage::FrontDraw(Screen& screen) {
-	
-	if (mIsFirstLoadTexture == false){
+	if (!mIsLoadUI) {
 		mX = Novice::LoadTexture("./Resources/UI/X.png");
 		mY = Novice::LoadTexture("./Resources/UI/Y.png");
 		mA = Novice::LoadTexture("./Resources/UI/A.png");
@@ -129,8 +128,9 @@ void Stage::FrontDraw(Screen& screen) {
 		mXText = Novice::LoadTexture("./Resources/UI/kougeki.png");
 		mAText = Novice::LoadTexture("./Resources/UI/jump.png");
 		mRTText = Novice::LoadTexture("./Resources/UI/kaihi.png");
-		mIsFirstLoadTexture = true;
+		mIsLoadUI = true;
 	}
+
 
 	if (!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT) || Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT)) {
 		screen.DrawUI(mPositionStick, mRadius * 1.2f, 0, 0, 64, 64, mStick, mColor);
