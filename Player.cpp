@@ -527,7 +527,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 	}
 
 	//ƒ[ƒŠƒ“ƒO‚µ‚Ä‚È‚¢‚ÉUŒ‚‚ğó‚¯‚é
-	if (mIsRolling == false && !mIsNoHit) {
+	if (mIsRolling == false && !mIsNoHit && enemy.GetIsRoundMove() == false) {
 
 
 		//-----ãUŒ‚“–‚½‚è”»’è-----//

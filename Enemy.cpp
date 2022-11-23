@@ -58,6 +58,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+	mAlphat = 0.0f;
+	mBlack = 0x000000FF;
 	mIsStay = false;
 	mIsStartBattle = false;
 	mToBattleFrame = 0;
@@ -231,6 +233,8 @@ void Enemy::ResetAll() {
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// ラウンド遷移用 ////////////////////
+	mAlphat = 0.0f;
+	mBlack = 0x000000FF;
 	mIsStay = false;
 	mIsStartBattle = false;
 	mToBattleFrame = 0;
@@ -2248,12 +2252,13 @@ void Enemy::ToBattle(Title& title) {
 	}
 
 	if (mIsStay == true){
-
+		mAlphat = EasingClamp(0.01f, mAlphat);
+		mBlack = ColorEasingMove(0x000000FF, 0x00000000, easeLinear(mAlphat));
 		mDirection = ENEMYLEFT;
 		mVelocity.x = 0;
 
 		mToBattleFrame++;
-		if (120 < mToBattleFrame){
+		if (180 < mToBattleFrame){
 			mIsStartBattle = true;
 		}
 	}
@@ -2879,4 +2884,9 @@ void Enemy::FrontDraw() {
 	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 50, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
 	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 50, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
 
+}
+
+void Enemy::BlackDraw() {
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
