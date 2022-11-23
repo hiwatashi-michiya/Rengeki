@@ -101,6 +101,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+	mFallingStarCount = 2;
 
 	mIsActive = false;
 	mIsActiveOnce = false;
@@ -278,6 +279,7 @@ void Enemy::ResetAll() {
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+	mFallingStarCount = 2;
 	mFallingStarStartValue = 0;
 	mFallingStarEndValue = 0;
 	for (int i = 0; i < 10; i++) {
@@ -453,7 +455,7 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 
 	}
 
-	FallingStar(player);
+	FallingStar(player, stage);
 
 
 	StarDrop(player, particle);
@@ -1757,7 +1759,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 ////////////////////@‚±‚±‚©‚ç•KŽE‹Z@////////////////////
 
 /*@•KŽE‹Z‚P@¯Ó—¬E—Ž‰º¯@*/
-void Enemy::FallingStar(Player& player) {
+void Enemy::FallingStar(Player& player, Stage& stage) {
 
 	//—Ž‰º¯ŠJŽn
 	if (mIsFallingStar == true){
@@ -1784,7 +1786,7 @@ void Enemy::FallingStar(Player& player) {
 			mVelocity.y += 12.0f;
 
 			if ((Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 0 || mIsPlayFallingStarFallSE == -1) &&
-				mIsGround == false) {
+				mIsGround == false && mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
 
 				mIsPlayFallingStarFallSE = Novice::PlayAudio(mFallingStarFallSE, 0, 0.5f);
 
@@ -1817,7 +1819,35 @@ void Enemy::FallingStar(Player& player) {
 					mFallingStarEndValue++;
 				}
 				if (mFallingStarFrame >= ( 5 * (kFallingStarMax - 1) + 20 )) {
-					mIsFallingStar = false;
+
+					if (stage.GetRound() == Round2) {
+
+						if (mFallingStarCount > 0) {
+							mVelocity.x = 0.0f;
+							mFallingStarStartPosition = mPosition;
+							mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+							for (int i = 0; i < kFallingStarMax; i++) {
+								mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+								mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+							}
+							mFallingStarEasingt = 0.0f;
+							mFallingStarFrame = 0;
+							mFallingStarStartValue = 0;
+							mFallingStarEndValue = 0;
+							for (int i = 0; i < 10; i++) {
+								mIsFallingStarAttack[i] = false;
+							}
+							mFallingStarCount--;
+						}
+						else {
+							mIsFallingStar = false;
+						}
+
+					}
+					else {
+						mIsFallingStar = false;
+					}
+
 				}
 			}
 		}
@@ -1832,6 +1862,7 @@ void Enemy::FallingStar(Player& player) {
 		for (int i = 0; i < 10; i++) {
 			mIsFallingStarAttack[i] = false;
 		}
+		mFallingStarCount = 2;
 	}
 }
 /*@•KŽE‹Z‚R@¯Ó—¬‰œ‹`E¯‚ÌŽ´@*/

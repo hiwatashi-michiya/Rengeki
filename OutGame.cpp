@@ -4,7 +4,7 @@
 #include "Key.h"
 #include "Function.h"
 #include "Easing.hpp"
-
+#include "ControllerInput.h"
 
 void InGame::Init() {
 
@@ -72,7 +72,7 @@ void GameClear::ToGameClear() {
 }
 void GameClear::Update() {
 
-	if (Key::IsTrigger(DIK_C)){
+	if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)){
 		mIsEndGameClear = true;
 	}
 
@@ -132,7 +132,7 @@ void GameOver::ToGameOver() {
 }
 void GameOver::Update() {
 
-	if (Key::IsTrigger(DIK_C)) {
+	if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
 		mIsEndGameOver = true;
 	}
 
