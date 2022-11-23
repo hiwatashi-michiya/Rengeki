@@ -158,6 +158,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
 	mIsPlayEnergySE = -1;
 	mEnergyChargeSE = Novice::LoadAudio("./Resources/SE/energycharge.wav");
+	mStarDropSE1 = Novice::LoadAudio("./Resources/SE/stardrop1.wav");
+	mStarDropSE2 = Novice::LoadAudio("./Resources/SE/stardrop2.wav");
 
 }
 
@@ -248,6 +250,12 @@ void Enemy::ResetAll() {
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
+	mFallingStarStartValue = 0;
+	mFallingStarEndValue = 0;
+	for (int i = 0; i < 10; i++) {
+		mIsFallingStarAttack[i] = false;
+	}
+
 
 	mIsActive = false;
 	mIsActiveOnce = false;
@@ -1730,7 +1738,7 @@ void Enemy::FallingStar(Player& player) {
 		mFallingStarFrame = 0;
 		mFallingStarStartValue = 0;
 		mFallingStarEndValue = 0;
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 10; i++) {
 			mIsFallingStarAttack[i] = false;
 		}
 	}
@@ -1847,6 +1855,7 @@ void Enemy::StarDrop(Player& player) {
 			mPowerEasingt = 0.0f;
 			mPowerStartPosition = mPowerPosition;
 			mIsStarDrop = true;
+			Novice::PlayAudio(mStarDropSE1, 0, 0.5f);
 			mAttackFrame = 0;
 		}
 
@@ -1860,6 +1869,10 @@ void Enemy::StarDrop(Player& player) {
 		if (mPowerEasingt == 1.0f){
 			mAttackFrame++;
 			mIsActiveStarDrop = true;
+		}
+
+		if (mAttackFrame == 1) {
+			Novice::PlayAudio(mStarDropSE2, 0, 0.5f);
 		}
 
 		if (mIsActiveStarDrop == true) {
