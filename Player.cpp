@@ -150,6 +150,7 @@ void Player::ResetAll() {
 	mFlashing = 1;
 	mIsHitCount = false;
 	mPlayerSrcRollX = 0;
+	mAtackBairitu = 0;
 }
 
 void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
@@ -762,6 +763,7 @@ void Player::Draw(Screen& screen) {
 		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
 		mKobusi = Novice::LoadTexture("./Resources/Player/kobusi.png");
 		mAsi = Novice::LoadTexture("./Resources/Player/asi.png");
+		mDoragon = Novice::LoadTexture("./Resources/Player/doragon.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}
@@ -793,17 +795,21 @@ void Player::Draw(Screen& screen) {
 		}
 
 		//  çUåÇ
+		mAtackBairitu = 3;
 
 		//âEçUåÇ
 		if (mDirection == RIGHT) {
 			if (mIsAttack[2] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+				screen.DrawQuad(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
 			else if (mIsAttack[1] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuad(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
 			}
 			else if (mIsAttack[0] == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuad(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 		}
 
@@ -811,12 +817,15 @@ void Player::Draw(Screen& screen) {
 		if (mDirection == LEFT) {
 			if (mIsAttack[2] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
+				screen.DrawQuadReverse(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
 			else if (mIsAttack[1] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuadReverse(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
 			}
 			else if (mIsAttack[0] == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuadReverse(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 		}
 
@@ -891,14 +900,14 @@ void Player::Draw(Screen& screen) {
 		
 
 
-		//çUåÇîÕàÕï`âÊ
-		for (int i = 0; i < kMaxAttack; i++) {
+		////çUåÇîÕàÕï`âÊ
+		//for (int i = 0; i < kMaxAttack; i++) {
 
-			if (mIsAttack[i] == true) {
-				mAttackParticle[i].Draw(screen);
-				screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
-			}
-		}
+		//	if (mIsAttack[i] == true) {
+		//		mAttackParticle[i].Draw(screen);
+		//		screen.DrawEllipse(mAttackPosition[i], mAttackRadius[i], 0.0f, 0xFF0000FF, kFillModeSolid);
+		//	}
+		//}
 	}
 
 

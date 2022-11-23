@@ -272,6 +272,8 @@ private:
 	int mHit;
 	int mKobusi;
 	int mAsi;
+	int mDoragon;
+	float mAtackBairitu;
 
 	//“–‚½‚Á‚½Œã‚ÌƒJƒEƒ“ƒg
 	bool mIsWallCount;
