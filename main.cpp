@@ -297,6 +297,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			player.Draw(screen);
 			enemy.Draw(screen, player);
 			enemy.FrontDraw();
+			player.DrawUI();
 			stage.FrontDraw(screen);
 
 			break;
@@ -313,7 +314,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 
-
+		
 
 
 		///

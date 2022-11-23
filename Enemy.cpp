@@ -132,13 +132,14 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsStartAttack = false;
 	mIsStarDrop = false;
 	mIsActiveStarDrop = false;
+	mIsStarDropDamage = false;
 	mFrame = 0;
 	mAttackFrame = 0;
 
 	///////////////////// •`‰æŠÖŒW ///////////////////////////
 	mIsLoadTexture = false;
 	mEnemySrcX = 0;
-
+	mEnemyUIPosition = { 140, 665 };
 	//////////////////////  ƒTƒEƒ“ƒhŠÖŒW  ////////////////////
 	
 	///////////////////// Šî‘bˆÚ“®SE /////////////////////////
@@ -1782,6 +1783,7 @@ void Enemy::FallingStar(Player& player) {
 void Enemy::StarDrop(Player& player) {
 
 	mIsOldEasingMust = mIsEasingMust;
+	mIsOldStarDropDamage = mIsStarDropDamage;
 
 	if (mIsActive == true && mIsAllBreak == false) {
 		mFrame++;
@@ -1918,6 +1920,9 @@ void Enemy::StarDrop(Player& player) {
 		if (240 <= mAttackFrame){
 			mPowerColort = EasingClamp(0.01f, mPowerColort);
 			mWhiteColor = ColorEasingMove(0xFFFFFF00, 0xFFFFFFFF, easeLinear(mPowerColort));
+			if (mPowerColort == 1.0f){
+				mIsStarDropDamage = true;
+			}
 		}
 
 		if (480 <= mAttackFrame && mIsEasingMust == false){
@@ -1944,6 +1949,7 @@ void Enemy::StarDrop(Player& player) {
 		mIsPowerDisplay = false;
 		mIsStartAttack = false;
 		mIsActiveStarDrop = false;
+		mIsStarDropDamage = false;
 		mIsAllBreak = false;
 		mFrame = 0;
 		mAttackFrame = 0;
@@ -2750,12 +2756,12 @@ void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 	if (mIsHitPointAssign[1] == true){
-		Novice::DrawQuad(140, 10, 300, 10, 140, 40, 300, 40, 1000, 0, 1000, 200, mEnemyName, WHITE);
+		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y, mEnemyUIPosition.x + 160, mEnemyUIPosition.y, mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 160, mEnemyUIPosition.y + 30, 1000, 0, 1000, 200, mEnemyName, WHITE);
 	}
 	else{
-		Novice::DrawQuad(140, 10, 300, 10, 140, 40, 300, 40, 0, 0, 1000, 200, mEnemyName, WHITE);
+		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y, mEnemyUIPosition.x + 160, mEnemyUIPosition.y, mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 160, mEnemyUIPosition.y + 30, 0, 0, 1000, 200, mEnemyName, WHITE);
 	}
-	Novice::DrawQuad(140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 140, 60, 140 + mHitPoint * (1000 / mTmpHitPointMax), 60, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
-	Novice::DrawQuad(140, 40, 1140, 40, 140, 60, 1140, 60, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
+	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 50, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
+	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 50, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
 
 }
