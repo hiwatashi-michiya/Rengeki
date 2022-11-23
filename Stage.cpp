@@ -79,6 +79,7 @@ void Stage::Draw(Screen& screen) {
 		mFlame = Novice::LoadTexture("./Resources/Stage/Flame.png");
 		mIsLoadTexture = true;
 	}
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
 

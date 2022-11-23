@@ -26,6 +26,9 @@ const Vec2 kKnockBackLength[3] = {
 //最大攻撃回数
 const int kEnemyMaxAttack = 3;
 
+//攻撃力
+const int kEnemyAttackValue[kEnemyMaxAttack] = { 1,3,5 };
+
 //星砕流・落下星の攻撃数
 static constexpr int kFallingStarMax = 10;
 
@@ -56,6 +59,9 @@ public:
 
 	//最前面に描画する処理
 	void FrontDraw();
+
+	//ゲームクリアか取得する
+	inline bool GetIsGameClear() { return mIsGameClear; }
 	
 	//ポジションリセット
 	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; mHitPoint = mHitPointMax[0]; }
@@ -146,7 +152,8 @@ public:
 
 private:
 
-	
+	//敵を倒したか（プレイヤーの勝利）
+	bool mIsGameClear;
 
 
 	//何か攻撃しているか

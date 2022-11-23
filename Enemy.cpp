@@ -9,6 +9,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition({mPosition.x,mPosition.y}),mVelocity({mVelocity.x,mVelocity.y}),mRadius(mRadius)
 {
 
+	mIsGameClear = false;
+
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
 	}
@@ -277,6 +279,10 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	HitPoint(stage);
 
 	RoundTranslation();
+
+	if (stage.GetRound() == Round2 && mHitPoint == 0) {
+		mIsGameClear = true;
+	}
 
 }
 
@@ -2109,12 +2115,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		screen.DrawBox({ mPosition.x - mRadius - 10, mPosition.y - mRadius - 10 }, mRadius * 2 + 20, mRadius * 2 + 20, 0.0f, BLUE, kFillModeWireFrame);
 	}
 
-	//体力描画
-	Novice::DrawBox(140, 700, mHitPoint * (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
-
-	//ステップのクールタイムを表示
-	Novice::ScreenPrintf(1000, 40, "stepTime : %d", mStepFrame);
-
 	mTextureFrame++;
 
 	//リソースの読み込み
@@ -2260,6 +2260,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 	}
+
+	//体力描画
+	Novice::DrawBox(140, 700, mHitPoint* (1000 / mTmpHitPointMax), 10, 0.0f, RED, kFillModeSolid);
+
 
 }
 
