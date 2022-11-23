@@ -363,7 +363,7 @@ private:
 	//攻撃の当たり判定の半径
 	float mAttackRadius[kEnemyMaxAttack];
 	//関数
-	void Attack(Player& player);
+	void Attack(Player& player, Stage& stage);
 	//パーティクル
 	Particle mAttackParticle[kEnemyMaxAttack];
 	//サウンド
@@ -458,6 +458,8 @@ private:
 	bool mIsAllBreak;
 	//原石
 	Vec2 mStonePosition[3];
+	Vec2 mArrowPosition[3];
+	float mTheta;
 	bool mIsStoneDisplay[3];
 	bool mIsStoneHit[3];
 	bool mIsStoneLeftHit[3];

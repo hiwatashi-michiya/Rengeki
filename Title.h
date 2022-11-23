@@ -16,8 +16,13 @@ public:
 	void FrontDraw();
 	inline bool GetIsTitleClear() { return mIsTitleClear; }
 	inline bool GetIsOldTitleClear() { return mIsOldTitleClear; }
+	bool mIsOldTitleClear;
+	bool mIsTitleClear;
 
 private:
+
+	float mFirstAlphat;
+	unsigned int mFirstBlack;
 
 	float mAlphat;
 	unsigned int mBlack;
@@ -26,8 +31,6 @@ private:
 	Vec2 mArrowPosition;
 
 	bool mIsPlayerMoveClear;
-	bool mIsTitleClear;
-	bool mIsOldTitleClear;
 	bool mIsLoadTexture;
 	int mTitle;
 	int mTitleGround;

@@ -5,6 +5,7 @@
 #include "Function.h"
 #include "Easing.hpp"
 #include "ControllerInput.h"
+#include "MatVec.h"
 
 void InGame::Init() {
 
@@ -53,7 +54,16 @@ void GameClear::Init() {
 	mBlack = 0x00000000;
 	mIsEndBlack = false;
 	mIsEndGameClear = false;
+	mIsAgain = false;
 	mIsLoadTexture = false;
+	mSelectPosition = { 640.0f, 450.0f };
+	mScale = 1.0f;
+	mWidth = 480;
+	mHeight = 80;
+	mSelectAlphat = 0.0f;
+	mSelectColor = WHITE;
+	mIsStartBlackToTitle = false;
+	mIsStartBlackAgain = false;
 }
 void GameClear::ToGameClear() {
 
@@ -72,21 +82,88 @@ void GameClear::ToGameClear() {
 }
 void GameClear::Update() {
 
-	if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)){
-		mIsEndGameClear = true;
+	mScale += 0.01f;
+	if (mScale >= 1.5f){
+		mScale = 1.0f;
 	}
+
+	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
+	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
+	if (mSelectAlphat == 1.0f){
+		mSelectAlphat = 0.0f;
+	}
+
+	switch (select)
+	{
+	case GameClear::ToTitle:
+
+		if (mIsStartBlackToTitle == false){
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackToTitle = true;
+			}
+			if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = Again;
+			}
+		}
+		else if (mIsStartBlackToTitle == true) {
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsEndGameClear = true;
+			}
+		}
+
+		mSelectPosition.y = 450.0f;
+
+
+
+		break;
+	case GameClear::Again:
+
+		if (mIsStartBlackAgain == false){
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackAgain = true;
+			}
+
+			if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = ToTitle;
+			}
+		}
+		else if (mIsStartBlackAgain == true) {
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsAgain = true;
+			}
+		}
+
+		mSelectPosition.y = 570.0f;
+
+		break;
+	}
+
 
 }
 void GameClear::Draw() {
 
 	if (mIsLoadTexture == false){
 		mGameClear = Novice::LoadTexture("./Resources/GameClear/Gameclear.png");
+		mSelectFlame = Novice::LoadTexture("./Resources/GameClear/SelectFlame.png");
 		mIsLoadTexture = true;
 	}
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
 
 	Novice::DrawSprite(0, 0, mGameClear, 1, 1, 0.0f, WHITE);
+
+	Quad OriginalPosition = RectAssign(mWidth, mHeight);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ mScale, mScale }, 0.0f, mSelectPosition));
+	Novice::DrawQuad(Rect.LeftTop.x, Rect.LeftTop.y, Rect.RightTop.x, Rect.RightTop.y, Rect.LeftBottom.x, Rect.LeftBottom.y, Rect.RightBottom.x, Rect.RightBottom.y, 0, 0, mWidth, mHeight, mSelectFlame, mSelectColor);
+
 }
 
 void GameClear::IngameDraw() {
@@ -98,6 +175,9 @@ void GameClear::IngameDraw() {
 
 	Novice::DrawSprite(0, 0, mWin, 1, 1, 0.0f, mWinColor);
 
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
+}
+void GameClear::FrontDraw() {
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
 
@@ -112,7 +192,16 @@ void GameOver::Init() {
 	mBlack = 0x00000000;
 	mIsEndBlack = false;
 	mIsEndGameOver = false;
+	mIsAgain = false;
 	mIsLoadTexture = false;
+	mSelectPosition = { 640.0f, 570.0f };
+	mScale = 1.0f;
+	mWidth = 480;
+	mHeight = 80;
+	mSelectAlphat = 0.0f;
+	mSelectColor = WHITE;
+	mIsStartBlackToTitle = false;
+	mIsStartBlackAgain = false;
 
 }
 void GameOver::ToGameOver() {
@@ -132,8 +221,66 @@ void GameOver::ToGameOver() {
 }
 void GameOver::Update() {
 
-	if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
-		mIsEndGameOver = true;
+	mScale += 0.01f;
+	if (mScale >= 1.5f) {
+		mScale = 1.0f;
+	}
+
+	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
+	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
+	if (mSelectAlphat == 1.0f) {
+		mSelectAlphat = 0.0f;
+	}
+
+	switch (select)
+	{
+	case GameOver::ToTitle:
+
+		if (mIsStartBlackToTitle == false) {
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackToTitle = true;
+			}
+			if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = Again;
+			}
+		}
+		else if (mIsStartBlackToTitle == true){
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f) {
+				mIsEndGameOver = true;
+			}
+		}
+
+		mSelectPosition.y = 450.0f;
+
+		break;
+	case GameOver::Again:
+
+		if (mIsStartBlackAgain == false) {
+			if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
+				mIsStartBlackAgain = true;
+			}
+
+			if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
+				mScale = 1.0f;
+				mSelectAlphat = 0.0f;
+				select = ToTitle;
+			}
+		}
+		else if (mIsStartBlackAgain == true){
+			mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+			mBlack = ColorEasingMove(0x00000000, BLACK, easeLinear(mBlackAlphat));
+			if (mBlackAlphat == 1.0f){
+				mIsAgain = true;
+			}
+		}
+
+		mSelectPosition.y = 570.0f;
+
+		break;
 	}
 
 }
@@ -141,12 +288,17 @@ void GameOver::Draw() {
 
 	if (mIsLoadTexture == false) {
 		mGameOver = Novice::LoadTexture("./Resources/GameOver/Gameover.png");
+		mSelectFlame = Novice::LoadTexture("./Resources/GameOver/SelectFlame.png");
 		mIsLoadTexture = true;
 	}
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, BLACK, kFillModeSolid);
 
 	Novice::DrawSprite(0, 0, mGameOver, 1, 1, 0.0f, WHITE);
+
+	Quad OriginalPosition = RectAssign(mWidth, mHeight);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ mScale, mScale }, 0.0f, mSelectPosition));
+	Novice::DrawQuad(Rect.LeftTop.x, Rect.LeftTop.y, Rect.RightTop.x, Rect.RightTop.y, Rect.LeftBottom.x, Rect.LeftBottom.y, Rect.RightBottom.x, Rect.RightBottom.y, 0, 0, mWidth, mHeight, mSelectFlame, mSelectColor);
 
 }
 
@@ -161,4 +313,7 @@ void GameOver::IngameDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 
+}
+void GameOver::FrontDraw() {
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
