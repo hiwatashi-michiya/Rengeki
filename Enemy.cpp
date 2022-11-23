@@ -434,7 +434,7 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 
 	}
 
-	Attack(player);
+	Attack(player, stage);
 
 	////////////////////　ここから強攻撃　////////////////////
 
@@ -1592,7 +1592,7 @@ void Enemy::Teleport() {
 
 ////////////////////　ここから弱攻撃　////////////////////
 
-void Enemy::Attack(Player& player) {
+void Enemy::Attack(Player& player, Stage& stage) {
 
 	//時間経過で攻撃を進める
 	if (mIsAttackStart == true) {
@@ -1601,10 +1601,22 @@ void Enemy::Attack(Player& player) {
 		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
 				mVelocity.x = -9.0f;
+
+				//第二形態強化
+				if (stage.GetRound() == Round2) {
+					mVelocity.x = -18.0f;
+				}
+
 				mDirection = ENEMYLEFT;
 			}
 			else {
 				mVelocity.x = 9.0f;
+
+				//第二形態強化
+				if (stage.GetRound() == Round2) {
+					mVelocity.x = 18.0f;
+				}
+
 				mDirection = ENEMYRIGHT;
 			}
 		}

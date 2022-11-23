@@ -95,13 +95,13 @@ void GameClear::Update() {
 	{
 	case GameClear::ToTitle:
 
-		if (Key::IsTrigger(DIK_C)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
 			mIsEndGameClear = true;
 		}
 
 		mSelectPosition.y = 450.0f;
 
-		if (Key::IsTrigger(DIK_DOWN)){
+		if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)){
 			mScale = 1.0f;
 			mSelectAlphat = 0.0f;
 			select = Again;
@@ -110,13 +110,13 @@ void GameClear::Update() {
 		break;
 	case GameClear::Again:
 
-		if (Key::IsTrigger(DIK_C)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
 			mIsAgain = true;
 		}
 
 		mSelectPosition.y = 570.0f;
 
-		if (Key::IsTrigger(DIK_UP)) {
+		if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
 			mScale = 1.0f;
 			mSelectAlphat = 0.0f;
 			select = ToTitle;
@@ -210,13 +210,13 @@ void GameOver::Update() {
 	{
 	case GameOver::ToTitle:
 
-		if (Key::IsTrigger(DIK_C)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
 			mIsEndGameOver = true;
 		}
 
 		mSelectPosition.y = 450.0f;
 
-		if (Key::IsTrigger(DIK_DOWN)) {
+		if (Key::IsTrigger(DIK_DOWN) || Controller::IsStickDirection(0, Controller::lsdDOWN)) {
 			mScale = 1.0f;
 			mSelectAlphat = 0.0f;
 			select = Again;
@@ -225,13 +225,13 @@ void GameOver::Update() {
 		break;
 	case GameOver::Again:
 
-		if (Key::IsTrigger(DIK_C)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
 			mIsAgain = true;
 		}
 
 		mSelectPosition.y = 570.0f;
 
-		if (Key::IsTrigger(DIK_UP)) {
+		if (Key::IsTrigger(DIK_UP) || Controller::IsStickDirection(0, Controller::lsdUP)) {
 			mScale = 1.0f;
 			mSelectAlphat = 0.0f;
 			select = ToTitle;
