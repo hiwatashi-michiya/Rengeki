@@ -5,6 +5,45 @@
 #include "Function.h"
 #include "Easing.hpp"
 
+
+void InGame::Init() {
+
+	mFrame = 0;
+	mStartEasingt = 0.0f;
+	mEndEasingt = 0.0f;
+	mStartBattlePosition = { -kWindowWidth, 0.0f };
+	mBattlePosition = mStartBattlePosition;
+	mMiddleBattlePosition = { 0.0f, 0.0f };
+	mEndBattlePosition = { kWindowWidth, 0.0f };
+	mIsLoadTexture = false;
+}
+void InGame::Update() {
+
+	mFrame++;
+
+	if (mFrame < 220){
+		mStartEasingt = EasingClamp(0.008f, mStartEasingt);
+		mBattlePosition.x = EasingMove(mStartBattlePosition.x, mMiddleBattlePosition.x, easeInExpo(mStartEasingt));
+	}
+	else {
+		mEndEasingt = EasingClamp(0.005f, mEndEasingt);
+		mBattlePosition.x = EasingMove(mMiddleBattlePosition.x, mEndBattlePosition.x, easeOutExpo(mEndEasingt));
+	}
+
+
+}
+void InGame::Draw() {
+
+	if (mIsLoadTexture == false){
+		mBattleStart = Novice::LoadTexture("./Resources/InGame/BattleStart.png");
+		mIsLoadTexture = true;
+	}
+
+	Novice::DrawQuad(mBattlePosition.x, mBattlePosition.y, mBattlePosition.x + 1280, mBattlePosition.y, mBattlePosition.x, mBattlePosition.y + 720, mBattlePosition.x + 1280, mBattlePosition.y + 720, 0, 0, 1280, 720, mBattleStart, WHITE);
+}
+
+//------------------------------------------------//
+
 void GameClear::Init() {
 	mFrame = 0;
 	mAlphat = 0.0f;

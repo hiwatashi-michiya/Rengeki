@@ -1,4 +1,31 @@
 #pragma once
+#include "Vec2.h"
+
+class InGame
+{
+public:
+	InGame() {
+		Init();
+	}
+
+	void Init();
+	void Update();
+	void Draw();
+
+private:
+
+	int mFrame;
+	Vec2 mBattlePosition;
+	float mStartEasingt;
+	float mEndEasingt;
+	Vec2 mStartBattlePosition;
+	Vec2 mMiddleBattlePosition;
+	Vec2 mEndBattlePosition;
+
+	bool mIsLoadTexture;
+	int mBattleStart;
+
+};
 
 
 class GameClear

@@ -2260,7 +2260,7 @@ void Enemy::ToBattle(Title& title) {
 		mVelocity.x = 0;
 
 		mToBattleFrame++;
-		if (180 < mToBattleFrame){
+		if (300 < mToBattleFrame){
 			mIsStartBattle = true;
 		}
 	}

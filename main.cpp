@@ -38,6 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Screen screen;
 	Title title;
+	InGame ingame;
 	GameClear gameclear;
 	GameOver gameover;
 
@@ -133,6 +134,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//Cキーを押したらシーンが変わる(ここでINGAMEに関わるものの初期化)
 			if (title.GetIsTitleClear() == true){
 				scene = INGAME;
+				ingame.Init();
 				player.ResetAll();
 				player.ResetPosition();
 				enemy.ResetAll();
@@ -191,6 +193,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 
 			}
+
+			ingame.Update();
 
 			screen.ZoomUpdate(stage, player, enemy);
 			screen.ScrollUpdate(stage, player, enemy);
@@ -333,6 +337,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			enemy.BlackDraw();
 
+			ingame.Draw();
 			gameclear.IngameDraw();
 			gameover.IngameDraw();
 
