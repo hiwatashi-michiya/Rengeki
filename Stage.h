@@ -70,6 +70,7 @@ private:
 
 	//画像読み込みフラグ
 	bool mIsLoadTexture;
+	bool mIsLoadUI;
 	int mFlame;
 	//描画関係
 	int mX;
@@ -84,6 +85,7 @@ private:
 	int mAText;
 	int mRTText;
 	int mStickText;
+	int mLongFlame;
 
 	//ボタンの場所
 	//座標
