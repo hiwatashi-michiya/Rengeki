@@ -6,15 +6,30 @@
 #include "Easing.hpp"
 
 void GameClear::Init() {
+	mFrame = 0;
 	mAlphat = 0.0f;
 	mWinColor = 0xFFFFFF00;
 	mIsLoadWin = false;
+	mBlackAlphat = 0.0f;
+	mBlack = 0x00000000;
+	mIsEndBlack = false;
 	mIsEndGameClear = false;
 	mIsLoadTexture = false;
 }
 void GameClear::ToGameClear() {
+
+	mFrame++;
+
 	mAlphat = EasingClamp(0.01f, mAlphat);
-	mWinColor = ColorEasingMove(0xFFFFFF00, WHITE, easeLinear(mAlphat));
+	mWinColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
+
+	if (240 < mFrame){
+		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
+		if (mBlackAlphat == 1.0f){
+			mIsEndBlack = true;
+		}
+	}
 }
 void GameClear::Update() {
 
@@ -38,26 +53,43 @@ void GameClear::Draw() {
 void GameClear::IngameDraw() {
 
 	if (mIsLoadWin == false) {
-		mWin = Novice::LoadTexture("./Resources/GameOver/Win.png");
+		mWin = Novice::LoadTexture("./Resources/GameClear/Win.png");
 		mIsLoadWin = true;
 	}
 
 	Novice::DrawSprite(0, 0, mWin, 1, 1, 0.0f, mWinColor);
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
 
 //------------------------------------------------//
 
 void GameOver::Init() {
+	mFrame = 0;
 	mAlphat = 0.0f;
 	mLoseColor = 0xFFFFFF00;
 	mIsLoadLose = false;
+	mBlackAlphat = 0.0f;
+	mBlack = 0x00000000;
+	mIsEndBlack = false;
 	mIsEndGameOver = false;
 	mIsLoadTexture = false;
 
 }
 void GameOver::ToGameOver() {
+
+	mFrame++;
+
 	mAlphat = EasingClamp(0.01f, mAlphat);
-	mLoseColor = ColorEasingMove(0xFFFFFF00, WHITE, easeLinear(mAlphat));
+	mLoseColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
+
+	if (240 < mFrame) {
+		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
+		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
+		if (mBlackAlphat == 1.0f) {
+			mIsEndBlack = true;
+		}
+	}
 }
 void GameOver::Update() {
 
@@ -87,5 +119,7 @@ void GameOver::IngameDraw() {
 	}
 
 	Novice::DrawSprite(0, 0, mLose, 1, 1, 0.0f, mLoseColor);
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 
 }

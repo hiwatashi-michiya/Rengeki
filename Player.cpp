@@ -149,6 +149,7 @@ void Player::ResetAll() {
 	mIsNoHit = false;
 	mFlashing = 1;
 	mIsHitCount = false;
+	mPlayerSrcRollX = 0;
 }
 
 void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
@@ -783,10 +784,10 @@ void Player::Draw(Screen& screen) {
 		//ÉçÅ[ÉäÉìÉO
 		if (mIsRolling) {
 			if (mDirection == RIGHT) {
-				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mRolling, mColor);
 			}
 			if (mDirection == LEFT) {
-				screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 7, 5, mTextureFrame, mRolling, mColor, 0, 0);
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mRolling, mColor);
 			}
 
 		}

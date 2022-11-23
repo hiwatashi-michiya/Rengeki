@@ -242,13 +242,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//ゲームクリア
 			if (enemy.GetIsGameClear() == true){
-				gameclear.Init();
-				scene = GAMECLEAR;
+				gameclear.ToGameClear();
+				if (gameclear.IsEndBlack() == true){
+					scene = GAMECLEAR;
+				}
 			}
 			//ゲームオーバー
 			if (player.GetIsGameOver() == true){
-				gameover.Init();
-				scene = GAMEOVER;
+				gameover.ToGameOver();
+				if (gameover.IsEndBlack() == true){
+					scene = GAMEOVER;
+				}
 			}
 
 			break;
@@ -265,6 +269,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				stageParticle.Reset();
 				stageParticle.SetRandSize(1, 3);
 				stageParticle.ChangeParticleColor(0xFFFFFF00);
+				gameclear.Init();
 				scene = TITLE;
 			}
 
@@ -282,6 +287,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				stageParticle.Reset();
 				stageParticle.SetRandSize(1, 3);
 				stageParticle.ChangeParticleColor(0xFFFFFF00);
+				gameover.Init();
 				scene = TITLE;
 			}
 
@@ -338,6 +344,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			stage.FrontDraw(screen);
 
 			enemy.BlackDraw();
+
+			gameclear.IngameDraw();
+			gameover.IngameDraw();
 
 			break;
 		case GAMECLEAR:
