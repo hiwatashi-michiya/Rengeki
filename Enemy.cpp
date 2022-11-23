@@ -2797,7 +2797,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		}
 
 		//ã≠çUåÇ
-		if (mIsSpecialAttack) {
+		if (mIsSpecialAttack || (mIsSpecialAttackStart == true && mIsSpecialAttack == false)) {
 			if (mAttackDirection == ENEMYLEFT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
 			}
