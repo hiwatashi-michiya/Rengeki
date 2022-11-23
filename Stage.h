@@ -51,6 +51,8 @@ public:
 	void HitStop(Player& player, Enemy& enemy);
 	void Draw(Screen& screen);
 
+	void FrontDraw(Screen& screen);
+
 private:
 
 	void Init();
@@ -59,8 +61,41 @@ private:
 
 	Vec2 mFlamePosition;
 
+	
+
+	//描画関係 UI
+
+	//色
+	int mColor;
+
+	//画像読み込みフラグ
 	bool mIsLoadTexture;
 	int mFlame;
-	int mLongFlame;
+	//描画関係
+	int mX;
+	int mY;
+	int mA;
+	int mB;
+	int mRT;
+	int mStick;
+	int mStick_R;
+	int mStick_L;
+	int mXText;
+	int mAText;
+	int mRTText;
+	int mStickText;
+
+	//ボタンの場所
+	//座標
+	Vec2 mPositionX;
+	Vec2 mPositionXText;
+	Vec2 mPositionA;
+	Vec2 mPositionAText;
+	Vec2 mPositionRT;
+	Vec2 mPositionRTText;
+	Vec2 mPositionStick;
+	Vec2 mPositionStickText;
+
+	float mRadius;
 };
 

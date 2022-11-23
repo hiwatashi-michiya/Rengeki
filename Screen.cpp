@@ -242,7 +242,11 @@ void Screen::DrawQuadReverse(Vec2 Position, float Radius, float srcX, float srcY
 	Novice::DrawQuad( (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftTop.x, (int)Rect.LeftTop.y,  (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
-
+void Screen::DrawUI(Vec2 Position, float Radius, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ 1.0f,1.0f }, 0.0f,Position));
+	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
+}
 
 
 Vec2 Screen::ScreenTransform(Vec2 Position) {
