@@ -399,6 +399,7 @@ private:
 	void FallingStar(Player& player);
 	//サウンド
 	int mFallingStarWaveSE;
+	int mFallingStarJumpSE;
 
 	//パーティクル
 	Particle mFallingStarParticleLeft[kFallingStarMax];
@@ -472,6 +473,7 @@ private:
 	int mEnergyChargeSE;
 	int mStarDropSE1;
 	int mStarDropSE2;
+	int mLitningSE;
 
 	//パーティクル
 	Particle mStarDropParticle;
@@ -503,6 +505,14 @@ private:
 	int mEnemyHpFlame;
 	int mEnemyName;
 	Vec2 mEnemyUIPosition;
+	int mAttack4;
+	int mSizuku1;
+	int mSizuku2;
+	int mLightning;
+	int mWing;
+
+	//第二形態フラグ（勝手に）
+	bool mIsRound2;
 };
 
 
