@@ -105,14 +105,12 @@ void Stage::Draw(Player& player, Enemy& enemy, Screen& screen) {
 	if (mIsLoadTexture == false){
 		mFlame = Novice::LoadTexture("./Resources/Stage/Flame.png");
 		mLongFlame = Novice::LoadTexture("./Resources/Stage/LongFlame.png");
-		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mIsLoadTexture = true;
 	}
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
 
 	screen.DrawWindowQuad(mFlamePosition, 0, 0, kWindowWidth, kWindowHeight, mFlame, WHITE);
 	screen.DrawWindowQuad({ mFlamePosition.x, mFlamePosition.y - kWindowHeight }, 0, 0, kWindowWidth, kWindowHeight, mLongFlame, WHITE);
-
 }
 
 

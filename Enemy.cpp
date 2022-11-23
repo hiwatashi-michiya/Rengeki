@@ -2551,6 +2551,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mStone = Novice::LoadTexture("./Resources/Enemy/Stone.png");
 		mEnerge = Novice::LoadTexture("./Resources/Enemy/Enemy_ounosizuku.png");
 		mTama = Novice::LoadTexture("./Resources/Enemy/Enemy_tama.png");
+		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mIsLoadTexture = true;
 	}
 
@@ -2680,5 +2681,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 void Enemy::FrontDraw() {
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
+	Novice::DrawQuad(140, 20, 140 + mHitPoint * (1000 / mTmpHitPointMax), 20, 140, 40, 140 + mHitPoint * (1000 / mTmpHitPointMax), 40, 0, 0, 1000, 20, mEnemyHp, WHITE);
 
 }
