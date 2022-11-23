@@ -110,9 +110,11 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mWidth = 50.0f;
 	mHeight = 100.0f;
 	mStoneColor = WHITE;
+	mTheta = 0.0f;
 	for (int i = 0; i < 3; i++) {
 		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
 		mStonePosition[i].y = kWindowHeight - mHeight / 2 - (kWindowHeight - Stage::kStageBottom - 3);
+		mArrowPosition[i] = mStonePosition[i];
 		mIsStoneHit[i] = false;
 		mIsStoneLeftHit[i] = false;
 		mIsStoneRightHit[i] = false;
@@ -295,9 +297,11 @@ void Enemy::ResetAll() {
 	mWidth = 50.0f;
 	mHeight = 100.0f;
 	mStoneColor = WHITE;
+	mTheta = 0.0f;
 	for (int i = 0; i < 3; i++) {
 		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
 		mStonePosition[i].y = kWindowHeight - mHeight / 2 - (kWindowHeight - Stage::kStageBottom - 3);
+		mArrowPosition[i] = mStonePosition[i];
 		mIsStoneHit[i] = false;
 		mIsStoneLeftHit[i] = false;
 		mIsStoneRightHit[i] = false;
@@ -1910,6 +1914,10 @@ void Enemy::StarDrop(Player& player, Particle& particle) {
 
 		if (mIsStartAttack == false && 240 <= mFrame){
 			StoneCollision(player);
+			mTheta += 1 / (4.0f * M_PI);
+			for (int i = 0; i < 3; i++){
+				mArrowPosition[i].y = sinf(mTheta) * 10 + mStonePosition[i].y;
+			}
 
 			if (mIsStoneBreak[0] && mIsStoneBreak[1] && mIsStoneBreak[2]){
 				mFrame = 0;
@@ -2036,6 +2044,7 @@ void Enemy::StarDrop(Player& player, Particle& particle) {
 	if (mIsEasingMust == true || mIsActive == false) {
 
 		mIsDisplay = true;
+		mTheta = 0.0f;
 		for (int i = 0; i < 3; i++) {
 			mStoneHp[i] = mWidth;
 			mIsStoneDisplay[i] = false;
@@ -2595,12 +2604,14 @@ void Enemy::StoneCollision(Player& player) {
 			mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
 			mStoneKnockBackSpeed[i] += mStoneKnockBackValue[i];
 			mStonePosition[i].x -= mStoneKnockBackSpeed[i];
+			mArrowPosition[i].x = mStonePosition[i].x;
 		}
 
 		if (mIsStoneLeftHit[i] == true) {
 			mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
 			mStoneKnockBackSpeed[i] += mStoneKnockBackValue[i];
 			mStonePosition[i].x += mStoneKnockBackSpeed[i];
+			mArrowPosition[i].x = mStonePosition[i].x;
 		}
 
 		if (mIsStoneRightHit[i] == true || mIsStoneLeftHit[i] == true) {
@@ -2724,7 +2735,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 		for (int i = 0; i < 3; i++) {
 			if (mIsStoneDisplay[i] == true && mIsStoneBreak[i] == false) {
-				screen.DrawArrow(mStonePosition[i], 10, 25, 0.0f, WHITE, kFillModeSolid);
+				screen.DrawArrow(mArrowPosition[i], 10, 25, 0.0f, WHITE, kFillModeSolid);
 				screen.DrawBox({ mStonePosition[i].x - mWidth / 2, mStonePosition[i].y - mHeight / 2 - 20 }, mStoneHp[i], 10, 0.0f, WHITE, kFillModeSolid);
 				screen.DrawRectAngle(mStonePosition[i], mWidth, mHeight, 0, 0, 500, 1000, mStone, mEnergyColor);
 			}

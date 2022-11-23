@@ -95,7 +95,7 @@ void GameClear::Update() {
 	{
 	case GameClear::ToTitle:
 
-		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
 			mIsEndGameClear = true;
 		}
 
@@ -110,7 +110,7 @@ void GameClear::Update() {
 		break;
 	case GameClear::Again:
 
-		if (Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bA)) {
+		if (Key::IsTrigger(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) {
 			mIsAgain = true;
 		}
 

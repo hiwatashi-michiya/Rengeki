@@ -458,6 +458,8 @@ private:
 	bool mIsAllBreak;
 	//å¥êŒ
 	Vec2 mStonePosition[3];
+	Vec2 mArrowPosition[3];
+	float mTheta;
 	bool mIsStoneDisplay[3];
 	bool mIsStoneHit[3];
 	bool mIsStoneLeftHit[3];
