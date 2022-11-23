@@ -158,6 +158,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
 	mIsPlayEnergySE = -1;
 	mEnergyChargeSE = Novice::LoadAudio("./Resources/SE/energycharge.wav");
+	mStarDropSE1 = Novice::LoadAudio("./Resources/SE/stardrop1.wav");
 
 }
 
@@ -1847,6 +1848,7 @@ void Enemy::StarDrop(Player& player) {
 			mPowerEasingt = 0.0f;
 			mPowerStartPosition = mPowerPosition;
 			mIsStarDrop = true;
+			Novice::PlayAudio(mStarDropSE1, 0, 0.25f);
 			mAttackFrame = 0;
 		}
 

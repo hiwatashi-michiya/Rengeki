@@ -458,6 +458,7 @@ private:
 	int mIsPlayEnergySE;
 	int mEnergySE;
 	int mEnergyChargeSE;
+	int mStarDropSE1;
 
 	//パーティクル
 	Particle mStarDropParticle;
