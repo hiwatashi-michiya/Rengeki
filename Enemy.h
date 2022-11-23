@@ -302,6 +302,8 @@ private:
 	int mStepSE;
 	//ジャンプサウンド
 	int mJumpSE;
+	//壁当てサウンド
+	int mWallHitSE;
 
 	//大ジャンプフラグ
 	bool mBigJumpLeft;
@@ -497,6 +499,7 @@ private:
 	int mStarDropSE1;
 	int mStarDropSE2;
 	int mLitningSE;
+	int mBreakSE;
 
 	//パーティクル
 	Particle mStarDropParticle;
@@ -529,6 +532,7 @@ private:
 	int mEnemyName;
 	Vec2 mEnemyUIPosition;
 	int mAttack4;
+	int mAttack4_1;
 	int mSizuku1;
 	int mSizuku2;
 	int mLightning;

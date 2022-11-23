@@ -215,7 +215,10 @@ private:
 	int mRollingFrame;
 	//ローリング関数
 	void Rolling();
-
+	//サウンド
+	int mRollingSE;
+	//壁当てサウンド
+	int mWallHitSE;
 
 	//----------描画関係----------//
 

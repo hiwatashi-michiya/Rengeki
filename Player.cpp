@@ -80,6 +80,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
 	mAttackSE[2] = Novice::LoadAudio("./Resources/SE/punch3.wav");
 	mJumpSE = Novice::LoadAudio("./Resources/SE/jump.wav");
+	mRollingSE = Novice::LoadAudio("./Resources/SE/rolling.wav");
+	mWallHitSE = Novice::LoadAudio("./Resources/SE/wallhit.wav");
 
 }
 
@@ -421,6 +423,11 @@ void Player::Rolling() {
 
 	//ローリングフラグを立てる
 	if ((Key::IsTrigger(DIK_X) || Controller::IsTriggerButton(0, Controller::rTrigger)) && mIsGround == true) {
+		
+		if (mIsRolling == false) {
+			Novice::PlayAudio(mRollingSE, 0, 0.5f);
+		}
+
 		mIsRolling = true;
 	}
 
@@ -485,6 +492,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 				mHitPoint -= kEnemyWallDamage;
 				mIsWallHitLeftFlag = true;
 				mKnockBackVelocity.x = 0;
+				Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
 			}
 
@@ -502,6 +510,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 				mHitPoint -= kEnemyWallDamage;
 				mIsWallHitRightFlag = true;
 				mKnockBackVelocity.x = 0;
+				Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
 			}
 
