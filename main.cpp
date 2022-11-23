@@ -242,13 +242,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//ゲームクリア
 			if (enemy.GetIsGameClear() == true){
-				gameclear.Init();
-				scene = GAMECLEAR;
+				gameclear.ToGameClear();
+				if (gameclear.IsEndBlack() == true){
+					scene = GAMECLEAR;
+				}
 			}
 			//ゲームオーバー
 			if (player.GetIsGameOver() == true){
-				gameover.Init();
-				scene = GAMEOVER;
+				gameover.ToGameOver();
+				if (gameover.IsEndBlack() == true){
+					scene = GAMEOVER;
+				}
 			}
 
 			break;
@@ -262,6 +266,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				gameclear.Init();
 				scene = TITLE;
 			}
 
@@ -276,6 +281,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				gameover.Init();
 				scene = TITLE;
 			}
 
@@ -326,6 +332,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			stage.FrontDraw(screen);
 
 			enemy.BlackDraw();
+
+			gameclear.IngameDraw();
+			gameover.IngameDraw();
 
 			break;
 		case GAMECLEAR:
