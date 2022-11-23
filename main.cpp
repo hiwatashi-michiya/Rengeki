@@ -280,6 +280,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			playerParticle.Draw(screen);
 			playerParticle2.Draw(screen);
 			player.Draw(screen);
+			stage.FrontDraw(screen);
 
 			break;
 		case INGAME:
@@ -296,6 +297,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			player.Draw(screen);
 			enemy.Draw(screen, player);
 			enemy.FrontDraw();
+			stage.FrontDraw(screen);
 
 			break;
 		case GAMECLEAR:

@@ -69,9 +69,11 @@ private:
 	int mColor;
 
 	//画像読み込みフラグ
-	bool mIsLoadTexture;
+	bool mIsLoadTexture;//こちらはINGAMEで使うもの
 	int mFlame;
+	int mLongFlame;
 	//描画関係
+	bool mIsFirstLoadTexture;//こちらはTITLEから使うもの
 	int mX;
 	int mY;
 	int mA;
