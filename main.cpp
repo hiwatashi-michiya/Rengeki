@@ -270,6 +270,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
 				gameclear.Init();
 				scene = TITLE;
 			}
@@ -285,6 +288,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				player.ResetPosition();
 				enemy.ResetAll();
 				enemy.ResetPosition();
+				stageParticle.Reset();
+				stageParticle.SetRandSize(1, 3);
+				stageParticle.ChangeParticleColor(0xFFFFFF00);
 				gameover.Init();
 				scene = TITLE;
 			}
@@ -321,7 +327,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		case INGAME:
 
 			stage.Draw(player, enemy, screen);
+			if (enemy.GetIsStarDrop() == true) {
+				Novice::SetBlendMode(BlendMode::kBlendModeAdd);
+			}
 			stageParticle.Draw(screen);
+			if (enemy.GetIsStarDrop() == true) {
+				Novice::SetBlendMode(BlendMode::kBlendModeNormal);
+			}
 			//透明の間表示しない
 			if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
 				enemyParticle.Draw(screen);
