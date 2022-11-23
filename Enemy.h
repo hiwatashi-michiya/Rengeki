@@ -29,6 +29,9 @@ const int kEnemyMaxAttack = 3;
 //攻撃力
 const int kEnemyAttackValue[kEnemyMaxAttack] = { 1,3,5 };
 
+//壁に当たった時のダメージ
+const int kEnemyWallDamage = 10;
+
 //星砕流・落下星の攻撃数
 static constexpr int kFallingStarMax = 10;
 

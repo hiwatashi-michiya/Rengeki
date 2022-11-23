@@ -406,6 +406,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 			mIsWallHit = true;
 			mWallHitLeft.SetFlag(mPosition);
+			mHitPoint -= kEnemyWallDamage;
 			mIsWallHitLeftFlag = true;
 			mKnockBackVelocity.x = 0;
 
@@ -422,6 +423,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 			mIsWallHit = true;
 			mWallHitRight.SetFlag(mPosition);
+			mHitPoint -= kEnemyWallDamage;
 			mIsWallHitRightFlag = true;
 			mKnockBackVelocity.x = 0;
 
