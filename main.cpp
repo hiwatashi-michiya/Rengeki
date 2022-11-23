@@ -105,7 +105,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//ズームとスクロールの設定
 			screen.Zoom = 1.0f;
-			screen.Scroll = { kWindowWidth / 2.0f, 0.0f };
+			screen.Scroll = { kWindowWidth / 2.0f, (Stage::kStageBottom + 20.0f) };
 
 			title.Update();
 
@@ -285,7 +285,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		case INGAME:
 
-			stage.Draw(screen);
+			stage.Draw(player, enemy, screen);
 			stageParticle.Draw(screen);
 			//透明の間表示しない
 			if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {

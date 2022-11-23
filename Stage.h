@@ -49,8 +49,7 @@ public:
 	bool mIsWallHitStop;
 	int mHitStopFrame;
 	void HitStop(Player& player, Enemy& enemy);
-	void Draw(Screen& screen);
-
+	void Draw(Player& player, Enemy& enemy, Screen& screen);
 	void FrontDraw(Screen& screen);
 
 private:
@@ -73,6 +72,8 @@ private:
 	bool mIsLoadUI;
 	int mFlame;
 	int mLongFlame;
+	//‘Ì—ÍŠÖŒW
+	int mEnemyHp;
 	//•`‰æŠÖŒW
 	int mX;
 	int mY;
