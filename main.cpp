@@ -1,5 +1,7 @@
 ﻿#include <Novice.h>
 #include <time.h>
+#include "Title.h"
+#include "OutGame.h"
 #include "Player.h"
 #include "Stage.h"
 #include "Key.h"
@@ -24,7 +26,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	srand(kCurrentTime);
 
+	//Scene
+	enum Scene
+	{
+		TITLE,
+		INGAME,
+		GAMECLEAR,
+		GAMEOVER
+	};
+	Scene scene = TITLE;
+
 	Screen screen;
+	Title title;
+	GameClear gameclear;
+	GameOver gameover;
 
 	Player player({ 0.0f,800.0f }, { 7.0f,7.0f }, 30.0f);
 	Enemy enemy({ 1000.0f,800.0f }, { 5.0f,5.0f }, 30.0f);
@@ -69,75 +84,127 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+		
+		switch (scene)
+		{
+		case TITLE:
 
-		////BGMを鳴らす
-		//if (Novice::IsPlayingAudio(isPlayBGM) == 0 || isPlayBGM == -1) {
+			title.Update();
 
-		//	isPlayBGM = Novice::PlayAudio(BossBGM, 1, BGMVolume);
+			//タイトル画面でのプレイヤー
+			player.Update(stage, enemy);
 
-		//}
-
-		//if (enemy.GetIsStarDropAttack() == true) {
-		//	BGMVolume = 0.0f;
-		//	Novice::SetAudioVolume(isPlayBGM, BGMVolume);
-		//}
-		//else {
-
-		//	if (BGMVolume < 0.5f) {
-		//		BGMVolume += 0.02f;
-		//	}
-
-		//	Novice::SetAudioVolume(isPlayBGM, BGMVolume);
-
-		//}
-
-		screen.ZoomUpdate(stage, player, enemy);
-		screen.ScrollUpdate(stage, player, enemy);
-
-		//体力が低くなったら敵パーティクルの色を変える
-		if (enemy.GetEnemyHitPoint() <= 50 &&
-			enemyParticle.GetParticleColor(0xFF000000) == false &&
-			enemyParticle2.GetParticleColor(0xFF000000) == false) {
-			enemyParticle.ChangeParticleColor(0xFF000000);
-			enemyParticle2.ChangeParticleColor(0xFF000000);
-		}
-
-		//ラウンド2で敵パーティクルの色を変える
-		if (enemy.GetIsHitPointAssign() == true &&
-			enemyParticle.GetParticleColor(0xFFFFFF00) == false &&
-			enemyParticle2.GetParticleColor(0xFFFFFF00) == false) {
-			enemyParticle.ChangeParticleColor(0xFFFFFF00);
-			enemyParticle2.ChangeParticleColor(0xFFFFFF00);
-		}
-
-		if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false && stage.mIsWallHitStop == false) {
-
-			if (Key::IsTrigger(DIK_R)) {
-				enemy.ResetPosition();
+			//Cキーを押したらシーンが変わる(ここでINGAMEに関わるものの初期化)
+			if (title.GetIsTitleClear() == true){
+				scene = INGAME;
 			}
 
-			enemy.Update(stage, player,stageParticle);
-			player.Update(stage, enemy);
-			stage.RoundTranslation(enemy);
-			stageParticle.SetFlag(stageParticlePosition);
-			stageParticle.Update(stageParticlePosition);
-			enemyParticle.SetFlag(enemy.GetEnemyPosition());
-			enemyParticle.Update(enemy.GetEnemyPosition());
-			enemyParticle2.SetFlag(enemy.GetEnemyPosition());
-			enemyParticle2.Update(enemy.GetEnemyPosition());
-			playerParticle.SetFlag(player.GetPlayerPosition());
-			playerParticle.Update(player.GetPlayerPosition());
-			playerParticle2.SetFlag(player.GetPlayerPosition());
-			playerParticle2.Update(player.GetPlayerPosition());
+			break;
+		case INGAME:
 
+			//BGMを鳴らす
+			if (Novice::IsPlayingAudio(isPlayBGM) == 0 || isPlayBGM == -1) {
+
+				isPlayBGM = Novice::PlayAudio(BossBGM, 1, BGMVolume);
+
+			}
+
+			if (enemy.GetIsStarDropAttack() == true) {
+				BGMVolume = 0.0f;
+				Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+			}
+			else {
+
+				if (BGMVolume < 0.5f) {
+					BGMVolume += 0.02f;
+				}
+
+				Novice::SetAudioVolume(isPlayBGM, BGMVolume);
+
+			}
+
+			screen.ZoomUpdate(stage, player, enemy);
+			screen.ScrollUpdate(stage, player, enemy);
+
+			//体力が低くなったら敵パーティクルの色を変える
+			if (enemy.GetEnemyHitPoint() <= 50 &&
+				enemyParticle.GetParticleColor(0xFF000000) == false &&
+				enemyParticle2.GetParticleColor(0xFF000000) == false) {
+				enemyParticle.ChangeParticleColor(0xFF000000);
+				enemyParticle2.ChangeParticleColor(0xFF000000);
+			}
+
+			//ラウンド2で敵パーティクルの色を変える
+			if (enemy.GetIsHitPointAssign() == true &&
+				enemyParticle.GetParticleColor(0xFFFFFF00) == false &&
+				enemyParticle2.GetParticleColor(0xFFFFFF00) == false) {
+				enemyParticle.ChangeParticleColor(0xFFFFFF00);
+				enemyParticle2.ChangeParticleColor(0xFFFFFF00);
+			}
+
+			if (stage.mIsHitStop == false && stage.mIsHeavyHitStop == false && stage.mIsWallHitStop == false) {
+
+				if (Key::IsTrigger(DIK_R)) {
+					enemy.ResetPosition();
+				}
+
+				enemy.Update(stage, player, stageParticle);
+				player.Update(stage, enemy);
+				stage.RoundTranslation(enemy);
+				stageParticle.SetFlag(stageParticlePosition);
+				stageParticle.Update(stageParticlePosition);
+				enemyParticle.SetFlag(enemy.GetEnemyPosition());
+				enemyParticle.Update(enemy.GetEnemyPosition());
+				enemyParticle2.SetFlag(enemy.GetEnemyPosition());
+				enemyParticle2.Update(enemy.GetEnemyPosition());
+				playerParticle.SetFlag(player.GetPlayerPosition());
+				playerParticle.Update(player.GetPlayerPosition());
+				playerParticle2.SetFlag(player.GetPlayerPosition());
+				playerParticle2.Update(player.GetPlayerPosition());
+
+			}
+
+			stage.HitStop(player, enemy);
+			screen.ShakeInit(stage.mIsHitStop, stage.mIsHeavyHitStop, stage.mIsWallHitStop);
+			screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
+			screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
+			screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsWallHitStop);
+			screen.StarDropShake(enemy);
+
+			//ゲームクリア
+			if (enemy.GetIsGameClear() == true){
+				gameclear.Init();
+				scene = GAMECLEAR;
+			}
+			//ゲームオーバー
+			if (player.GetIsGameOver() == true){
+				gameover.Init();
+				scene = GAMEOVER;
+			}
+
+			break;
+		case GAMECLEAR:
+
+			gameclear.Update();
+
+			if (gameclear.IsEndGameClear() == true){
+				title.Init();
+				scene = TITLE;
+			}
+
+			break;
+		case GAMEOVER:
+
+			gameover.Update();
+
+			if (gameover.IsEndGameOver() == true) {
+				title.Init();
+				scene = TITLE;
+			}
+
+			break;
 		}
-
-		stage.HitStop(player, enemy);
-		screen.ShakeInit(stage.mIsHitStop, stage.mIsHeavyHitStop, stage.mIsWallHitStop);
-		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHitStop);
-		screen.Shake(-Screen::kShakeValue * 2, Screen::kShakeValue * 2, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsHeavyHitStop);
-		screen.Shake(-Screen::kShakeValue, Screen::kShakeValue, -Screen::kShakeValue, Screen::kShakeValue, stage.mIsWallHitStop);
-		screen.StarDropShake(enemy);
+	
 
 		///
 		/// ↑更新処理ここまで
@@ -147,19 +214,47 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		
-		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0, BLACK, kFillModeSolid);
-		stage.Draw(screen);
-		stageParticle.Draw(screen);
-		//透明の間表示しない
-		if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
-			enemyParticle.Draw(screen);
-			enemyParticle2.Draw(screen);
+		switch (scene)
+		{
+		case TITLE:
+
+			title.Draw();
+
+			playerParticle.Draw(screen);
+			playerParticle2.Draw(screen);
+			player.Draw(screen);
+
+			break;
+		case INGAME:
+
+			stage.Draw(screen);
+			stageParticle.Draw(screen);
+			//透明の間表示しない
+			if (enemy.GetIsSpecialAttackStart() == false || enemy.GetIsSpecialAttack() == true) {
+				enemyParticle.Draw(screen);
+				enemyParticle2.Draw(screen);
+			}
+			playerParticle.Draw(screen);
+			playerParticle2.Draw(screen);
+			player.Draw(screen);
+			enemy.Draw(screen, player);
+			enemy.FrontDraw();
+
+			break;
+		case GAMECLEAR:
+
+			gameclear.Draw();
+
+			break;
+		case GAMEOVER:
+
+			gameover.Draw();
+
+			break;
 		}
-		playerParticle.Draw(screen);
-		playerParticle2.Draw(screen);
-		player.Draw(screen);
-		enemy.Draw(screen, player);
-		enemy.FrontDraw();
+
+
+
 
 
 		///

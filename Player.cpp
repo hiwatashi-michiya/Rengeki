@@ -13,6 +13,9 @@
 Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
+
+	mIsGameOver = false;
+
 	//パーティクル
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
@@ -23,6 +26,10 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 	mIsWallHitRightFlag = false;
 	mIsWallHitLeftFlag = false;
+
+	mHitPoint = 0;
+	mHitPointMax = 100;
+	mIsHitPointAssign = false;
 
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
@@ -133,7 +140,15 @@ void Player::Update(Stage &stage, Enemy &enemy) {
 		mFlashing *= -1;
 	}
 
+	HitPoint();
+
 	RoundTranslation(enemy);
+
+	if (mHitPoint == 0){
+		mIsGameOver = true;
+	}
+
+
 }
 
 
@@ -442,7 +457,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 
 				if (CircleCollision(enemy.GetAttackPosition(i), enemy.GetAttackRadius(i)) == true && enemy.GetIsAttack(i) == true) {
 					mColor = 0xFFFF00FF;
-					mIsHit[enemy.GetAttackCount() - 1] = true;
+					if (mIsHit[enemy.GetAttackCount() - 1] == false){
+						mHitPoint -= kEnemyAttackValue[enemy.GetAttackCount() - 1];
+						mIsHit[enemy.GetAttackCount() - 1] = true;
+					}
 					mHitFrame = 10;
 
 					//敵の向きによってノックバックする方向を変える
@@ -465,7 +483,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 		//攻撃を受けた場合
 		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
 			mColor = 0xFFFF00FF;
-			mIsHit[2] = true;
+			if (mIsHit[2] == false) {
+				mHitPoint -= kEnemyAttackValue[2];
+				mIsHit[2] = true;
+			}
 			mHitFrame = 10;
 
 			//敵の向きによってノックバックする方向を変える
@@ -483,7 +504,7 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			//左側攻撃を受けた場合
 			if (CircleCollision(enemy.GetLeftFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 				mColor = 0xFFFF00FF;
-				mIsHit[2] = true;
+
 				mHitFrame = 10;
 
 				if (mKnockBack[2] == false) {
@@ -500,7 +521,10 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 			//右側攻撃を受けた場合
 			if (CircleCollision(enemy.GetRightFallingStarPosition(i), enemy.GetFallingStarRadius()) == true && enemy.GetIsFallingStarAttack(i) == true) {
 				mColor = 0xFFFF00FF;
-				mIsHit[2] = true;
+				if (mIsHit[2] == false) {
+					mHitPoint -= kEnemyAttackValue[2];
+					mIsHit[2] = true;
+				}
 				mHitFrame = 10;
 
 				if (mKnockBack[2] == false) {
@@ -528,7 +552,15 @@ void Player::Collision(Stage& stage, Enemy& enemy) {
 	}
 	
 }
+void Player::HitPoint() {
 
+	//体力の代入
+	if (mIsHitPointAssign == false) {
+		mHitPoint = mHitPointMax;
+		mIsHitPointAssign = true;
+	}
+
+}
 
 bool Player::CircleCollision(Vec2 AttackPosition, float AttackRadius) {
 
@@ -762,5 +794,9 @@ void Player::Draw(Screen& screen) {
 		}
 	}
 	
+
+	//体力描画
+	Novice::DrawBox(20, 40, mHitPoint * (200 / mHitPointMax), 10, 0.0f, RED, kFillModeSolid);
+
 
 }

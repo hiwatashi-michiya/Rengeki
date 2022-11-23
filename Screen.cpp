@@ -110,7 +110,7 @@ void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 				ZoomSpeed = 0.0f;
 			}
 			Zoom += ZoomSpeed;
-			Zoom = Clamp(Zoom, 0.9f, 1.5f);
+			Zoom = Clamp(Zoom, 0.9f, 1.4f);
 		}
 	}
 
