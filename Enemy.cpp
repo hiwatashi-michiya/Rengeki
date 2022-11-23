@@ -153,11 +153,18 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	///////////////////// 必殺技SE ///////////////////////////
 	mFallingStarWaveSE = Novice::LoadAudio("./Resources/SE/fallingstar.wav");
 	//////////////////// 星の雫SE ///////////////////////////
+	mEnergySE = Novice::LoadAudio("./Resources/SE/energy.wav");
+	mIsPlayEnergySE = -1;
 	mEnergyChargeSE = Novice::LoadAudio("./Resources/SE/energycharge.wav");
 
 }
 
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
+
+	//デバッグ用、体力を10減らす
+	if (Key::IsTrigger(DIK_Q)) {
+		mHitPoint -= 10;
+	}
 
 	//体力低下でパーティクルの色を変える
 	if (mHitPoint <= 50 &&
@@ -298,7 +305,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 	//攻撃していない場合
 	//第二形態
-	if (AnyAttack() == false && mIsHitPointAssign[1] == true) {
+	if (AnyAttack() == false && mIsHitPointAssign[1] == true && mHitPoint > 75) {
 
 		//背景の色を変化させる
 		if (particle.GetParticleColor(0xFF000000) == false) {
@@ -537,6 +544,263 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 					else {
 						mVelocity.x = RandNum(70, 140, BINARY) * -1;
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
+					}
+
+				}
+
+			}
+
+
+
+			mDirection = ENEMYRIGHT;
+		}
+
+	}
+	//第二形態の体力低下で更に行動パターン変化
+	else if (AnyAttack() == false && mIsHitPointAssign[1] == true && mHitPoint <= 75) {
+
+		//背景の色を変化させる
+		if (particle.GetParticleColor(0xFF000000) == false) {
+			particle.ChangeParticleColor(0xFF000000);
+		}
+
+		//地面にいる場合
+		if (mIsGround == true) {
+
+			//大ジャンプフラグをfalseに
+			mBigJumpLeft = false;
+			mBigJumpRight = false;
+
+			//ステップしない時一定のタイミングで確率でジャンプ
+			if (RandNum(1, 10, NATURAL) % 10 <= 2 && mStartFrame % 15 == 0 && mStartFrame % mStepFrame != 0) {
+
+				//距離によってジャンプ距離を変える
+				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+					mVelocity.y = -15.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+					mVelocity.y = -10.0f;
+				}
+				else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+					mVelocity.y = -35.0f;
+				}
+				else {
+					mVelocity.y = -25.0f;
+				}
+
+			}
+
+		}
+
+		//プレイヤーより右側の場合
+		if (mPosition.x >= player.GetPlayerPosition().x) {
+
+			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 20) {
+
+				//右側の場合
+				if (Stage::kStageRight - mPosition.x - mRadius < 200) {
+					mVelocity.y = -35.0f;
+					mBigJumpRight = true;
+				}
+
+			}
+
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = -4.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = -6.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = -8.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = -4.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = -9.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = -7.5f;
+			}
+			else {
+				mVelocity.x = -19.0f;
+			}
+
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 350) {
+
+				//退く
+				if (mStartFrame % 30 <= 20) {
+					mVelocity.x = 4.0f;
+				}
+
+			}
+
+			//地面にいるときステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+				// 4/5の確率でステップする
+				if (RandNum(1, 5, NATURAL) % 5 != 0) {
+
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(50, 200, BINARY) * -1;
+					}
+					else {
+						mVelocity.x = RandNum(50, 200, BINARY);
+					}
+
+					//停止期間でなければ音を鳴らす
+					if (mStartFrame < 55 || 65 <= mStartFrame) {
+						Novice::PlayAudio(mStepSE, 0, 0.5f);
+					}
+
+				}
+
+			}
+
+			mDirection = ENEMYLEFT;
+		}
+		//プレイヤーより左側の場合
+		else {
+
+			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 20) {
+
+				//左側の場合
+				if (mPosition.x - mRadius - Stage::kStageLeft < 200) {
+					mVelocity.y = -35.0f;
+					mBigJumpLeft = true;
+				}
+
+			}
+
+			//距離によって速度を変える
+			if ((player.GetPlayerPosition() - mPosition).length() <= 100) {
+				mVelocity.x = 4.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+				mVelocity.x = 6.5f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
+				mVelocity.x = 8.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
+				mVelocity.x = 4.5f;
+			}
+			//緩急をわざとつける
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+				mVelocity.x = 9.0f;
+			}
+			else if ((player.GetPlayerPosition() - mPosition).length() <= 800) {
+				mVelocity.x = 7.5f;
+			}
+			else {
+				mVelocity.x = 19.0f;
+			}
+
+			//間合いを取る
+			if ((player.GetPlayerPosition() - mPosition).length() <= 350) {
+
+				//退く
+				if (mStartFrame % 30 <= 20) {
+					mVelocity.x = -4.0f;
+				}
+
+			}
+
+			//地面にいる時ステップ
+			if (mStartFrame % mStepFrame == 0 && mIsGround == true) {
+
+				//どちらかの方向に動く
+				int plusOrMinus = 0;
+
+
+				// 4/5の確率でステップする
+				if (RandNum(1, 5, NATURAL) % 5 != 0) {
+
+					//プレイヤーとの距離によって行動の確率を変化
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200) {
+						//八割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//0以外の場合1に変える
+						if (plusOrMinus != 0) {
+							plusOrMinus = 1;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 600) {
+						//二割の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 4, NATURAL);
+
+						//1以外は0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+					else if ((player.GetPlayerPosition() - mPosition).length() <= 1200) {
+						//5%の確率で進行方向とは逆に移動
+						plusOrMinus = RandNum(0, 19, NATURAL);
+
+						//1以外の場合0に変える
+						if (plusOrMinus != 1) {
+							plusOrMinus = 0;
+						}
+
+					}
+
+					//1の場合逆に移動
+					if (plusOrMinus == 0) {
+						mVelocity.x = RandNum(50, 200, BINARY);
+					}
+					else {
+						mVelocity.x = RandNum(50, 200, BINARY) * -1;
 					}
 
 					//停止期間でなければ音を鳴らす
@@ -1384,6 +1648,12 @@ void Enemy::StarDrop(Player& player) {
 				mStarDropParticle.Reset();
 			}
 			
+			//チャージ音再生
+			if (Novice::IsPlayingAudio(mIsPlayEnergySE) == 0 || mIsPlayEnergySE == -1) {
+
+				mIsPlayEnergySE = Novice::PlayAudio(mEnergySE, 1, 0.5f);
+
+			}
 
 			for (int i = 0; i < 50; i++) {
 
@@ -1421,6 +1691,9 @@ void Enemy::StarDrop(Player& player) {
 	}
 
 	if (mIsStartAttack == true && mIsStarDrop == false) {
+
+		//チャージ音を止める
+		Novice::StopAudio(mIsPlayEnergySE);
 
 		if (mAttackFrame == 60) {
 			Novice::PlayAudio(mEnergyChargeSE, 0, 0.5f);
@@ -1511,6 +1784,9 @@ void Enemy::StarDrop(Player& player) {
 			mIsEnergyActive[i] = false;
 			mEnergyEasingt[i] = 0.0f;
 		}
+		Novice::StopAudio(mIsPlayEnergySE);
+		//全てのパーティクルを消す
+		mStarDropParticle.Reset();
 		mStarDropAttackParticle.Reset();
 		if (300 <= mFrame || mIsHit[2]) {
 			mIsStarDrop = false;
@@ -2099,6 +2375,14 @@ void Enemy::Draw(Screen& screen, Player& player) {
 			}
 		}
 
+		//エネルギーを溜めている間のパーティクル表示
+		mStarDropParticle.Draw(screen);
+
+		//星の雫が落ちたときにパーティクル表示
+		if (mIsActiveStarDrop == true) {
+			mStarDropAttackParticle.Draw(screen);
+		}
+
 		/*if (mIsPowerDisplay == true) {
 			screen.DrawEllipse(mPowerPosition, mPowerRadius, 0.0f, mPowerColor, kFillModeWireFrame);
 		}*/
@@ -2138,14 +2422,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	//星の雫使用時の移動中は描画しない
 	if (mIsDisplay == true){
-
-		//エネルギーを溜めている間のパーティクル表示
-		mStarDropParticle.Draw(screen);
-
-		//星の雫が落ちたときにパーティクル表示
-		if (mIsActiveStarDrop == true) {
-			mStarDropAttackParticle.Draw(screen);
-		}
 
 		//待機モーション
 		if (mVelocity.x <= 0.001f && mVelocity.y <= 0.001f && AnyAttack() == false) {
