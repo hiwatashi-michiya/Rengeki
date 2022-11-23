@@ -145,7 +145,7 @@ void Player::ResetAll() {
 	mNoHitCount = 0;
 	mIsNoHit = false;
 	mFlashing = 1;
-
+	mIsHitCount = false;
 }
 
 void Player::Update(Stage &stage, Enemy &enemy) {
@@ -719,6 +719,9 @@ void Player::Draw(Screen& screen) {
 
 	mTextureFrame++;
 
+	
+	
+
 	//リソースの読み込み
 	if (mIsLoadTexture == false) {
 		mPlayer_right = Novice::LoadTexture("./Resources/Player/Player.png");
@@ -732,7 +735,7 @@ void Player::Draw(Screen& screen) {
 		mJump = Novice::LoadTexture("./Resources/Player/Player_jump.png");
 		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
 		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
-
+		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
 		mIsLoadTexture = true;
 	}
 
@@ -749,7 +752,8 @@ void Player::Draw(Screen& screen) {
 
 	//プレイヤー描画
 
-	if (mFlashing == 1) {
+
+	if (mFlashing == 1 && mKnockBackVelocity.x == 0) {
 		//ローリング
 		if (mIsRolling) {
 			if (mDirection == RIGHT) {
@@ -869,7 +873,14 @@ void Player::Draw(Screen& screen) {
 			}
 		}
 	}
-	
+
+
+	if (mKnockBackVelocity.x < 0) {
+		screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
+	}
+	if (mKnockBackVelocity.x > 0) {
+		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
+	}
 
 	//体力描画
 	Novice::DrawBox(20, 40, mHitPoint * (200 / mHitPointMax), 10, 0.0f, RED, kFillModeSolid);

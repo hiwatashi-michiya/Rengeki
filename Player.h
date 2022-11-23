@@ -261,6 +261,11 @@ private:
 	bool mIsjumpRoll;
 	int mFall;
 	int mJumpAnimeCount;
+	int mHit;
+
+	//“–‚½‚Á‚½Œã‚ÌƒJƒEƒ“ƒg
+	bool mIsWallCount;
+	bool mIsHitCount;
 };
 
 

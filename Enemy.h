@@ -458,6 +458,7 @@ private:
 	int mIsPlayEnergySE;
 	int mEnergySE;
 	int mEnergyChargeSE;
+	int mLitningSE;
 
 	//パーティクル
 	Particle mStarDropParticle;
@@ -485,6 +486,14 @@ private:
 	int mButtobi;
 	int mEnerge;
 	int mTama;
+	int mAttack4;
+	int mSizuku1;
+	int mSizuku2;
+	int mLightning;
+	int mWing;
+
+	//第二形態フラグ（勝手に）
+	bool mIsRound2;
 };
 
 
