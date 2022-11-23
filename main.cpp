@@ -34,7 +34,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		GAMECLEAR,
 		GAMEOVER
 	};
-	Scene scene = GAMEOVER;
+	Scene scene = TITLE;
 
 	Screen screen;
 	Title title;
