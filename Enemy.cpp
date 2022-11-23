@@ -1766,7 +1766,7 @@ void Enemy::StarDrop(Player& player) {
 			mIsPowerDisplay = true;
 		}
 
-		if (240 <= mFrame){
+		if (mIsStartAttack == false && 240 <= mFrame){
 			StoneCollision(player);
 
 			if (mIsStoneBreak[0] && mIsStoneBreak[1] && mIsStoneBreak[2]){
