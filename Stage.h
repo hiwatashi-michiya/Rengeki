@@ -65,7 +65,10 @@ private:
 	//•`‰æŠÖŒW UI
 
 	//F
-	int mColor;
+	int mXColor;
+	int mAColor;
+	int mRTColor;
+	int mStickColor;
 
 	//‰æ‘œ“Ç‚İ‚İƒtƒ‰ƒO
 	bool mIsLoadTexture;
