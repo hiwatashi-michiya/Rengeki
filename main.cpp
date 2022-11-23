@@ -124,7 +124,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Draw(screen);
 		enemy.Draw(screen, player);
 		enemy.FrontDraw();
-
+		stage.FrontDraw(screen);
 
 		///
 		/// ↑描画処理ここまで
