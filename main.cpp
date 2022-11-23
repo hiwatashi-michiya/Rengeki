@@ -305,6 +305,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			player.Draw(screen);
 			stage.FrontDraw(screen);
 
+			title.FrontDraw();
+
 			break;
 		case INGAME:
 
@@ -322,6 +324,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			enemy.FrontDraw();
 			player.DrawUI();
 			stage.FrontDraw(screen);
+
+			enemy.BlackDraw();
 
 			break;
 		case GAMECLEAR:

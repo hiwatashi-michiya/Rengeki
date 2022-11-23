@@ -268,6 +268,8 @@ private:
 	int mFall;
 	int mJumpAnimeCount;
 	int mHit;
+	int mKobusi;
+	int mAsi;
 
 	//“–‚½‚Á‚½Œã‚ÌƒJƒEƒ“ƒg
 	bool mIsWallCount;

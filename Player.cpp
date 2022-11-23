@@ -533,7 +533,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 	}
 
 	//ƒ[ƒŠƒ“ƒO‚µ‚Ä‚È‚¢‚ÉUŒ‚‚ğó‚¯‚é
-	if (mIsRolling == false && !mIsNoHit) {
+	if (mIsRolling == false && !mIsNoHit && enemy.GetIsRoundMove() == false) {
 
 
 		//-----ãUŒ‚“–‚½‚è”»’è-----//
@@ -756,6 +756,8 @@ void Player::Draw(Screen& screen) {
 		mJumpRoll = Novice::LoadTexture("./Resources/Player/Player_jump_roll.png");
 		mFall = Novice::LoadTexture("./Resources/Player/Player_fall.png");
 		mHit = Novice::LoadTexture("./Resources/Player/Player_buttobi.png");
+		mKobusi = Novice::LoadTexture("./Resources/Player/kobusi.png");
+		mAsi = Novice::LoadTexture("./Resources/Player/asi.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}

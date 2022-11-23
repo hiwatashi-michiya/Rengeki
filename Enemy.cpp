@@ -58,6 +58,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+	mAlphat = 0.0f;
+	mBlack = 0x000000FF;
 	mIsStay = false;
 	mIsStartBattle = false;
 	mToBattleFrame = 0;
@@ -232,6 +234,8 @@ void Enemy::ResetAll() {
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// ラウンド遷移用 ////////////////////
+	mAlphat = 0.0f;
+	mBlack = 0x000000FF;
 	mIsStay = false;
 	mIsStartBattle = false;
 	mToBattleFrame = 0;
@@ -2249,12 +2253,13 @@ void Enemy::ToBattle(Title& title) {
 	}
 
 	if (mIsStay == true){
-
+		mAlphat = EasingClamp(0.01f, mAlphat);
+		mBlack = ColorEasingMove(0x000000FF, 0x00000000, easeLinear(mAlphat));
 		mDirection = ENEMYLEFT;
 		mVelocity.x = 0;
 
 		mToBattleFrame++;
-		if (120 < mToBattleFrame){
+		if (180 < mToBattleFrame){
 			mIsStartBattle = true;
 		}
 	}
@@ -2690,6 +2695,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		mSizuku2 = Novice::LoadTexture("./Resources/Enemy/Enemy_sizuku2.png");
 		mLightning = Novice::LoadTexture("./Resources/Enemy/lightning_strike.png");
 		mWing = Novice::LoadTexture("./Resources/Enemy/wing.png");
+		mHadou = Novice::LoadTexture("./Resources/Enemy/hadou.png");
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
 		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
 		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
@@ -2727,10 +2733,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 					screen.DrawAnimeReverse(mPosition, mRadius, mEnemySrcX, 140, 140, 7, 2, mTextureFrame, mJump, mColor, 0, 1);
 				}
 
-			}
+		}
 
 		//バックステップモーション
-		if (mIsBackStep || mRoundEasingt < 1 && mIsRoundTranslation) {
+		else if (mIsBackStep || mRoundEasingt < 1 && mIsRoundTranslation) {
 			if (mDirection == ENEMYRIGHT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mBackStep, mColor);
 			}
@@ -2803,9 +2809,11 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		if (mIsSpecialAttack || (mIsSpecialAttackStart == true && mIsSpecialAttack == false)) {
 			if (mAttackDirection == ENEMYLEFT) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}
 			if (mAttackDirection == ENEMYRIGHT) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHadou, mColor);
 			}
 		}
 
@@ -2879,4 +2887,9 @@ void Enemy::FrontDraw() {
 	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 50, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
 	Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 50, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
 
+}
+
+void Enemy::BlackDraw() {
+
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }

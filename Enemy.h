@@ -67,6 +67,9 @@ public:
 	//最前面に描画する処理
 	void FrontDraw();
 
+	//タイトル後の黒い画面描画
+	void BlackDraw();
+
 	//ゲームクリアか取得する
 	inline bool GetIsGameClear() { return mIsGameClear; }
 	
@@ -238,6 +241,9 @@ private:
 
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
 
+	//黒
+	float mAlphat;
+	unsigned int mBlack;
 	//タイトル後か
 	bool mIsStay;
 	//タイトル後に移動開始できるか
@@ -528,6 +534,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mHadou;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
