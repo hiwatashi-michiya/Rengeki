@@ -161,6 +161,136 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 }
 
+//敵情報のリセット
+void Enemy::ResetAll() {
+
+	mIsGameClear = false;
+
+	for (int i = 0; i < 3; i++) {
+		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
+	}
+
+	for (int i = 0; i < kFallingStarMax; i++) {
+		mFallingStarParticleLeft[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
+		mFallingStarParticleRight[i] = Particle(FOUNTAIN, 0xFF00FF00, 800, 1, 2, 50, false);
+	}
+
+	mSpecialAttackParticle = Particle(DIFFUSION, 0xFF00FF00, 500, 90, 100, 50, false);
+
+	mWallHitRight = Particle(WALLHITRIGHT, 0xFF00FF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0xFF00FF00, -10000, 3, 5, 100, false);
+
+	mStarDropParticle = Particle(STARDROP, 0xFFFFFF00, 20, 3, 25, 100, false);
+	mStarDropAttackParticle = Particle(HALFCIRCLE, 0xFFFFFF00, 20, 3, 25, 200, false);
+
+	mIsWallHitRightFlag = false;
+	mIsWallHitLeftFlag = false;
+
+	mKnockBackVelocity = { 0.0f, 0.0f };
+	mColor = 0x0000FFFF;
+	mAttackCount = 0;
+	mJumpCount = 0;
+	mIsGround = false;
+	mDirection = ENEMYRIGHT;
+	mAttackTimer = 0;
+	mIsAttackStart = false;
+	for (int i = 0; i < kEnemyMaxAttack; i++) {
+		mIsAttack[i] = false;
+		mAttackPosition[i].x = mPosition.x + (i * 32 + 32);
+		mAttackPosition[i].y = mPosition.y;
+		mAttackRadius[i] = 16;
+	}
+	for (int i = 0; i < kMaxAttack; i++) {
+		mIsHit[i] = false;
+		mKnockBack[i] = false;
+	}
+	mHitPoint = mHitPointMax[0];
+	mIsHitPointAssign[0] = false;
+	mIsHitPointAssign[1] = false;
+	mCross = 0.0f;
+	mCanAttack = true;
+	mIsWallHit = false;
+	//////////////////// ラウンド遷移用 ////////////////////
+	mIsRoundTranslation = false;
+	mIsRoundMove = false;
+	mCanRoundTranslation = false;
+	mRoundFrame = 0;
+	mRoundEasingt = 0.0f;
+	//////////////////// ここから攻撃関係 ////////////////////
+	mIsStart = false;
+	mStartFrame = -30;
+	mStartFrameTimer = 40;
+	//////////////////// ここから基礎移動 ////////////////////
+	mIsBackStep = false;
+	mIsBackStepNoGravity = false;
+	mBackStepEasingt = 0.0f;
+	mIsGuard = false;
+	mGuardFrame = 0;
+	mIsTeleport = false;
+	mIsApper = false;
+	mTeleportFrame = 0;
+	mStepFrame = 20;
+	mStepCoolTime[0] = 15;
+	mStepCoolTime[1] = 20;
+	mStepCoolTime[2] = 25;
+	mNewStepCoolTime[0] = 13;
+	mNewStepCoolTime[1] = 18;
+	mNewStepCoolTime[2] = 30;
+	mBigJumpLeft = false;
+	mBigJumpRight = false;
+	////////////////////　ここから強攻撃　////////////////////
+	mIsSpecialAttackOnce = false;
+	mIsSpecialAttackStart = false;
+	mIsSpecialAttack = false;
+	mSpecialAttackRadius = 100;
+	////////////////////　ここから必殺技　////////////////////
+	mIsFallingStar = false;
+	mFallingStarRadius = 15;
+	mFallingStarEasingt = 0.0f;
+	mFallingStarFrame = 0;
+
+	mIsActive = false;
+	mIsActiveOnce = false;
+	mIsDisplay = true;
+	mIsAllBreak = false;
+	mWidth = 50.0f;
+	mHeight = 100.0f;
+	mStoneColor = WHITE;
+	for (int i = 0; i < 3; i++) {
+		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
+		mStonePosition[i].y = kWindowHeight - mHeight / 2 - (kWindowHeight - Stage::kStageBottom - 3);
+		mIsStoneHit[i] = false;
+		mIsStoneLeftHit[i] = false;
+		mIsStoneRightHit[i] = false;
+		mIsStoneBreak[i] = false;
+		mStoneKnockBackSpeed[i] = 0.0f;
+		mStoneKnockBackValue[i] = -3.0f;
+		mStoneHp[i] = mWidth;
+		mIsStoneDisplay[i] = false;
+	}
+	mEnergyColor = WHITE;
+	mEnergyRadius = 5.0f;
+	for (int i = 0; i < 50; i++) {
+		mEnergyPosition[i].x = 0.0f;
+		mEnergyPosition[i].y = 0.0f;
+		mIsEnergyActive[i] = false;
+		mEnergyEasingt[i] = 0.0f;
+	}
+	mPowerRadius = 0.0f;
+	mPowerEasingt = 0.0f;
+	mPowerColor = WHITE;
+	mWhiteColor = 0xFFFFFF00;
+	mPowerColort = 0.0f;
+	mIsEasingMust = false;
+	mIsPowerDisplay = false;
+	mIsStartAttack = false;
+	mIsStarDrop = false;
+	mIsActiveStarDrop = false;
+	mFrame = 0;
+	mAttackFrame = 0;
+
+}
+
 void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 
 	//デバッグ用、体力を10減らす

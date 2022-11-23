@@ -54,6 +54,12 @@ public:
 	//描画処理
 	void Draw(Screen& screen);
 
+	//ポジションリセット
+	void ResetPosition() { mPosition.x = 0.0f; mPosition.y = 800.0f; }
+
+	//プレイヤーのステータスリセット
+	void ResetAll();
+
 	//ゲームオーバーか取得する
 	inline bool GetIsGameOver() { return mIsGameOver; }
 

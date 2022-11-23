@@ -79,7 +79,71 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFlashing = 1;
 }
 
+//リセット
+void Player::ResetAll() {
 
+	mIsGameOver = false;
+
+	//パーティクル
+	for (int i = 0; i < 3; i++) {
+		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
+	}
+
+	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 100, false);
+
+	mIsWallHitRightFlag = false;
+	mIsWallHitLeftFlag = false;
+
+	mHitPoint = 0;
+	mHitPointMax = 100;
+	mIsHitPointAssign = false;
+
+	mColor = 0xFFFFFFFF;
+	mAttackCount = kMaxAttack;
+	mCanJump = true;
+	mJumpCount = 0;
+	mIsGround = false;
+	mIsRolling = false;
+	mRollingFrame = 0;
+	mIsWallHit = false;
+	mDirection = RIGHT;
+	mAttackTimer = 0;
+	mIsAttack[0] = false;
+	mIsAttack[1] = false;
+	mIsAttack[2] = false;
+	mAttackPosition[0].x = mPosition.x + 32;
+	mAttackPosition[0].x = mPosition.x + 64;
+	mAttackPosition[0].x = mPosition.x + 96;
+	mAttackPosition[0].y = mPosition.y;
+	mAttackPosition[1].y = mPosition.y;
+	mAttackPosition[2].y = mPosition.y;
+	mAttackRadius[0] = 16;
+	mAttackRadius[1] = 16;
+	mAttackRadius[2] = 16;
+	mIsHit[0] = false;
+	mIsHit[1] = false;
+	mIsHit[2] = false;
+	mHitFrame = 0;
+	mKnockBack[0] = false;
+	mKnockBack[1] = false;
+	mKnockBack[2] = false;
+	mScaling = { 1.0f, 1.0f };
+	mIsJumpScaling = false;
+	mIsLandScaling = false;
+	mIsRollingScaling = false;
+	mTheta = 0.0f;
+	mIsLoadTexture = false;
+	mTextureFrame = 0;
+	mPlayerSrcX = 0;
+	mJumpSrcX = 0;
+	mIsjumpRoll = false;
+	mJumpAnimeCount = 0;
+	mNoHitCount = 0;
+	mIsNoHit = false;
+	mFlashing = 1;
+
+}
 
 void Player::Update(Stage &stage, Enemy &enemy) {
 
