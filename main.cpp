@@ -201,7 +201,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 					enemy.ResetPosition();
 				}
 
-				enemy.Update(stage, player, stageParticle);
+				enemy.Update(title, stage, player, stageParticle);
 				player.Update(title, stage, enemy);
 				stage.RoundTranslation(enemy);
 				stageParticle.SetFlag(stageParticlePosition);

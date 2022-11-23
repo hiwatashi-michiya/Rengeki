@@ -44,6 +44,7 @@ enum ENEMYDIRECTION {
 	ENEMYRIGHT
 };
 
+class Title;
 class Player;
 
 class Particle;
@@ -55,7 +56,7 @@ public:
 	Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius);
 
 	//更新処理
-	void Update(Stage& stage, Player& player, Particle& particle);
+	void Update(Title& title, Stage& stage, Player& player, Particle& particle);
 
 	//描画処理
 	void Draw(Screen& screen, Player& player);
@@ -70,7 +71,7 @@ public:
 	inline bool GetIsGameClear() { return mIsGameClear; }
 	
 	//ポジションリセット
-	inline void ResetPosition() { mPosition.x = 1000.0f; mPosition.y = 800.0f; }
+	inline void ResetPosition() { mPosition.x = 1280.0f; mPosition.y = 800.0f; }
 
 	//座標取得
 	inline Vec2 GetEnemyPosition() { return mPosition; }
@@ -85,7 +86,9 @@ public:
 	//ラウンド2の体力代入取得
 	inline bool GetIsHitPointAssign() { return mIsHitPointAssign[1]; }
 
-	////////////////////　ラウンド遷移取得関数　////////////////////
+	////////////////////　タイトル後とラウンド遷移取得関数　////////////////////
+
+	inline bool GetIsStartBattle() { return mIsStartBattle; }
 
 	inline bool GetIsRoundTranslation() { return mIsRoundTranslation; }
 	inline bool GetIsOldRoundTranslation() { return mIsOldRoundTranslation; }
@@ -233,7 +236,16 @@ private:
 	bool mIsWallHitRightFlag;
 	bool mIsWallHitLeftFlag;
 
-	//////////////////// ラウンド遷移用 ////////////////////
+	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+
+	//タイトル後か
+	bool mIsStay;
+	//タイトル後に移動開始できるか
+	bool mIsStartBattle;
+	//移動開始までのフレーム
+	int mToBattleFrame;
+	//関数
+	void ToBattle(Title& title);
 
 	//ラウンド遷移を開始するか && できるか
 	bool mIsRoundTranslation;

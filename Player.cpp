@@ -180,11 +180,11 @@ void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
 		mIsWallHitLeftFlag = false;
 	}
 
-	Move(enemy);
+	Move(title, enemy);
 
 	Collision(title, stage, enemy);
 
-	//星の雫の時場所を変える
+	//星の雫の時、場所を変える
 	if (enemy.GetIsOldEasingMust() == false && enemy.GetIsEasingMust() == true){
 		mDirection = RIGHT;
 		mPosition = { Stage::kStageLeft + (mRadius * 3), Stage::kStageBottom - mRadius };
@@ -222,7 +222,7 @@ void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
 
 
 //----------ここから動き関係----------//
-void Player::Move(Enemy& enemy) {
+void Player::Move(Title& title, Enemy& enemy) {
 
 	//重力を加算
 	mVelocity.y += kGravity;
@@ -243,8 +243,8 @@ void Player::Move(Enemy& enemy) {
 
 	//プレイヤーの場合の操作
 
-	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && ラウンド遷移しているか
-	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false) {
+	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && タイトル後の硬直は終わったか && ラウンド遷移しているか
+	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -286,7 +286,7 @@ void Player::Move(Enemy& enemy) {
 	mReleaseFrame = Clamp(mReleaseFrame, 0, 30);
 	
 	//攻撃
-	if (enemy.GetIsStarDropAttack() == false && enemy.GetIsRoundTranslation() == false){
+	if (enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false){
 		Attack();
 	}
 
@@ -444,6 +444,8 @@ void Player::Rolling() {
 }
 
 void Player::RoundTranslation(Enemy& enemy) {
+
+	
 
 	if (enemy.GetIsRoundTranslation() == true) {
 

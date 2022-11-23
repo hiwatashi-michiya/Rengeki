@@ -107,7 +107,7 @@ private:
 
 
 	//“®‚«
-	void Move(Enemy& enemy);
+	void Move(Title & title, Enemy& enemy);
 
 	//“–‚½‚è”»’è
 	void Collision(Title& title, Stage& stage, Enemy& enemy);

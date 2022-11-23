@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Title.h"
 #include "Vec2.h"
 #include <Novice.h>
 #include "Player.h"
@@ -56,7 +57,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mCross = 0.0f;
 	mCanAttack = true;
 	mIsWallHit = false;
-	//////////////////// ラウンド遷移用 ////////////////////
+	//////////////////// タイトル後とラウンド遷移用 ////////////////////
+	mIsStay = false;
+	mIsStartBattle = false;
+	mToBattleFrame = 0;
 	mIsRoundTranslation = false;
 	mIsRoundMove = false;
 	mCanRoundTranslation = false;
@@ -223,6 +227,9 @@ void Enemy::ResetAll() {
 	mCanAttack = true;
 	mIsWallHit = false;
 	//////////////////// ラウンド遷移用 ////////////////////
+	mIsStay = false;
+	mIsStartBattle = false;
+	mToBattleFrame = 0;
 	mIsRoundTranslation = false;
 	mIsRoundMove = false;
 	mCanRoundTranslation = false;
@@ -309,7 +316,7 @@ void Enemy::ResetAll() {
 	mIsRound2 = false;
 }
 
-void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
+void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
 
 	//デバッグ用、体力を10減らす
 	if (Key::IsTrigger(DIK_Q)) {
@@ -376,7 +383,10 @@ void Enemy::Update(Stage &stage, Player &player, Particle& particle) {
 	//１フレーム前の座標取得
 	mOldPosition = mPosition;
 
-	if (mIsRoundTranslation == false) {
+	//タイトル後はしばらく見合う
+	ToBattle(title);
+
+	if (mIsStartBattle == true && mIsRoundTranslation == false) {
 
 		Move(player, particle);
 
@@ -1561,11 +1571,11 @@ void Enemy::Attack(Player& player) {
 		//移動
 		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
-				mVelocity.x = -10.0f;
+				mVelocity.x = -9.0f;
 				mDirection = ENEMYLEFT;
 			}
 			else {
-				mVelocity.x = 10.0f;
+				mVelocity.x = 9.0f;
 				mDirection = ENEMYRIGHT;
 			}
 		}
@@ -2207,6 +2217,24 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 }
 
 
+void Enemy::ToBattle(Title& title) {
+
+	if (title.GetIsOldTitleClear() == false && title.GetIsTitleClear() == true){
+		mIsStay = true;
+	}
+
+	if (mIsStay == true){
+
+		mDirection = ENEMYLEFT;
+		mVelocity.x = 0;
+
+		mToBattleFrame++;
+		if (120 < mToBattleFrame){
+			mIsStartBattle = true;
+		}
+	}
+
+}
 void Enemy::RoundTranslation(Stage& stage) {
 
 	mIsOldRoundTranslation = mIsRoundTranslation;

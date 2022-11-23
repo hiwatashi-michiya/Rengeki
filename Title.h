@@ -14,6 +14,7 @@ public:
 	void Update(Player& player);
 	void Draw();
 	inline bool GetIsTitleClear() { return mIsTitleClear; }
+	inline bool GetIsOldTitleClear() { return mIsOldTitleClear; }
 
 private:
 
@@ -21,6 +22,7 @@ private:
 	Vec2 mArrowPosition;
 
 	bool mIsTitleClear;
+	bool mIsOldTitleClear;
 	bool mIsLoadTexture;
 	int mTitle;
 	int mTitleGround;

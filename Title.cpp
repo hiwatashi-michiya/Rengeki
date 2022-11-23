@@ -15,6 +15,8 @@ void Title::Init() {
 }
 void Title::Update(Player& player) {
 
+	mIsOldTitleClear = mIsTitleClear;
+
 	mTheta += 1 / (4.0f * M_PI);
 	mArrowPosition.x = sinf(mTheta) * 10 + 1180;
 
