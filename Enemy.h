@@ -449,6 +449,8 @@ private:
 	//関数
 	void StarDrop(Player& player);
 	//サウンド
+	int mIsPlayEnergySE;
+	int mEnergySE;
 	int mEnergyChargeSE;
 
 	//パーティクル
