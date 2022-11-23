@@ -54,6 +54,9 @@ public:
 	//描画処理
 	void Draw(Screen& screen);
 
+	//体力等のUI描画
+	void DrawUI();
+
 	//ポジションリセット
 	void ResetPosition() { mPosition.x = 0.0f; mPosition.y = 800.0f; }
 
@@ -261,6 +264,7 @@ private:
 	bool mIsjumpRoll;
 	int mFall;
 	int mJumpAnimeCount;
+	int mPlayerHpFlame;
 };
 
 

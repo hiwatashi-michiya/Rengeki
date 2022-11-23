@@ -150,6 +150,9 @@ public:
 	//イージングすべきか
 	inline bool GetIsEasingMust() { return mIsEasingMust; }
 	inline bool GetIsOldEasingMust() { return mIsOldEasingMust; }
+	//攻撃を受けるようになったか
+	inline bool GetStarDropDamage() { return mIsStarDropDamage;}
+	inline bool GetOldStarDropDamage() { return mIsOldStarDropDamage;}
 
 
 	//攻撃を受けているか
@@ -448,6 +451,8 @@ private:
 	bool mIsStartAttack;
 	bool mIsStarDrop;
 	bool mIsActiveStarDrop;
+	bool mIsStarDropDamage;
+	bool mIsOldStarDropDamage;
 	//移動時のフレーム
 	int mFrame;
 	//攻撃時のフレーム
@@ -490,6 +495,7 @@ private:
 	int mEnemyHp;
 	int mEnemyHpFlame;
 	int mEnemyName;
+	Vec2 mEnemyUIPosition;
 };
 
 
