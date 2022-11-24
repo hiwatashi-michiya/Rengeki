@@ -1888,6 +1888,11 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 		}
 	}
 
+	//ゲームクリア/オーバーで強制終了
+	if (mIsGameClear == true || player.GetIsGameOver() == true) {
+		mIsFallingStar = false;
+	}
+
 	//落下星終了（初期化）
 	if (mIsFallingStar == false){
 		mFallingStarEasingt = 0.0f;
@@ -1899,6 +1904,7 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 		}
 		mFallingStarCount = 2;
 	}
+
 }
 /*　必殺技３　星砕流奥義・星の雫　*/
 void Enemy::StarDrop(Player& player, Particle& particle) {
