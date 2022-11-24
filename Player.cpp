@@ -944,12 +944,21 @@ void Player::Draw(Screen& screen) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 170, 170, mTaoreta, mColor);
 	}
 
-	Novice::ScreenPrintf(100, 100, "%d", mGameOverCount);
 }
 
 void Player::DrawUI() {
 
 	//‘Ì—Í•`‰æ
-	Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, GREEN, kFillModeSolid);
+	int a = mHitPointMax - mHitPoint;
+	if (a < 50){
+		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, GREEN, kFillModeSolid);
+	}
+	else if (a < 70){
+		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, 0xFFFF00FF, kFillModeSolid);
+	}
+	else {
+		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, RED, kFillModeSolid);
+	}
+
 	Novice::DrawQuad(20, 10, 420, 10, 20, 110, 420, 110, 0, 0, 2000, 500, mPlayerHpFlame, WHITE);
 }

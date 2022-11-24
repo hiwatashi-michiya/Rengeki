@@ -241,6 +241,8 @@ private:
 
 	//無敵
 	bool mIsInvincible;
+	bool mIsStartInvincible;
+	int mInvincibleFrame;
 
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
 
@@ -544,6 +546,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mWingSrcX;
 	int mHadou;
 	int mKobusi;
 	int mAsi;
