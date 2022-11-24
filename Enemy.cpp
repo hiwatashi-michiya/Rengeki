@@ -2328,6 +2328,10 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 			mIsActive = true;
 			mIsFallingStar = false;
 			mFallingStarCount = 2;
+			for (int i = 0; i < 10; i++) {
+				mFallingStarParticleLeft[i].Reset();
+				mFallingStarParticleRight[i].Reset();
+			}
 			mIsActiveOnce = true;
 			mStartFrame = 0;
 			mIsStart = false;
