@@ -338,6 +338,7 @@ void Enemy::ResetAll() {
 	mGameClearCount = 0;
 	mGameClearSrcX = 0;
 	mWing2SrcX = 0;
+	mWingSrcX = 0;
 	//チャージ音を止める
 	Novice::StopAudio(mIsPlayEnergySE);
 
@@ -2983,10 +2984,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	//第二形態に入ったら翼
 	if (mIsRound2 && mIsDisplay && mGameClearCount == 0) {
 		if (mDirection == ENEMYLEFT) {
-			screen.DrawQuad({ mPosition.x + mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, 0, 0, 200, 200, mWing, mColor);
+			screen.DrawAnime({ mPosition.x + mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, mWingSrcX, 200, 200, 4, 5, mTextureFrame, mWing, mColor, 0, 1);
 		}
 		if (mDirection == ENEMYRIGHT) {
-			screen.DrawQuadReverse({ mPosition.x - mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, 0, 0, 200, 200, mWing, mColor);
+			screen.DrawAnimeReverse({ mPosition.x - mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, mWingSrcX, 200, 200, 4, 5, mTextureFrame, mWing, mColor, 0, 1);
 		}
 
 	}

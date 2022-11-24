@@ -944,7 +944,6 @@ void Player::Draw(Screen& screen) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 170, 170, mTaoreta, mColor);
 	}
 
-	Novice::ScreenPrintf(100, 100, "%d", mGameOverCount);
 }
 
 void Player::DrawUI() {

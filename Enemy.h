@@ -544,6 +544,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mWingSrcX;
 	int mHadou;
 	int mKobusi;
 	int mAsi;
