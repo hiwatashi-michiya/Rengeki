@@ -274,6 +274,10 @@ private:
 	int mAsi;
 	int mDoragon;
 	float mAtackBairitu;
+	int mTaoreru;
+	int mTaoreta;
+	int mGameOverCount;
+	int mGameOverSrcX;
 
 	//“–‚½‚Á‚½Œã‚ÌƒJƒEƒ“ƒg
 	bool mIsWallCount;

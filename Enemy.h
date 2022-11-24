@@ -550,6 +550,11 @@ private:
 	float mSyougekiSrcX[kFallingStarMax];
 	int mTaoreru;
 	int mTaoreta;
+	int mGameClearCount;
+	int mGameClearSrcX;
+	int mWing2SrcX;
+	int mWing2;
+	int mKyanseru;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;

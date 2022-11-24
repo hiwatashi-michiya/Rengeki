@@ -75,6 +75,8 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mNoHitCount = 0;
 	mIsNoHit = false;
 	mFlashing = 1;
+	mGameOverCount = 0;
+	mGameOverSrcX = 0;
 	//////////// SE /////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -151,6 +153,8 @@ void Player::ResetAll() {
 	mIsHitCount = false;
 	mPlayerSrcRollX = 0;
 	mAtackBairitu = 0;
+	mGameOverCount = 0;
+	mGameOverSrcX = 0;
 }
 
 void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
@@ -329,6 +333,13 @@ void Player::Move(Title& title, Enemy& enemy) {
 	//ノックバック時の速度を加算
 	mPosition.x += mKnockBackVelocity.x;
 	mPosition.y += mKnockBackVelocity.y;
+
+	if (enemy.GetIsGameClear() == true) {
+		mAttackCount = kMaxAttack;
+		mIsAttack[0] = false;
+		mIsAttack[1] = false;
+		mIsAttack[2] = false;
+	}
 
 }
 void Player::Attack() {
@@ -764,6 +775,8 @@ void Player::Draw(Screen& screen) {
 		mKobusi = Novice::LoadTexture("./Resources/Player/kobusi.png");
 		mAsi = Novice::LoadTexture("./Resources/Player/asi.png");
 		mDoragon = Novice::LoadTexture("./Resources/Player/doragon.png");
+		mTaoreru = Novice::LoadTexture("./Resources/Player/taoreru.png");
+		mTaoreta = Novice::LoadTexture("./Resources/Player/taoreta.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
 		mIsLoadTexture = true;
 	}
@@ -782,7 +795,7 @@ void Player::Draw(Screen& screen) {
 	//プレイヤー描画
 
 
-	if (mFlashing == 1 && mKnockBackVelocity.x == 0) {
+	if (mFlashing == 1 && mKnockBackVelocity.x == 0 && mGameOverCount == 0) {
 		//ローリング
 		if (mIsRolling) {
 			if (mDirection == RIGHT) {
@@ -923,6 +936,15 @@ void Player::Draw(Screen& screen) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mHit, mColor);
 	}
 
+	if (mIsGameOver && mIsGround) {
+		mGameOverCount++;
+		screen.DrawAnime(mPosition, mRadius, mGameOverSrcX, 170, 170, 8, 6, mTextureFrame, mTaoreru, mColor, 0, 0);
+	}
+	if (mGameOverCount >= 48) {
+		screen.DrawQuad(mPosition, mRadius, 0, 0, 170, 170, mTaoreta, mColor);
+	}
+
+	Novice::ScreenPrintf(100, 100, "%d", mGameOverCount);
 }
 
 void Player::DrawUI() {
