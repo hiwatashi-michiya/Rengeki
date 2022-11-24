@@ -406,7 +406,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			enemy.BlackDraw();
 
-			ingame.Draw();
+			ingame.Draw(enemy);
 			gameclear.IngameDraw();
 			gameover.IngameDraw();
 

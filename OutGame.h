@@ -2,6 +2,8 @@
 #include "Vec2.h"
 #include "Quad.h"
 
+class Enemy;
+
 class InGame
 {
 public:
@@ -11,7 +13,7 @@ public:
 
 	void Init();
 	void Update();
-	void Draw();
+	void Draw(Enemy& enemy);
 
 private:
 
@@ -25,6 +27,8 @@ private:
 
 	bool mIsLoadTexture;
 	int mBattleStart;
+	int mMada;
+
 
 };
 

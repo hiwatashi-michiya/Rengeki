@@ -6,6 +6,7 @@
 #include "Easing.hpp"
 #include "ControllerInput.h"
 #include "MatVec.h"
+#include "Enemy.h"
 
 void InGame::Init() {
 
@@ -33,14 +34,22 @@ void InGame::Update() {
 
 
 }
-void InGame::Draw() {
+void InGame::Draw(Enemy& enemy) {
 
 	if (mIsLoadTexture == false){
 		mBattleStart = Novice::LoadTexture("./Resources/InGame/BattleStart.png");
+		mMada = Novice::LoadTexture("./Resources/InGame/mada.png");
 		mIsLoadTexture = true;
 	}
 
+	if (mEndEasingt <= 0.45f){
+		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, 0x00000080, kFillModeSolid);
+	}
+
 	Novice::DrawQuad(mBattlePosition.x, mBattlePosition.y, mBattlePosition.x + 1280, mBattlePosition.y, mBattlePosition.x, mBattlePosition.y + 720, mBattlePosition.x + 1280, mBattlePosition.y + 720, 0, 0, 1280, 720, mBattleStart, WHITE);
+	if (enemy.GetIsRoundMove() == true){
+		Novice::DrawQuad(1000, 550, 1200, 550, 1000, 590, 1200, 590, 0, 0, 1000, 200, mMada, WHITE);
+	}
 }
 
 //------------------------------------------------//
@@ -72,7 +81,7 @@ void GameClear::ToGameClear() {
 	mAlphat = EasingClamp(0.01f, mAlphat);
 	mWinColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
 
-	if (240 < mFrame){
+	if (90 < mFrame){
 		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
 		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
 		if (mBlackAlphat == 1.0f){
@@ -173,6 +182,10 @@ void GameClear::IngameDraw() {
 		mIsLoadWin = true;
 	}
 
+	if (mAlphat != 0.0f) {
+		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, 0x00000080, kFillModeSolid);
+	}
+
 	Novice::DrawSprite(0, 0, mWin, 1, 1, 0.0f, mWinColor);
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
@@ -211,7 +224,7 @@ void GameOver::ToGameOver() {
 	mAlphat = EasingClamp(0.01f, mAlphat);
 	mLoseColor = ColorEasingMove(0xFFFFFF00, WHITE, easeOutCirc(mAlphat));
 
-	if (240 < mFrame) {
+	if (90 < mFrame) {
 		mBlackAlphat = EasingClamp(0.01f, mBlackAlphat);
 		mBlack = ColorEasingMove(0x00000000, BLACK, easeOutCirc(mBlackAlphat));
 		if (mBlackAlphat == 1.0f) {
@@ -307,6 +320,10 @@ void GameOver::IngameDraw() {
 	if (mIsLoadLose == false){
 		mLose = Novice::LoadTexture("./Resources/GameOver/Lose.png");
 		mIsLoadLose = true;
+	}
+
+	if (mAlphat != 0.0f){
+		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, 0x00000080, kFillModeSolid);
 	}
 
 	Novice::DrawSprite(0, 0, mLose, 1, 1, 0.0f, mLoseColor);

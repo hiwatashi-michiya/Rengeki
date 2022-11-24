@@ -18,8 +18,8 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{5,8},
-	{10,15},
+	{2,8},
+	{5,15},
 	{50,28}
 };
 
@@ -238,6 +238,9 @@ private:
 	//パーティクルフラグが立っているかどうか
 	bool mIsWallHitRightFlag;
 	bool mIsWallHitLeftFlag;
+
+	//無敵
+	bool mIsInvincible;
 
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
 
