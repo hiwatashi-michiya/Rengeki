@@ -11,6 +11,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 {
 
 	mIsGameClear = false;
+	mIsInvincible = false;
 
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
@@ -191,6 +192,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 void Enemy::ResetAll() {
 
 	mIsGameClear = false;
+	mIsInvincible = false;
 
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
@@ -342,9 +344,11 @@ void Enemy::ResetAll() {
 
 void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
 
-	//デバッグ用、体力を10減らす
-	if (Key::IsTrigger(DIK_Q)) {
-		mHitPoint -= 10;
+	if (mIsInvincible == true) {
+		mColor = 0x0000FF60;
+	}
+	else {
+		mColor = BLUE;
 	}
 
 	//体力低下でパーティクルの色を変える
@@ -2122,13 +2126,6 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 		}
 	}
 
-	if (Key::IsTrigger(DIK_A)){
-		mPowerEasingt = 0.0f;
-		mIsActive = true;
-		mStartFrame = 0;
-		mIsStart = false;
-	}
-
 	if (stage.GetRound() == Round1){
 
 		if (AnyAttack() == false && mIsStart == true && mCanAttack == true) {
@@ -2198,8 +2195,8 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 					mFallingStarStartPosition = mPosition;
 					mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
 					for (int i = 0; i < kFallingStarMax; i++) {
-						mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-						mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+						mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+						mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
 					}
 					mIsFallingStar = true;
 					mStartFrame = 0;
@@ -2431,6 +2428,7 @@ void Enemy::Collision(Player& player) {
 			mWallHitLeft.SetFlag(mPosition);
 			mHitPoint -= kWallDamage;
 			mIsWallHitLeftFlag = true;
+			mIsInvincible = true;
 			mKnockBackVelocity.x = 0;
 			Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
@@ -2449,6 +2447,7 @@ void Enemy::Collision(Player& player) {
 			mWallHitRight.SetFlag(mPosition);
 			mHitPoint -= kWallDamage;
 			mIsWallHitRightFlag = true;
+			mIsInvincible = true;
 			mKnockBackVelocity.x = 0;
 			Novice::PlayAudio(mWallHitSE, 0, 0.8f);
 
@@ -2462,6 +2461,7 @@ void Enemy::Collision(Player& player) {
 		mIsGround = true;
 		mCanAttack = true;
 		mIsWallHit = false;
+		mIsInvincible = false;
 		mKnockBackVelocity.y = 0;
 		mJumpCount = kEnemyMaxJump;
 	}
@@ -2482,7 +2482,7 @@ void Enemy::Collision(Player& player) {
 	}
 
 	//ガード中 || 透明化の最中は無敵化
-	if ((mIsGuard == false && mIsSpecialAttackStart == false && ((mIsActive == false) || (mIsActive == true && mIsAllBreak == true))) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
+	if (mIsInvincible == false && (mIsGuard == false && mIsSpecialAttackStart == false && ((mIsActive == false) || (mIsActive == true && mIsAllBreak == true))) || (mIsSpecialAttackStart == true && mIsSpecialAttack == true)) {
 
 		//一撃目に当たった場合
 		for (int i = 0; i < kMaxAttack; i++){
