@@ -658,7 +658,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
 	//¯‚Ì´‚Ìƒ_ƒ[ƒW
 	if (enemy.GetOldStarDropDamage() == false && enemy.GetStarDropDamage() == true) {
-		mHitPoint = (mHitPoint / 2);
+		mHitPoint = (0);
 	}
 	
 }
