@@ -11,7 +11,7 @@
 #include <time.h>
 #include "ControllerInput.h"
 
-const char kWindowTitle[] = "1203_Seiken";
+const char kWindowTitle[] = "星拳";
 
 clock_t oldTime;
 

@@ -546,6 +546,7 @@ private:
 	int mSizuku2;
 	int mLightning;
 	int mWing;
+	int mWingSrcX;
 	int mHadou;
 	int mKobusi;
 	int mAsi;
@@ -555,6 +556,11 @@ private:
 	float mSyougekiSrcX[kFallingStarMax];
 	int mTaoreru;
 	int mTaoreta;
+	int mGameClearCount;
+	int mGameClearSrcX;
+	int mWing2SrcX;
+	int mWing2;
+	int mKyanseru;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
