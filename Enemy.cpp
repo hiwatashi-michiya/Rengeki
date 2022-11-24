@@ -12,6 +12,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 
 	mIsGameClear = false;
 	mIsInvincible = false;
+	mIsStartInvincible = false;
+	mInvincibleFrame = 0;
 
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
@@ -193,6 +195,8 @@ void Enemy::ResetAll() {
 
 	mIsGameClear = false;
 	mIsInvincible = false;
+	mIsStartInvincible = false;
+	mInvincibleFrame = 0;
 
 	for (int i = 0; i < 3; i++) {
 		mAttackParticle[i] = Particle(DIFFUSION, 0xFF00FF00, 300, 3, 5, 50, false);
@@ -344,12 +348,21 @@ void Enemy::ResetAll() {
 
 void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
 
-	if (mIsInvincible == true) {
+	if (mIsInvincible == true){
 		mColor = 0x0000FF60;
 	}
 	else {
 		mColor = BLUE;
 	}
+	if (mIsStartInvincible == true) {
+		mInvincibleFrame++;
+		if (20 < mInvincibleFrame){
+			mIsInvincible = false;
+			mIsStartInvincible = false;
+			mInvincibleFrame = 0;
+		}
+	}
+
 
 	//体力低下でパーティクルの色を変える
 	if (mHitPoint <= 50 &&
@@ -1847,8 +1860,8 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 							mFallingStarStartPosition = mPosition;
 							mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
 							for (int i = 0; i < kFallingStarMax; i++) {
-								mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-								mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+								mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+								mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
 							}
 							mFallingStarEasingt = 0.0f;
 							mFallingStarFrame = 0;
@@ -2291,8 +2304,8 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 					mFallingStarStartPosition = mPosition;
 					mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
 					for (int i = 0; i < kFallingStarMax; i++) {
-						mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
-						mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius };
+						mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+						mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
 					}
 					mIsFallingStar = true;
 					mStartFrame = 0;
@@ -2461,7 +2474,9 @@ void Enemy::Collision(Player& player) {
 		mIsGround = true;
 		mCanAttack = true;
 		mIsWallHit = false;
-		mIsInvincible = false;
+		if (mIsInvincible == true){
+			mIsStartInvincible = true;
+		}
 		mKnockBackVelocity.y = 0;
 		mJumpCount = kEnemyMaxJump;
 	}

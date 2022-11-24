@@ -241,6 +241,8 @@ private:
 
 	//無敵
 	bool mIsInvincible;
+	bool mIsStartInvincible;
+	int mInvincibleFrame;
 
 	//////////////////// タイトル後とラウンド遷移用 ////////////////////
 
