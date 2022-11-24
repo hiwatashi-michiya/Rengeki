@@ -42,7 +42,7 @@ void InGame::Draw(Enemy& enemy) {
 		mIsLoadTexture = true;
 	}
 
-	if (mEndEasingt <= 0.45f){
+	if (mEndEasingt <= 0.4f){
 		Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, 0x00000080, kFillModeSolid);
 	}
 
