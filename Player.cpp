@@ -583,7 +583,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
 		//-----‹­UŒ‚“–‚½‚è”»’è-----
 		//UŒ‚‚ğó‚¯‚½ê‡
-		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius()) == true && enemy.GetIsSpecialAttack() == true) {
+		if (CircleCollision(enemy.GetSpecialAttackPosition(), enemy.GetSpecialAttackRadius() * 0.9f) == true && enemy.GetIsSpecialAttack() == true) {
 			mColor = 0xFFFF00FF;
 			if (mIsHit[2] == false) {
 				mHitPoint -= kEnemyAttackValue[2];

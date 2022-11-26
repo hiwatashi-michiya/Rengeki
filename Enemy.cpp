@@ -112,7 +112,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mIsAllBreak = false;
 	mWidth = 50.0f;
 	mHeight = 100.0f;
-	mStoneColor = WHITE;
+	mStoneColor = BLUE;
 	mTheta = 0.0f;
 	for (int i = 0; i < 3; i++) {
 		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
@@ -127,8 +127,8 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mStoneHp[i] = mWidth;
 		mIsStoneDisplay[i] = false;
 	}
-	mEnergyColor = WHITE;
-	mEnergyRadius = 5.0f;
+	mEnergyColor = BLUE;
+	mEnergyRadius = 7.5f;
 	for (int i = 0; i < 50; i++) {
 		mEnergyPosition[i].x = 0.0f;
 		mEnergyPosition[i].y = 0.0f;
@@ -302,7 +302,7 @@ void Enemy::ResetAll() {
 	mIsAllBreak = false;
 	mWidth = 50.0f;
 	mHeight = 100.0f;
-	mStoneColor = WHITE;
+	mStoneColor = BLUE;
 	mTheta = 0.0f;
 	for (int i = 0; i < 3; i++) {
 		mStonePosition[i].x = kWindowWidth / 2 - kStoneInterval + (kStoneInterval * i);
@@ -317,8 +317,8 @@ void Enemy::ResetAll() {
 		mStoneHp[i] = mWidth;
 		mIsStoneDisplay[i] = false;
 	}
-	mEnergyColor = WHITE;
-	mEnergyRadius = 5.0f;
+	mEnergyColor = BLUE;
+	mEnergyRadius = 7.5f;
 	for (int i = 0; i < 50; i++) {
 		mEnergyPosition[i].x = 0.0f;
 		mEnergyPosition[i].y = 0.0f;
@@ -2147,6 +2147,20 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 		}
 	}
 
+	if (Key::IsTrigger(DIK_A)){
+		mPowerEasingt = 0.0f;
+		mIsActive = true;
+		mIsFallingStar = false;
+		mFallingStarCount = 2;
+		for (int i = 0; i < 10; i++) {
+			mFallingStarParticleLeft[i].Reset();
+			mFallingStarParticleRight[i].Reset();
+		}
+		mIsActiveOnce = true;
+		mStartFrame = 0;
+		mIsStart = false;
+	}
+
 	if (stage.GetRound() == Round1){
 
 		if (AnyAttack() == false && mIsStart == true && mCanAttack == true) {
@@ -2754,14 +2768,15 @@ void Enemy::Draw(Screen& screen, Player& player) {
 	if (mIsEasingMust == false){
 		for (int i = 0; i < 50; i++) {
 			if (mIsEnergyActive[i] == true) {
-				screen.DrawQuad(mEnergyPosition[i], mEnergyRadius, 0, 0, 0, 0, 0, mStoneColor);
+				screen.DrawRotateQuad(mEnergyPosition[i], mEnergyRadius, mTheta, mStoneColor);
 			}
 		}
 
 		for (int i = 0; i < 3; i++) {
 			if (mIsStoneDisplay[i] == true && mIsStoneBreak[i] == false) {
 				screen.DrawArrow(mArrowPosition[i], 10, 25, 0.0f, WHITE, kFillModeSolid);
-				screen.DrawBox({ mStonePosition[i].x - mWidth / 2, mStonePosition[i].y - mHeight / 2 - 20 }, mStoneHp[i], 10, 0.0f, WHITE, kFillModeSolid);
+				screen.DrawBox({ mStonePosition[i].x - mWidth / 2, mStonePosition[i].y - mHeight / 2 - 20 }, mStoneHp[i], 10, 0.0f, BLUE, kFillModeSolid);
+				screen.DrawBox({ mStonePosition[i].x - mWidth / 2 - 1, mStonePosition[i].y - mHeight / 2 - 20 - 1 }, 52, 12, 0.0f, WHITE, kFillModeWireFrame);
 				screen.DrawRectAngle(mStonePosition[i], mWidth, mHeight, 0, 0, 500, 1000, mStone, mEnergyColor);
 			}
 		}
@@ -2773,16 +2788,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 		if (mIsActiveStarDrop == true) {
 			mStarDropAttackParticle.Draw(screen);
 		}
-
-		/*if (mIsPowerDisplay == true) {
-			screen.DrawEllipse(mPowerPosition, mPowerRadius, 0.0f, mPowerColor, kFillModeWireFrame);
-		}*/
 	}
-
-	//ガード中のデバッグ用矩形
-	/*if (mIsGuard == true){
-		screen.DrawBox({ mPosition.x - mRadius - 10, mPosition.y - mRadius - 10 }, mRadius * 2 + 20, mRadius * 2 + 20, 0.0f, BLUE, kFillModeWireFrame);
-	}*/
 
 	mTextureFrame++;
 

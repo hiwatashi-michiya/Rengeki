@@ -180,6 +180,12 @@ void Screen::DrawQuad(Vec2 Position, float Radius, float srcX, float srcY, float
 	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, srcX, srcY, srcW, srcH, textureHandle, color);
 }
 
+void Screen::DrawRotateQuad(Vec2 Position, float Radius, float theta, unsigned int color) {
+	Quad OriginalPosition = SquareAssign(Radius);
+	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ Zoom, Zoom }, theta, ScreenTransform(Position)));
+	Novice::DrawQuad((int)Rect.LeftTop.x, (int)Rect.LeftTop.y, (int)Rect.RightTop.x, (int)Rect.RightTop.y, (int)Rect.LeftBottom.x, (int)Rect.LeftBottom.y, (int)Rect.RightBottom.x, (int)Rect.RightBottom.y, 0, 0, 0, 0, 0, color);
+}
+
 void Screen::DrawRectAngle(Vec2 Position, float Width, float Height, float srcX, float srcY, float srcW, float srcH, float textureHandle, unsigned int color) {
 	Quad OriginalPosition = RectAssign(Width, Height);
 	Quad Rect = Transform(OriginalPosition, MakeAffineMatrix({ 1.0f, 1.0f }, 0.0f, ScreenTransform(Position)));
