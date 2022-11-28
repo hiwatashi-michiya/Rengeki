@@ -90,7 +90,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mStepCoolTime[2] = 25;
 	mNewStepCoolTime[0] = 13;
 	mNewStepCoolTime[1] = 18;
-	mNewStepCoolTime[2] = 30;
+	mNewStepCoolTime[2] = 22;
 	mBigJumpLeft = false;
 	mBigJumpRight = false;
 	////////////////////　ここから強攻撃　////////////////////
@@ -104,7 +104,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	mFallingStarCount = 2;
+	mFallingStarCount = 4;
 
 	mIsActive = false;
 	mIsActiveOnce = false;
@@ -273,7 +273,7 @@ void Enemy::ResetAll() {
 	mStepCoolTime[2] = 25;
 	mNewStepCoolTime[0] = 13;
 	mNewStepCoolTime[1] = 18;
-	mNewStepCoolTime[2] = 30;
+	mNewStepCoolTime[2] = 22;
 	mBigJumpLeft = false;
 	mBigJumpRight = false;
 	////////////////////　ここから強攻撃　////////////////////
@@ -287,7 +287,7 @@ void Enemy::ResetAll() {
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	mFallingStarCount = 2;
+	mFallingStarCount = 4;
 	mFallingStarStartValue = 0;
 	mFallingStarEndValue = 0;
 	for (int i = 0; i < 10; i++) {
@@ -532,7 +532,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			mBigJumpRight = false;
 
 			//ステップしない時一定のタイミングで低確率でジャンプ
-			if (RandNum(1, 10, NATURAL) % 10 <= 1 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
+			if (RandNum(1, 10, NATURAL) % 10 <= 2 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
 
 				//距離によってジャンプ距離を変える
 				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
@@ -553,13 +553,13 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
-			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 20) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 5) {
 
 				//右側の場合
 				if (mPosition.x >= player.GetPlayerPosition().x) {
 
 					if (Stage::kStageRight - mPosition.x - mRadius < 200) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpRight = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -569,7 +569,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 				else {
 
 					if (mPosition.x - mRadius - Stage::kStageLeft < 200) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpLeft = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -612,7 +612,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 				//退く
 				if (mStartFrame % 30 <= 20) {
-					mVelocity.x = 3.5f;
+					mVelocity.x = 6.0f;
 				}
 
 			}
@@ -664,6 +664,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 					else {
 						mVelocity.x = RandNum(70, 140, BINARY);
+					}
+
+					//間合い近くで向かい合って攻撃してきたら回避
+					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack(0) == true &&
+						player.GetPlayerDirection() == RIGHT) {
+						mVelocity.x = -150.0f;
 					}
 
 					//停止期間でなければ音を鳴らす
@@ -709,7 +715,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 				//退く
 				if (mStartFrame % 30 <= 20) {
-					mVelocity.x = -3.5f;
+					mVelocity.x = -6.0f;
 				}
 
 			}
@@ -764,6 +770,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 						mVelocity.x = RandNum(70, 140, BINARY) * -1;
 					}
 
+					//間合い近くで向かい合って攻撃してきたら回避
+					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack(0) == true &&
+						player.GetPlayerDirection() == LEFT) {
+						mVelocity.x = 150.0f;
+					}
+
 					//停止期間でなければ音を鳴らす
 					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.8f);
@@ -795,7 +807,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			mBigJumpRight = false;
 
 			//ステップしない時一定のタイミングで確率でジャンプ
-			if (RandNum(1, 10, NATURAL) % 10 <= 2 && mStartFrame % 15 == 0 && mStartFrame % mStepFrame != 0) {
+			if (RandNum(1, 10, NATURAL) % 10 <= 3 && mStartFrame % 15 == 0 && mStartFrame % mStepFrame != 0) {
 
 				//距離によってジャンプ距離を変える
 				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
@@ -816,13 +828,13 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
-			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 20) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 5) {
 
 				//右側の場合
 				if (mPosition.x >= player.GetPlayerPosition().x) {
 
 					if (Stage::kStageRight - mPosition.x - mRadius < 200) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpRight = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -832,7 +844,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 				else {
 
 					if (mPosition.x - mRadius - Stage::kStageLeft < 200) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpLeft = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -871,11 +883,11 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//間合いを取る
-			if ((player.GetPlayerPosition() - mPosition).length() <= 350) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//退く
-				if (mStartFrame % 30 <= 20) {
-					mVelocity.x = 4.0f;
+				if (mStartFrame % 30 <= 25) {
+					mVelocity.x = 6.0f;
 				}
 
 			}
@@ -929,6 +941,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 						mVelocity.x = RandNum(50, 200, BINARY);
 					}
 
+					//間合い近くで向かい合って攻撃してきたら回避
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack(0) == true &&
+						player.GetPlayerDirection() == RIGHT) {
+						mVelocity.x = -250.0f;
+					}
+
 					//停止期間でなければ音を鳴らす
 					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.8f);
@@ -968,11 +986,11 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//間合いを取る
-			if ((player.GetPlayerPosition() - mPosition).length() <= 350) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//退く
-				if (mStartFrame % 30 <= 20) {
-					mVelocity.x = -4.0f;
+				if (mStartFrame % 30 <= 25) {
+					mVelocity.x = -6.0f;
 				}
 
 			}
@@ -1027,6 +1045,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 						mVelocity.x = RandNum(50, 200, BINARY) * -1;
 					}
 
+					//間合い近くで向かい合って攻撃してきたら回避
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack(0) == true &&
+						player.GetPlayerDirection() == LEFT) {
+						mVelocity.x = 250.0f;
+					}
+
 					//停止期間でなければ音を鳴らす
 					if (mStartFrame < 55 || 65 <= mStartFrame) {
 						Novice::PlayAudio(mStepSE, 0, 0.8f);
@@ -1053,8 +1077,12 @@ void Enemy::Move(Player& player, Particle& particle) {
 		//地面にいる場合
 		if (mIsGround == true) {
 
+			//大ジャンプフラグをfalseに
+			mBigJumpLeft = false;
+			mBigJumpRight = false;
+
 			//ステップしない時一定のタイミングで低確率でジャンプ
-			if (11 % RandNum(2, 11, NATURAL) == 0 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
+			if (RandNum(1, 10, NATURAL) % 10 == 0 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
 
 				//距離によってジャンプ距離を変える
 				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
@@ -1071,6 +1099,32 @@ void Enemy::Move(Player& player, Particle& particle) {
 				}
 
 				Novice::PlayAudio(mJumpSE, 0, 0.5f);
+
+			}
+
+			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 5) {
+
+				//右側の場合
+				if (mPosition.x >= player.GetPlayerPosition().x) {
+
+					if (Stage::kStageRight - mPosition.x - mRadius < 100) {
+						mVelocity.y = -28.0f;
+						mBigJumpRight = true;
+						Novice::PlayAudio(mJumpSE, 0, 0.5f);
+					}
+
+				}
+				//左側の場合
+				else {
+
+					if (mPosition.x - mRadius - Stage::kStageLeft < 100) {
+						mVelocity.y = -28.0f;
+						mBigJumpLeft = true;
+						Novice::PlayAudio(mJumpSE, 0, 0.5f);
+					}
+
+				}
 
 			}
 
@@ -1108,7 +1162,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 				//少しだけ退く
 				if (mStartFrame % 30 <= 10) {
-					mVelocity.x = 2.0f;
+					mVelocity.x = 5.0f;
 				}
 
 			}
@@ -1205,7 +1259,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 
 				//少しだけ退く
 				if (mStartFrame % 30 <= 10) {
-					mVelocity.x = -2.0f;
+					mVelocity.x = -5.0f;
 				}
 
 			}
@@ -1291,7 +1345,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 			mBigJumpRight = false;
 
 			//ステップしない時一定のタイミングで低確率でジャンプ
-			if (RandNum(1,10,NATURAL) % 10 <= 1 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
+			if (RandNum(1,10,NATURAL) % 10 <= 2 && mStartFrame % 10 == 0 && mStartFrame % mStepFrame != 0) {
 
 				//距離によってジャンプ距離を変える
 				if ((player.GetPlayerPosition() - mPosition).length() <= 400) {
@@ -1312,13 +1366,13 @@ void Enemy::Move(Player& player, Particle& particle) {
 			}
 
 			//プレイヤーとの距離が近く且つ壁に追い込まれていたら確定ジャンプ
-			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 30) {
+			if ((player.GetPlayerPosition() - mPosition).length() <= 200 && mStartFrame > 5) {
 
 				//右側の場合
 				if (mPosition.x >= player.GetPlayerPosition().x) {
 
 					if (Stage::kStageRight - mPosition.x - mRadius < 100) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpRight = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -1328,7 +1382,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 				else {
 
 					if (mPosition.x - mRadius - Stage::kStageLeft < 100) {
-						mVelocity.y = -35.0f;
+						mVelocity.y = -28.0f;
 						mBigJumpLeft = true;
 						Novice::PlayAudio(mJumpSE, 0, 0.5f);
 					}
@@ -1370,8 +1424,8 @@ void Enemy::Move(Player& player, Particle& particle) {
 			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//退く
-				if (mStartFrame % 30 <= 15) {
-					mVelocity.x = 3.0f;
+				if (mStartFrame % 30 <= 10) {
+					mVelocity.x = 5.5f;
 				}
 
 			}
@@ -1467,8 +1521,8 @@ void Enemy::Move(Player& player, Particle& particle) {
 			if ((player.GetPlayerPosition() - mPosition).length() <= 300) {
 
 				//退く
-				if (mStartFrame % 30 <= 15) {
-					mVelocity.x = -3.0f;
+				if (mStartFrame % 30 <= 10) {
+					mVelocity.x = -5.5f;
 				}
 
 			}
@@ -1588,7 +1642,7 @@ void Enemy::BackStep() {
 }
 void Enemy::Guard() {
 
-	if (mIsGuard == true){
+	if (mIsGuard == true && mIsGround == true){
 
 		if (mGuardFrame == 0) {
 			Novice::PlayAudio(mGuard2SE, 0, 0.5f);
@@ -1596,7 +1650,7 @@ void Enemy::Guard() {
 
 		mGuardFrame++;
 
-		if (mGuardFrame >= 120){
+		if (mGuardFrame >= 90){
 			mIsGuard = false;
 			//次のステップの速さを設定
 			mStepFrame = mStepCoolTime[0];
@@ -1621,23 +1675,23 @@ void Enemy::Attack(Player& player, Stage& stage) {
 	if (mIsAttackStart == true) {
 
 		//移動
-		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false) {
+		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false && mIsGround == true) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
-				mVelocity.x = -9.0f;
+				mVelocity.x = -11.0f;
 
 				//第二形態強化
 				if (stage.GetRound() == Round2) {
-					mVelocity.x = -18.0f;
+					mVelocity.x = -20.0f;
 				}
 
 				mDirection = ENEMYLEFT;
 			}
 			else {
-				mVelocity.x = 9.0f;
+				mVelocity.x = 11.0f;
 
 				//第二形態強化
 				if (stage.GetRound() == Round2) {
-					mVelocity.x = 18.0f;
+					mVelocity.x = 20.0f;
 				}
 
 				mDirection = ENEMYRIGHT;
@@ -1663,11 +1717,26 @@ void Enemy::Attack(Player& player, Stage& stage) {
 
 		if ((player.GetPlayerPosition() - mPosition).length() < 100 || mIsAttack[0] == true) {
 			mVelocity.x = 0.0f;
-			if (mAttackTimer % 15 == 0) {
-				mIsAttack[mAttackCount] = true;
-				Novice::PlayAudio(mAttackSE[mAttackCount], 0, 0.5f);
-				mAttackParticle[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
-				mAttackCount++;
+
+			if (stage.GetRound() == Round2) {
+
+				if (mAttackTimer % 10 == 0) {
+					mIsAttack[mAttackCount] = true;
+					Novice::PlayAudio(mAttackSE[mAttackCount], 0, 0.5f);
+					mAttackParticle[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
+					mAttackCount++;
+				}
+
+			}
+			else {
+
+				if (mAttackTimer % 15 == 0) {
+					mIsAttack[mAttackCount] = true;
+					Novice::PlayAudio(mAttackSE[mAttackCount], 0, 0.5f);
+					mAttackParticle[mAttackCount].SetFlag(mAttackPosition[mAttackCount]);
+					mAttackCount++;
+				}
+
 			}
 			mAttackTimer--;
 		}
@@ -1778,7 +1847,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 				mStepFrame = mStepCoolTime[2];
 			}
 
-			if (mSpecialAttackFrame >= 420){
+			if (mSpecialAttackFrame >= 360){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
 				mSpecialAttackParticle.Reset();
@@ -1853,26 +1922,37 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 					mFallingStarParticleRight[mFallingStarEndValue].Reset();
 					mFallingStarEndValue++;
 				}
-				if (mFallingStarFrame >= ( 5 * (kFallingStarMax - 1) + 20 )) {
+				if (mFallingStarFrame >= ( 5 * (kFallingStarMax - (8 - mFallingStarCount)) + 20 )) {
 
 					if (stage.GetRound() == Round2) {
 
 						if (mFallingStarCount > 0) {
-							mVelocity.x = 0.0f;
-							mFallingStarStartPosition = mPosition;
-							mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
-							for (int i = 0; i < kFallingStarMax; i++) {
-								mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
-								mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+
+							//確率で連続攻撃
+							if (RandNum(1, (10 - mFallingStarCount), NATURAL) % 9 <= 4) {
+								mVelocity.x = 0.0f;
+								mFallingStarStartPosition = mPosition;
+								mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
+								for (int i = 0; i < kFallingStarMax; i++) {
+									mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+									mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
+								}
+								mFallingStarEasingt = 0.0f;
+								mFallingStarFrame = 0;
+								mFallingStarStartValue = 0;
+								mFallingStarEndValue = 0;
+								for (int i = 0; i < 10; i++) {
+									mIsFallingStarAttack[i] = false;
+									mFallingStarParticleLeft[i].Reset();
+									mFallingStarParticleRight[i].Reset();
+								}
+
+								mFallingStarCount--;
 							}
-							mFallingStarEasingt = 0.0f;
-							mFallingStarFrame = 0;
-							mFallingStarStartValue = 0;
-							mFallingStarEndValue = 0;
-							for (int i = 0; i < 10; i++) {
-								mIsFallingStarAttack[i] = false;
+							else {
+								mIsFallingStar = false;
 							}
-							mFallingStarCount--;
+							
 						}
 						else {
 							mIsFallingStar = false;
@@ -1880,7 +1960,11 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 
 					}
 					else {
-						mIsFallingStar = false;
+
+						if (mFallingStarFrame >= (5 * (kFallingStarMax - 1) + 20)) {
+							mIsFallingStar = false;
+						}
+
 					}
 
 				}
@@ -1901,8 +1985,10 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 		mFallingStarEndValue = 0;
 		for (int i = 0; i < 10; i++) {
 			mIsFallingStarAttack[i] = false;
+			mFallingStarParticleLeft[i].Reset();
+			mFallingStarParticleRight[i].Reset();
 		}
-		mFallingStarCount = 2;
+		mFallingStarCount = 4;
 	}
 
 }
@@ -2265,13 +2351,13 @@ void Enemy::MovePattern(Stage& stage, Player& player) {
 			mStartFrameTimer = RandNum(1, 3, NATURAL);
 
 			if (mStartFrameTimer == 1) {
-				mStartFrameTimer = 80;
+				mStartFrameTimer = 60;
 			}
 			else if (mStartFrameTimer == 2) {
-				mStartFrameTimer = 120;
+				mStartFrameTimer = 80;
 			}
 			else if (mStartFrameTimer == 3) {
-				mStartFrameTimer = 160;
+				mStartFrameTimer = 100;
 			}
 			else {
 				mStartFrameTimer = 40;
