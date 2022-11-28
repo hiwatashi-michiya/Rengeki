@@ -211,13 +211,22 @@ private:
 
 	//体力
 	int mHitPoint;
+	int mOldHitPoint;
 
 	//体力の最大値
-	int mHitPointMax[Stage::kStageMax] = { 100, 150 };
+	int mHitPointMax[Stage::kStageMax] = { 100, 200 };
 	int mTmpHitPointMax;								//一時保存変数
 
 	//体力を代入したか
 	bool mIsHitPointAssign[Stage::kStageMax];
+
+	//遅れ体力
+	bool mIsDelayHp;
+	int mDelayHpFrame;
+	float mDelayHp;
+	float mDelayEasingt;
+	float mStartDelay;
+	float mEndDelay;
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kEnemyMaxAttack];
@@ -408,6 +417,8 @@ private:
 	int mFallingStarRadius;
 	//フラグ
 	bool mIsFallingStar;
+	//地面に着くまでフラグ
+	bool mIsFallingComplete;
 	//イージングの増加値
 	float mFallingStarEasingt;
 	//移動の開始地点と終了地点
@@ -537,6 +548,7 @@ private:
 	int mEnerge;
 	int mTama;
 	int mEnemyHp;
+	int mEnemyDelayHp;
 	int mEnemyHpFlame;
 	int mEnemyName;
 	Vec2 mEnemyUIPosition;

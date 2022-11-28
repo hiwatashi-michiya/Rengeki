@@ -116,6 +116,7 @@ private:
 
 	//体力
 	int mHitPoint;
+	int mOldHitPoint;
 	//体力の最大値
 	int mHitPointMax;
 	//体力を代入したか
@@ -151,6 +152,14 @@ private:
 
 	//攻撃を受けてからのフレーム
 	int mHitFrame;
+
+	//遅れ体力
+	bool mIsDelayHp;
+	int mDelayHpFrame;
+	float mDelayHp;
+	float mDelayEasingt;
+	float mStartDelay;
+	float mEndDelay;
 
 	//ノックバックしたかどうか
 	bool mKnockBack[kMaxAttack];

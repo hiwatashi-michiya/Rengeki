@@ -57,6 +57,10 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mHitPoint = mHitPointMax[0];
 	mIsHitPointAssign[0] = false;
 	mIsHitPointAssign[1] = false;
+	mDelayHp = 0;
+	mIsDelayHp = false;
+	mDelayHpFrame = 0;
+	mDelayEasingt = 0.0f;
 	mCross = 0.0f;
 	mCanAttack = true;
 	mIsWallHit = false;
@@ -101,6 +105,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
+	mIsFallingComplete = false;
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
@@ -240,6 +245,10 @@ void Enemy::ResetAll() {
 	mHitPoint = mHitPointMax[0];
 	mIsHitPointAssign[0] = false;
 	mIsHitPointAssign[1] = false;
+	mDelayHp = 0;
+	mIsDelayHp = false;
+	mDelayHpFrame = 0;
+	mDelayEasingt = 0.0f;
 	mCross = 0.0f;
 	mCanAttack = true;
 	mIsWallHit = false;
@@ -284,6 +293,7 @@ void Enemy::ResetAll() {
 	mAttackDirection = ENEMYRIGHT;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
+	mIsFallingComplete = false;
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
@@ -1818,7 +1828,9 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 
 		//上空に移動が完了したら
 		if (mFallingStarEasingt >= 1.0f){
-			mVelocity.y += 12.0f;
+			if (!mIsFallingComplete){
+				mVelocity.y += 12.0f;
+			}
 
 			if ((Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 0 || mIsPlayFallingStarFallSE == -1) &&
 				mIsGround == false && mIsHit[0] == false && mIsHit[1] == false && mIsHit[2] == false) {
@@ -1827,8 +1839,13 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 
 			}
 
+			if (mIsGround == true){
+				mIsFallingComplete = true;
+			}
+
 			//地面に到達したら
-			if (mIsGround == true) {
+			if (mIsFallingComplete == true) {
+
 
 				//音停止
 				if (Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 1) {
@@ -1895,6 +1912,7 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 
 	//落下星終了（初期化）
 	if (mIsFallingStar == false){
+		mIsFallingComplete = false;
 		mFallingStarEasingt = 0.0f;
 		mFallingStarFrame = 0;
 		mFallingStarStartValue = 0;
@@ -2450,6 +2468,8 @@ void Enemy::VelocityAssign() {
 
 void Enemy::Collision(Player& player) {
 
+	mOldHitPoint = mHitPoint;
+
 	for (int i = 0; i < kMaxAttack; i++){
 		mIsOldHit[i] = mIsHit[i];
 	}
@@ -2552,6 +2572,13 @@ void Enemy::Collision(Player& player) {
 					mVelocity.y = 0.0f;
 					mCanAttack = false;
 					mKnockBack[2 - player.GetAttackCount()] = true;
+				}
+
+				//もしも落下星の攻撃が残っていたら中断させる
+				if (0 < mFallingStarCount){
+					mFallingStarCount = 0;
+					mFallingStarFrame = 65;
+					mIsFallingComplete = false;
 				}
 
 			}
@@ -2697,11 +2724,13 @@ void Enemy::HitPoint(Stage& stage) {
 	if (stage.GetRound() == Round1 && mIsHitPointAssign[0] == false) {
 		mHitPoint = mHitPointMax[0];
 		mTmpHitPointMax = mHitPoint;
+		mDelayHp = mHitPoint;
 		mIsHitPointAssign[0] = true;
 	}
 	else if (stage.GetRound() == Round2 && mIsHitPointAssign[1] == false) {
 		mHitPoint = mHitPointMax[1];
 		mTmpHitPointMax = mHitPoint;
+		mDelayHp = mHitPoint;
 		//ステップするフレームを第二形態用に更新
 		mStepCoolTime[0] = mNewStepCoolTime[0];
 		mStepCoolTime[1] = mNewStepCoolTime[1];
@@ -2711,6 +2740,23 @@ void Enemy::HitPoint(Stage& stage) {
 
 	//体力を0に収める
 	mHitPoint = Clamp(mHitPoint, 0, mTmpHitPointMax);
+
+	if (mOldHitPoint != mHitPoint) {
+		mDelayEasingt = 0.0f;
+		mDelayHpFrame = 0;
+		mStartDelay = mDelayHp;
+		mEndDelay = mHitPoint;
+		mIsDelayHp = true;
+	}
+
+	if (mIsDelayHp) {
+		mDelayHpFrame++;
+		if (30 < mDelayHpFrame) {
+			mDelayEasingt = EasingClamp(0.1f, mDelayEasingt);
+			mDelayHp = EasingMove(mStartDelay, mEndDelay, easeLinear(mDelayEasingt));
+		}
+	}
+
 }
 
 void Enemy::Draw(Screen& screen, Player& player) {
@@ -2826,6 +2872,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 
 		mEnemyHp = Novice::LoadTexture("./Resources/UI/EnemyHp.png");
+		mEnemyDelayHp = Novice::LoadTexture("./Resources/UI/EnemyDelayHp.png");
 		mEnemyHpFlame = Novice::LoadTexture("./Resources/UI/EnemyHpFlame.png");
 		mEnemyName = Novice::LoadTexture("./Resources/UI/EnemyName.png");
 		
@@ -3054,7 +3101,9 @@ void Enemy::FrontDraw() {
 	else{
 		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y, mEnemyUIPosition.x + 160, mEnemyUIPosition.y, mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 160, mEnemyUIPosition.y + 30, 0, 0, 1000, 200, mEnemyName, WHITE);
 	}
+
 	if (mTmpHitPointMax != 0){
+		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + mDelayHp * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + mDelayHp * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 50, 0, 0, mDelayHp * (1000 / mTmpHitPointMax), 20, mEnemyDelayHp, 0x505050FF);
 		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + mHitPoint * (1000 / mTmpHitPointMax), mEnemyUIPosition.y + 50, 0, 0, mHitPoint * (1000 / mTmpHitPointMax), 20, mEnemyHp, WHITE);
 		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 30, mEnemyUIPosition.x, mEnemyUIPosition.y + 50, mEnemyUIPosition.x + 1000, mEnemyUIPosition.y + 50, 0, 0, 1000, 20, mEnemyHpFlame, WHITE);
 	}
