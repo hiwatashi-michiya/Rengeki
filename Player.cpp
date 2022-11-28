@@ -31,6 +31,10 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mHitPoint = 0;
 	mHitPointMax = 100;
 	mIsHitPointAssign = false;
+	mDelayHp = 0;
+	mIsDelayHp = false;
+	mDelayHpFrame = 0;
+	mDelayEasingt = 0.0f;
 
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
@@ -106,6 +110,10 @@ void Player::ResetAll() {
 	mHitPoint = 0;
 	mHitPointMax = 100;
 	mIsHitPointAssign = false;
+	mDelayHp = 0;
+	mIsDelayHp = false;
+	mDelayHpFrame = 0;
+	mDelayEasingt = 0.0f;
 
 	mColor = 0xFFFFFFFF;
 	mAttackCount = kMaxAttack;
@@ -484,6 +492,8 @@ void Player::RoundTranslation(Enemy& enemy) {
 //----------‚±‚±‚©‚ç“–‚½‚è”»’è----------//
 void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
+	mOldHitPoint = mHitPoint;
+
 	for (int i = 0; i < kMaxAttack; i++) {
 		mIsOldHit[i] = mIsHit[i];
 	}
@@ -658,7 +668,7 @@ void Player::Collision(Title& title, Stage& stage, Enemy& enemy) {
 
 	//¯‚ÌŽ´‚Ìƒ_ƒ[ƒW
 	if (enemy.GetOldStarDropDamage() == false && enemy.GetStarDropDamage() == true) {
-		mHitPoint = (0);
+		mHitPoint = 0;
 	}
 	
 }
@@ -667,10 +677,27 @@ void Player::HitPoint() {
 	//‘Ì—Í‚Ì‘ã“ü
 	if (mIsHitPointAssign == false) {
 		mHitPoint = mHitPointMax;
+		mDelayHp = mHitPoint;
 		mIsHitPointAssign = true;
 	}
 
 	mHitPoint = Clamp(mHitPoint, 0, mHitPointMax);
+
+	if (mOldHitPoint != mHitPoint){
+		mDelayEasingt = 0.0f;
+		mDelayHpFrame = 0;
+		mStartDelay = mDelayHp;
+		mEndDelay = mHitPoint;
+		mIsDelayHp = true;
+	}
+
+	if (mIsDelayHp){
+		mDelayHpFrame++;
+		if (30 < mDelayHpFrame){
+			mDelayEasingt = EasingClamp(0.2f, mDelayEasingt);
+			mDelayHp = EasingMove(mStartDelay, mEndDelay, easeLinear(mDelayEasingt));
+		}
+	}
 
 }
 
@@ -950,6 +977,10 @@ void Player::DrawUI() {
 
 	//‘Ì—Í•`‰æ
 	int a = mHitPointMax - mHitPoint;
+
+	//’x‚ê‚ÄŒ¸‚é‘Ì—Í
+	Novice::DrawBox(90, 36, mDelayHp * (300 / mHitPointMax), 23, 0.0f, 0x606060FF, kFillModeSolid);
+
 	if (a < 50){
 		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, GREEN, kFillModeSolid);
 	}
