@@ -360,6 +360,11 @@ void Enemy::ResetAll() {
 
 void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particle) {
 
+	//デバッグ用・体力を減らす
+	if (Key::IsTrigger(DIK_Q)) {
+		mHitPoint -= 20;
+	}
+
 	if (mIsInvincible == true){
 		mColor = 0x0000FF60;
 	}
@@ -1857,7 +1862,7 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 				mStepFrame = mStepCoolTime[2];
 			}
 
-			if (mSpecialAttackFrame >= 360){
+			if (mSpecialAttackFrame >= 390){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
 				mSpecialAttackParticle.Reset();
@@ -1891,6 +1896,10 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 		//移動
 		if (mFallingStarEasingt < 1.0f){
 			mFallingStarEasingt += 0.015f;
+			//第二形態時の移動速度上昇
+			if (stage.GetRound() == Round2) {
+				mFallingStarEasingt += 0.010f;
+			}
 			mFallingStarEasingt = Clamp(mFallingStarEasingt, 0.0f, 1.0f);
 			mPosition = EasingMove(mFallingStarStartPosition, mFallingStarEndPosition, easeOutExpo(mFallingStarEasingt));
 		}
@@ -1898,7 +1907,16 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 		//上空に移動が完了したら
 		if (mFallingStarEasingt >= 1.0f){
 			if (!mIsFallingComplete){
-				mVelocity.y += 12.0f;
+
+				if (stage.GetRound() == Round1) {
+					mVelocity.y += 12.0f;
+				}
+
+				//第二形態時の移動速度上昇
+				if (stage.GetRound() == Round2) {
+					mVelocity.y += 24.0f;
+				}
+
 			}
 
 			if ((Novice::IsPlayingAudio(mIsPlayFallingStarFallSE) == 0 || mIsPlayFallingStarFallSE == -1) &&
@@ -1946,7 +1964,7 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 						if (mFallingStarCount > 0) {
 
 							//確率で連続攻撃
-							if (RandNum(1, (10 - mFallingStarCount), NATURAL) % 9 <= 4) {
+							if (RandNum(1, (10 - mFallingStarCount), NATURAL) % 9 <= 5) {
 								mVelocity.x = 0.0f;
 								mFallingStarStartPosition = mPosition;
 								mFallingStarEndPosition = { player.GetPlayerPosition().x ,200 };
@@ -1954,6 +1972,7 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 									mLeftFallingStarPosition[i] = { player.GetPlayerPosition().x - (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
 									mRightFallingStarPosition[i] = { player.GetPlayerPosition().x + (i * (mFallingStarRadius * 2) + mFallingStarRadius) , Stage::kStageBottom - mRadius / 2 };
 								}
+								mIsFallingComplete = false;
 								mFallingStarEasingt = 0.0f;
 								mFallingStarFrame = 0;
 								mFallingStarStartValue = 0;
@@ -1967,12 +1986,16 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 								mFallingStarCount--;
 							}
 							else {
-								mIsFallingStar = false;
+								mFallingStarCount = 0;
 							}
 							
 						}
 						else {
-							mIsFallingStar = false;
+							
+							if (mFallingStarFrame >= (5 * (kFallingStarMax - 1) + 20)) {
+								mIsFallingStar = false;
+							}
+
 						}
 
 					}
