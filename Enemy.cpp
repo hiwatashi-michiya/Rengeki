@@ -1690,7 +1690,7 @@ void Enemy::Attack(Player& player, Stage& stage) {
 	if (mIsAttackStart == true) {
 
 		//ˆÚ“®
-		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false && mIsGround == true) {
+		if ((player.GetPlayerPosition().x - mPosition.x) >= 100 && mIsAttack[0] == false && mIsGround == true) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
 				mVelocity.x = -11.0f;
 
