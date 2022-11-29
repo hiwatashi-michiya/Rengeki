@@ -214,7 +214,7 @@ private:
 	int mOldHitPoint;
 
 	//‘Ì—Í‚ÌÅ‘å’l
-	int mHitPointMax[Stage::kStageMax] = { 100, 200 };
+	int mHitPointMax[Stage::kStageMax] = { 100, 100 };
 	int mTmpHitPointMax;								//ˆê•Û‘¶•Ï”
 
 	//‘Ì—Í‚ğ‘ã“ü‚µ‚½‚©

@@ -3203,7 +3203,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 void Enemy::FrontDraw() {
 
-	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 	if (mIsHitPointAssign[1] == true){
 		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y, mEnemyUIPosition.x + 160, mEnemyUIPosition.y, mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 160, mEnemyUIPosition.y + 30, 1000, 0, 1000, 200, mEnemyName, WHITE);
 	}
@@ -3220,6 +3219,7 @@ void Enemy::FrontDraw() {
 }
 
 void Enemy::BlackDraw() {
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
