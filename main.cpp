@@ -8,7 +8,6 @@
 #include "Enemy.h"
 #include "Particle.h"
 #include "Rand.h"
-#include <time.h>
 #include "ControllerInput.h"
 
 const char kWindowTitle[] = "星拳";
