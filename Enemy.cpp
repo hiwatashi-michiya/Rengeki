@@ -109,7 +109,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	mFallingStarCount = 4;
+	mFallingStarCount = 2;
 
 	mIsActive = false;
 	mIsActiveOnce = false;
@@ -297,7 +297,7 @@ void Enemy::ResetAll() {
 	mFallingStarRadius = 15;
 	mFallingStarEasingt = 0.0f;
 	mFallingStarFrame = 0;
-	mFallingStarCount = 4;
+	mFallingStarCount = 2;
 	mFallingStarStartValue = 0;
 	mFallingStarEndValue = 0;
 	for (int i = 0; i < 10; i++) {
@@ -2029,7 +2029,7 @@ void Enemy::FallingStar(Player& player, Stage& stage) {
 			mFallingStarParticleLeft[i].Reset();
 			mFallingStarParticleRight[i].Reset();
 		}
-		mFallingStarCount = 4;
+		mFallingStarCount = 2;
 	}
 
 }
