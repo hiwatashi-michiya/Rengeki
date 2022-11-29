@@ -1690,7 +1690,9 @@ void Enemy::Attack(Player& player, Stage& stage) {
 	if (mIsAttackStart == true) {
 
 		//ˆÚ“®
-		if ((player.GetPlayerPosition().x - mPosition.x) >= 100 && mIsAttack[0] == false && mIsGround == true) {
+		float direction = player.GetPlayerPosition().x - mPosition.x;
+
+		if (( -100 > direction || direction > 100 ) && mIsAttack[0] == false && mIsGround == true) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
 				mVelocity.x = -11.0f;
 
@@ -1730,7 +1732,7 @@ void Enemy::Attack(Player& player, Stage& stage) {
 		mAttackPosition[1].y = mPosition.y;
 		mAttackPosition[2].y = mPosition.y;
 
-		if ((player.GetPlayerPosition().x - mPosition.x) < 100 || mIsAttack[0] == true) {
+		if ((-100 < direction && direction < 100) || mIsAttack[0] == true) {
 			mVelocity.x = 0.0f;
 
 			if (stage.GetRound() == Round2) {
