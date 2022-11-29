@@ -1730,7 +1730,7 @@ void Enemy::Attack(Player& player, Stage& stage) {
 		mAttackPosition[1].y = mPosition.y;
 		mAttackPosition[2].y = mPosition.y;
 
-		if ((player.GetPlayerPosition() - mPosition).length() < 100 || mIsAttack[0] == true) {
+		if ((player.GetPlayerPosition().x - mPosition.x) < 100 || mIsAttack[0] == true) {
 			mVelocity.x = 0.0f;
 
 			if (stage.GetRound() == Round2) {
