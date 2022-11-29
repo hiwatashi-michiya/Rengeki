@@ -1690,7 +1690,7 @@ void Enemy::Attack(Player& player, Stage& stage) {
 	if (mIsAttackStart == true) {
 
 		//ˆÚ“®
-		if ((player.GetPlayerPosition() - mPosition).length() >= 100 && mIsAttack[0] == false && mIsGround == true) {
+		if ((player.GetPlayerPosition().x - mPosition.x) >= 100 && mIsAttack[0] == false && mIsGround == true) {
 			if (mPosition.x >= player.GetPlayerPosition().x) {
 				mVelocity.x = -11.0f;
 
@@ -2121,7 +2121,7 @@ void Enemy::StarDrop(Player& player, Particle& particle) {
 					if (mEnergyEasingt[i] == 1.0f) {
 
 						if (mIsStartAttack == false) {
-							mPowerRadius += 2.5f;
+							mPowerRadius += 4.0f;
 							if (220 <= mPowerRadius) {
 								mPowerStartRadius = mPowerRadius;
 								mIsStartAttack = true;
@@ -3203,7 +3203,6 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 void Enemy::FrontDraw() {
 
-	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 	if (mIsHitPointAssign[1] == true){
 		Novice::DrawQuad(mEnemyUIPosition.x, mEnemyUIPosition.y, mEnemyUIPosition.x + 160, mEnemyUIPosition.y, mEnemyUIPosition.x, mEnemyUIPosition.y + 30, mEnemyUIPosition.x + 160, mEnemyUIPosition.y + 30, 1000, 0, 1000, 200, mEnemyName, WHITE);
 	}
@@ -3220,6 +3219,7 @@ void Enemy::FrontDraw() {
 }
 
 void Enemy::BlackDraw() {
+	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mWhiteColor, kFillModeSolid);
 
 	Novice::DrawBox(0, 0, kWindowWidth, kWindowHeight, 0.0f, mBlack, kFillModeSolid);
 }
