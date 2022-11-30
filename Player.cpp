@@ -15,7 +15,76 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
 
-	ResetAll();
+	mIsGameOver = false;
+
+	//パーティクル
+	for (int i = 0; i < 3; i++) {
+		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
+	}
+
+	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 100, false);
+	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 100, false);
+
+	mIsWallHitRightFlag = false;
+	mIsWallHitLeftFlag = false;
+
+	mHitPoint = 0;
+	mHitPointMax = 100;
+	mIsHitPointAssign = false;
+	mDelayHp = 0;
+	mIsDelayHp = false;
+	mDelayHpFrame = 0;
+	mDelayEasingt = 0.0f;
+
+	mColor = 0xFFFFFFFF;
+	mAttackCount = kMaxAttack;
+	mCanJump = true;
+	mJumpCount = 0;
+	mIsGround = false;
+	mIsRolling = false;
+	mRollingFrame = 0;
+	mIsWallHit = false;
+	mDirection = RIGHT;
+	mAttackTimer = 0;
+	mIsAttack[0] = false;
+	mIsAttack[1] = false;
+	mIsAttack[2] = false;
+	mAttackPosition[0].x = mPosition.x + 32;
+	mAttackPosition[0].x = mPosition.x + 64;
+	mAttackPosition[0].x = mPosition.x + 96;
+	mAttackPosition[0].y = mPosition.y;
+	mAttackPosition[1].y = mPosition.y;
+	mAttackPosition[2].y = mPosition.y;
+	mAttackRadius[0] = 16;
+	mAttackRadius[1] = 16;
+	mAttackRadius[2] = 16;
+	mIsHit[0] = false;
+	mIsHit[1] = false;
+	mIsHit[2] = false;
+	mHitFrame = 0;
+	mKnockBack[0] = false;
+	mKnockBack[1] = false;
+	mKnockBack[2] = false;
+	mScaling = { 1.0f, 1.0f };
+	mIsJumpScaling = false;
+	mIsLandScaling = false;
+	mIsRollingScaling = false;
+	mTheta = 0.0f;
+	mIsLoadTexture = false;
+	mTextureFrame = 0;
+	mPlayerSrcX = 0;
+	mJumpSrcX = 0;
+	mIsjumpRoll = false;
+	mJumpAnimeCount = 0;
+	mNoHitCount = 0;
+	mIsNoHit = false;
+	mFlashing = 1;
+	mGameOverCount = 0;
+	mGameOverSrcX = 0;
+	mDoragonPosition = {};
+	mDoragonSrcX = 0;
+	mIsDoragon = false;
+
 	//////////// SE /////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -92,6 +161,9 @@ void Player::ResetAll() {
 	mAtackBairitu = 0;
 	mGameOverCount = 0;
 	mGameOverSrcX = 0;
+	mDoragonPosition = {};
+	mDoragonSrcX = 0;
+	mIsDoragon = false;
 }
 
 void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
@@ -289,20 +361,36 @@ void Player::Attack() {
 
 	if ((Key::IsRelease(DIK_C) || Controller::IsReleaseButton(0, Controller::bX))){
 
-		//弱攻撃
-		if (mPushFrame < 180) {
-			mIsWeekAttack = true;
-			mIsAttack = true;
-
-			if (mIsWeekAttack == true){
-				mAttackRadius = mWeekAttackRadius;
-				if (mDirection == LEFT){
-					mAttackPosition.x = mPosition.x - mAttackRadius * 2;
-				}
-				else if (mDirection == RIGHT){
-					mAttackPosition.x = mPosition.x + mAttackRadius * 2;
-				}
+			//一撃目
+			if (mAttackCount == 3 && mIsAttack[0] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[0] = true;
+				mAttackParticle[0].SetFlag(mAttackPosition[0]);
+				Novice::PlayAudio(mAttackSE[0], 0, 0.5f);
+				mAttackCount -= 1;
+				mDoragonSrcX = 0;
 			}
+
+			//二撃目
+			else if (mAttackCount == 2 && mIsAttack[1] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[1] = true;
+				mAttackParticle[1].SetFlag(mAttackPosition[1]);
+				Novice::PlayAudio(mAttackSE[1], 0, 0.5f);
+				mAttackCount -= 1;
+			}
+
+			//三撃目
+			else if (mAttackCount == 1 && mIsAttack[2] == false) {
+				mAttackTimer = kAttackPersistence;
+				mIsAttack[2] = true;
+				mAttackParticle[2].SetFlag(mAttackPosition[2]);
+				Novice::PlayAudio(mAttackSE[2], 0, 0.5f);
+				mAttackCount -= 1;
+				mIsDoragon = true;
+			}
+
+		}
 
 		}
 
@@ -747,9 +835,28 @@ void Player::Draw(Screen& screen) {
 
 		//右攻撃
 		if (mDirection == RIGHT) {
-			if (mIsAttack == true) {
+			
+			if (mIsAttack[2] == true) {
+				mDoragonPosition.x++;
+				if (mDoragonPosition.y <= 0) {
+					mDoragonPosition.y++;
+				}
+				else {
+					mDoragonPosition.y *= -1;
+				}
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
-				screen.DrawQuad(mAttackPosition, mAttackRadius * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
+				if (mIsDoragon) {
+					screen.DrawAnime(mAttackPosition[2] + mDoragonPosition, mAttackRadius[2] * mAtackBairitu, mDoragonSrcX, 140, 140, 7, 4, mTextureFrame, mDoragon, mColor, 0, 0);
+				}
+			}
+			else if (mIsAttack[1] == true) {
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuad(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
+			}
+			else if (mIsAttack[0] == true) {
+				mDoragonPosition = { -3,-3 };
+				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuad(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 			//else if (mIsAttack[1] == true) {
 			//	screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
@@ -763,9 +870,28 @@ void Player::Draw(Screen& screen) {
 
 		//左攻撃
 		if (mDirection == LEFT) {
-			if (mIsAttack == true) {
+			
+			if (mIsAttack[2] == true) {
+				mDoragonPosition.x--;
+				if (mDoragonPosition.y <= 0) {
+					mDoragonPosition.y++;
+				}
+				else {
+					mDoragonPosition.y *= -1;
+				}
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
-				screen.DrawQuadReverse(mAttackPosition, mAttackRadius * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
+				if (mIsDoragon) {
+					screen.DrawAnimeReverse(mAttackPosition[2] + mDoragonPosition, mAttackRadius[2] * mAtackBairitu, mDoragonSrcX, 140, 140, 7, 4, mTextureFrame, mDoragon, mColor, 0, 0);
+				}
+			}
+			else if (mIsAttack[1] == true) {
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+				screen.DrawQuadReverse(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
+			}
+			else if (mIsAttack[0] == true) {
+				mDoragonPosition = { 3,-3 };
+				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+				screen.DrawQuadReverse(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
 			}
 			//else if (mIsAttack[1] == true) {
 			//	screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
@@ -777,7 +903,11 @@ void Player::Draw(Screen& screen) {
 			//}
 		}
 
-
+		if (mDoragonSrcX > 980) {
+			mDoragonSrcX = 0;
+			mIsDoragon = false;
+		}
+		
 
 
 
@@ -873,9 +1003,9 @@ void Player::Draw(Screen& screen) {
 
 	if (mIsGameOver && mIsGround) {
 		mGameOverCount++;
-		screen.DrawAnime(mPosition, mRadius, mGameOverSrcX, 170, 170, 8, 6, mTextureFrame, mTaoreru, mColor, 0, 0);
+		screen.DrawAnime(mPosition, mRadius, mGameOverSrcX, 170, 170, 8, 7, mTextureFrame, mTaoreru, mColor, 0, 0);
 	}
-	if (mGameOverCount >= 48) {
+	if (mGameOverCount >= 56) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 170, 170, mTaoreta, mColor);
 	}
 
