@@ -78,23 +78,17 @@ public:
 	inline float GetPlayerRadius() { return mRadius; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
-	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
+	inline Vec2 GetAttackPosition() { return mAttackPosition; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ì”¼Œa‚Ìæ“¾
-	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
+	inline float GetAttackRadius() { return mAttackRadius; }
 
 	//UŒ‚‚µ‚Ä‚¢‚é‚©æ“¾
-	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
-
-	//UŒ‚‰ñ”‚Ìæ“¾
-	inline int GetAttackCount() { return mAttackCount; }
+	inline bool GetIsAttack() { return mIsAttack; }
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©æ“¾
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
 	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
-
-	//UŒ‚ŠÔ‚Ìæ“¾
-	inline int GetAttackTimer() { return mAttackTimer; }
 
 	//ƒvƒŒƒCƒ„[‚ÌÀ•Wæ“¾iŠOÏ‚Ég—p‚·‚éj
 	inline Vec2 GetPlayerPosition() { return mPosition; }
@@ -188,17 +182,20 @@ private:
 	void RoundTranslation(Enemy& enemy);
 
 	//----------“®‚«ŠÖŒW----------//
-	//---UŒ‚---//
-	//UŒ‚‰ñ”
-	int mAttackCount;
-	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ì”»’è
-	bool mIsAttack[kMaxAttack];
-	//UŒ‚‚Ì•`‰æŠÔ
-	int mAttackTimer;
+	//ƒL[ || ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éƒtƒŒ[ƒ€
+	int mPushFrame;
+	//UŒ‚‚ğ‚µ‚Ä‚¢‚é‚©
+	bool mIsWeekAttack;
+	bool mIsStrongAttack;
+	bool mIsAttack;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚ÌÀ•W
-	Vec2 mAttackPosition[kMaxAttack];
+	Vec2 mWeekAttackPosition;
+	Vec2 mStrongAttackPosition;
+	Vec2 mAttackPosition;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ì”¼Œa
-	float mAttackRadius[kMaxAttack];
+	float mWeekAttackRadius;
+	float mStrongAttackRadius;
+	float mAttackRadius;
 	//UŒ‚ŠÖ”
 	void Attack();
 	//ƒp[ƒeƒBƒNƒ‹

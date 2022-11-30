@@ -50,7 +50,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mAttackRadius[i] = 16;
 	}
 	for (int i = 0; i < kMaxAttack; i++){
-		mIsHit[i] = false;
+		mIsHit = false;
 		mIsGuardHit[i] = false;
 		mKnockBack[i] = false;
 	}
@@ -682,7 +682,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//ŠÔ‡‚¢‹ß‚­‚ÅŒü‚©‚¢‡‚Á‚ÄUŒ‚‚µ‚Ä‚«‚½‚ç‰ñ”ð
-					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack(0) == true &&
+					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack() == true &&
 						player.GetPlayerDirection() == RIGHT) {
 						mVelocity.x = -150.0f;
 					}
@@ -786,7 +786,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//ŠÔ‡‚¢‹ß‚­‚ÅŒü‚©‚¢‡‚Á‚ÄUŒ‚‚µ‚Ä‚«‚½‚ç‰ñ”ð
-					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack(0) == true &&
+					if ((player.GetPlayerPosition() - mPosition).length() <= 100 && player.GetIsAttack() == true &&
 						player.GetPlayerDirection() == LEFT) {
 						mVelocity.x = 150.0f;
 					}
@@ -957,7 +957,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//ŠÔ‡‚¢‹ß‚­‚ÅŒü‚©‚¢‡‚Á‚ÄUŒ‚‚µ‚Ä‚«‚½‚ç‰ñ”ð
-					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack(0) == true &&
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack() == true &&
 						player.GetPlayerDirection() == RIGHT) {
 						mVelocity.x = -250.0f;
 					}
@@ -1061,7 +1061,7 @@ void Enemy::Move(Player& player, Particle& particle) {
 					}
 
 					//ŠÔ‡‚¢‹ß‚­‚ÅŒü‚©‚¢‡‚Á‚ÄUŒ‚‚µ‚Ä‚«‚½‚ç‰ñ”ð
-					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack(0) == true &&
+					if ((player.GetPlayerPosition() - mPosition).length() <= 200 && player.GetIsAttack() == true &&
 						player.GetPlayerDirection() == LEFT) {
 						mVelocity.x = 250.0f;
 					}
@@ -2663,7 +2663,7 @@ void Enemy::Collision(Player& player) {
 
 				mColor = 0xFFFF00FF;
 				//ƒqƒbƒgƒtƒ‰ƒO‚ð—§‚Ä‚é
-				if (mIsHit[2 - player.GetAttackCount()] == false) {
+				if (mIsHit == false) {
 					mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
 					mIsHit[2 - player.GetAttackCount()] = true;
 				}

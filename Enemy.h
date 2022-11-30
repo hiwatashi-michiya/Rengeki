@@ -162,8 +162,8 @@ public:
 
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©
-	inline bool GetIsHit(int i) { return mIsHit[i]; }
-	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
+	inline bool GetIsHit() { return mIsHit; }
+	inline bool GetIsOldHit() { return mIsOldHit; }
 
 private:
 
@@ -203,8 +203,8 @@ private:
 	int mJumpCount;
 
 	//“–‚½‚Á‚½‚©‚Ç‚¤‚©‚Ì”»’è
-	bool mIsHit[kEnemyMaxAttack];
-	bool mIsOldHit[kEnemyMaxAttack];
+	bool mIsHit;
+	bool mIsOldHit;
 
 	//“G‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü
 	ENEMYDIRECTION mDirection;

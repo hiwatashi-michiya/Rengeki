@@ -15,72 +15,7 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	: mPosition(mPosition),mVelocity(mVelocity),mRadius(mRadius)
 {
 
-	mIsGameOver = false;
-
-	//パーティクル
-	for (int i = 0; i < 3; i++) {
-		mAttackParticle[i] = Particle(DIFFUSION, 0x00FFFF00, 300, 3, 5, 50, false);
-	}
-
-	mWallHitRight = Particle(WALLHITRIGHT, 0x00FFFF00, 10000, 3, 5, 100, false);
-	mWallHitLeft = Particle(WALLHITLEFT, 0x00FFFF00, -10000, 3, 5, 100, false);
-
-	mIsWallHitRightFlag = false;
-	mIsWallHitLeftFlag = false;
-
-	mHitPoint = 0;
-	mHitPointMax = 100;
-	mIsHitPointAssign = false;
-	mDelayHp = 0;
-	mIsDelayHp = false;
-	mDelayHpFrame = 0;
-	mDelayEasingt = 0.0f;
-
-	mColor = 0xFFFFFFFF;
-	mAttackCount = kMaxAttack;
-	mCanJump = true;
-	mJumpCount = 0;
-	mIsGround = false;
-	mIsRolling = false;
-	mRollingFrame = 0;
-	mIsWallHit = false;
-	mDirection = RIGHT;
-	mAttackTimer = 0;
-	mIsAttack[0] = false;
-	mIsAttack[1] = false;
-	mIsAttack[2] = false;
-	mAttackPosition[0].x = mPosition.x + 32;
-	mAttackPosition[0].x = mPosition.x + 64;
-	mAttackPosition[0].x = mPosition.x + 96;
-	mAttackPosition[0].y = mPosition.y;
-	mAttackPosition[1].y = mPosition.y;
-	mAttackPosition[2].y = mPosition.y;
-	mAttackRadius[0] = 16;
-	mAttackRadius[1] = 16;
-	mAttackRadius[2] = 16;
-	mIsHit[0] = false;
-	mIsHit[1] = false;
-	mIsHit[2] = false;
-	mHitFrame = 0;
-	mKnockBack[0] = false;
-	mKnockBack[1] = false;
-	mKnockBack[2] = false;
-	mScaling = { 1.0f, 1.0f };
-	mIsJumpScaling = false;
-	mIsLandScaling = false;
-	mIsRollingScaling = false;
-	mTheta = 0.0f;
-	mIsLoadTexture = false;
-	mTextureFrame = 0;
-	mPlayerSrcX = 0;
-	mJumpSrcX = 0;
-	mIsjumpRoll = false;
-	mJumpAnimeCount = 0;
-	mNoHitCount = 0;
-	mIsNoHit = false;
-	mFlashing = 1;
-	mGameOverCount = 0;
-	mGameOverSrcX = 0;
+	ResetAll();
 	//////////// SE /////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
 	mAttackSE[1] = Novice::LoadAudio("./Resources/SE/punch2.wav");
@@ -116,7 +51,6 @@ void Player::ResetAll() {
 	mDelayEasingt = 0.0f;
 
 	mColor = 0xFFFFFFFF;
-	mAttackCount = kMaxAttack;
 	mCanJump = true;
 	mJumpCount = 0;
 	mIsGround = false;
@@ -124,19 +58,14 @@ void Player::ResetAll() {
 	mRollingFrame = 0;
 	mIsWallHit = false;
 	mDirection = RIGHT;
-	mAttackTimer = 0;
-	mIsAttack[0] = false;
-	mIsAttack[1] = false;
-	mIsAttack[2] = false;
-	mAttackPosition[0].x = mPosition.x + 32;
-	mAttackPosition[0].x = mPosition.x + 64;
-	mAttackPosition[0].x = mPosition.x + 96;
-	mAttackPosition[0].y = mPosition.y;
-	mAttackPosition[1].y = mPosition.y;
-	mAttackPosition[2].y = mPosition.y;
-	mAttackRadius[0] = 16;
-	mAttackRadius[1] = 16;
-	mAttackRadius[2] = 16;
+
+	mPushFrame = 0;
+	mIsWeekAttack = false;
+	mIsStrongAttack = false;
+	mIsAttack = false;
+	mWeekAttackRadius = 16;
+	mStrongAttackRadius = 32;
+
 	mIsHit[0] = false;
 	mIsHit[1] = false;
 	mIsHit[2] = false;
@@ -173,8 +102,8 @@ void Player::Update(Title& title, Stage &stage, Enemy &enemy) {
 	//攻撃パーティクルの更新
 	for (int i = 0; i < kEnemyMaxAttack; i++) {
 
-		if (mIsAttack[i] == true) {
-			mAttackParticle[i].Update(mAttackPosition[i]);
+		if (mIsAttack == true) {
+			mAttackParticle[i].Update(mAttackPosition);
 		}
 
 	}
@@ -248,11 +177,6 @@ void Player::Move(Title& title, Enemy& enemy) {
 		mVelocity.y = 0;
 	}
 
-	//攻撃フラグが立っている場合、一定時間でフラグを戻す
-	if (mAttackTimer > 0) {
-		mAttackTimer -= 1;
-	}
-
 	//攻撃を受けたらしばらく動けない
 	mHitFrame--;
 	mHitFrame = Clamp(mHitFrame, 0, 30);
@@ -260,7 +184,7 @@ void Player::Move(Title& title, Enemy& enemy) {
 	//プレイヤーの場合の操作
 
 	//攻撃していない場合のみ行動できる && 攻撃を受けてしばらくは動けない && 星の雫が起きたか && タイトル後の硬直は終わったか && ラウンド遷移しているか
-	if (mIsAttack[0] == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false && mIsGameOver == false && enemy.GetIsGameClear() == false) {
+	if (mIsAttack == false && mHitFrame == 0 && enemy.GetIsStarDropAttack() == false && (title.GetIsTitleClear() == false || (title.GetIsTitleClear() == true && enemy.GetIsStartBattle() == true)) && enemy.GetIsRoundTranslation() == false && mIsGameOver == false && enemy.GetIsGameClear() == false) {
 
 		if (Key::IsPress(DIK_RIGHT) || Key::IsPress(DIK_LEFT)) {
 			mReleaseFrame = 12;
@@ -310,11 +234,9 @@ void Player::Move(Title& title, Enemy& enemy) {
 	if (enemy.GetIsRoundTranslation() == true) {
 
 		for (int i = 0; i < kMaxAttack; i++) {
-			mIsAttack[i] = false;
 			mAttackParticle[i].Reset();
 		}
-
-		mAttackCount = kMaxAttack;
+		mIsAttack = false;
 	}
 
 	//速度を加算
@@ -343,76 +265,62 @@ void Player::Move(Title& title, Enemy& enemy) {
 	mPosition.y += mKnockBackVelocity.y;
 
 	if (enemy.GetIsGameClear() == true) {
-		mAttackCount = kMaxAttack;
-		mIsAttack[0] = false;
-		mIsAttack[1] = false;
-		mIsAttack[2] = false;
+		mIsAttack = false;
 	}
 
 }
 void Player::Attack() {
 
-	//攻撃座標を設定
-	if (mDirection == LEFT) {
-		mAttackPosition[0].x = mPosition.x - 32;
-		mAttackPosition[1].x = mPosition.x - 64;
-		mAttackPosition[2].x = mPosition.x - 96;
-	}
-
-	if (mDirection == RIGHT) {
-		mAttackPosition[0].x = mPosition.x + 32;
-		mAttackPosition[1].x = mPosition.x + 64;
-		mAttackPosition[2].x = mPosition.x + 96;
-	}
-
-	mAttackPosition[0].y = mPosition.y;
-	mAttackPosition[1].y = mPosition.y;
-	mAttackPosition[2].y = mPosition.y;
-
-	if ((Key::IsTrigger(DIK_C) || Controller::IsTriggerButton(0, Controller::bX)) && mIsRolling == false) {
-
-		if (mIsGround == true) {
-
-			//一撃目
-			if (mAttackCount == 3 && mIsAttack[0] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[0] = true;
-				mAttackParticle[0].SetFlag(mAttackPosition[0]);
-				Novice::PlayAudio(mAttackSE[0], 0, 0.5f);
-				mAttackCount -= 1;
-			}
-
-			//二撃目
-			else if (mAttackCount == 2 && mIsAttack[1] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[1] = true;
-				mAttackParticle[1].SetFlag(mAttackPosition[1]);
-				Novice::PlayAudio(mAttackSE[1], 0, 0.5f);
-				mAttackCount -= 1;
-			}
-
-			//三撃目
-			else if (mAttackCount == 1 && mIsAttack[2] == false) {
-				mAttackTimer = kAttackPersistence;
-				mIsAttack[2] = true;
-				mAttackParticle[2].SetFlag(mAttackPosition[2]);
-				Novice::PlayAudio(mAttackSE[2], 0, 0.5f);
-				mAttackCount -= 1;
-			}
-
-		}
-
-	}
-
-	//タイマーが0になったらフラグを戻す
-	if (mAttackTimer == 0) {
-
+	//フラグを戻す
+	if (mIsAttack == true){
 		for (int i = 0; i < kMaxAttack; i++) {
-			mIsAttack[i] = false;
 			mAttackParticle[i].Reset();
 		}
+		mPushFrame = 0;
+		mIsWeekAttack = false;
+		mIsStrongAttack = false;
+		mIsAttack = false;
+	}
 
-		mAttackCount = kMaxAttack;
+
+	if ((Key::IsPress(DIK_C) || Controller::IsPressedButton(0, Controller::bX)) && mIsRolling == false) {
+		mPushFrame++;
+	}
+
+	if ((Key::IsRelease(DIK_C) || Controller::IsReleaseButton(0, Controller::bX))){
+
+		//弱攻撃
+		if (mPushFrame < 180) {
+			mIsWeekAttack = true;
+			mIsAttack = true;
+
+			if (mIsWeekAttack == true){
+				mAttackRadius = mWeekAttackRadius;
+				if (mDirection == LEFT){
+					mAttackPosition.x = mPosition.x - mAttackRadius * 2;
+				}
+				else if (mDirection == RIGHT){
+					mAttackPosition.x = mPosition.x + mAttackRadius * 2;
+				}
+			}
+
+		}
+
+		//強攻撃
+		else{
+			mIsStrongAttack = true;
+			mIsAttack = true;
+
+			if (mIsStrongAttack == true){
+				mAttackRadius = mStrongAttackRadius;
+				if (mDirection == LEFT) {
+					mAttackPosition.x = mPosition.x - mAttackRadius * 2;
+				}
+				else if (mDirection == RIGHT) {
+					mAttackPosition.x = mPosition.x + mAttackRadius * 2;
+				}
+			}
+		}
 	}
 
 
@@ -839,34 +747,34 @@ void Player::Draw(Screen& screen) {
 
 		//右攻撃
 		if (mDirection == RIGHT) {
-			if (mIsAttack[2] == true) {
+			if (mIsAttack == true) {
 				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
-				screen.DrawQuad(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
+				screen.DrawQuad(mAttackPosition, mAttackRadius * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
-			else if (mIsAttack[1] == true) {
-				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
-				screen.DrawQuad(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
-			}
-			else if (mIsAttack[0] == true) {
-				screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
-				screen.DrawQuad(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
-			}
+			//else if (mIsAttack[1] == true) {
+			//	screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+			//	screen.DrawQuad(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
+			//}
+			//else if (mIsAttack[0] == true) {
+			//	screen.DrawQuad(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+			//	screen.DrawQuad(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
+			//}
 		}
 
 		//左攻撃
 		if (mDirection == LEFT) {
-			if (mIsAttack[2] == true) {
+			if (mIsAttack == true) {
 				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack3, mColor);
-				screen.DrawQuadReverse(mAttackPosition[2], mAttackRadius[2] * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
+				screen.DrawQuadReverse(mAttackPosition, mAttackRadius * mAtackBairitu, 0, 0, 140, 140, mDoragon, mColor);
 			}
-			else if (mIsAttack[1] == true) {
-				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
-				screen.DrawQuadReverse(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
-			}
-			else if (mIsAttack[0] == true) {
-				screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
-				screen.DrawQuadReverse(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
-			}
+			//else if (mIsAttack[1] == true) {
+			//	screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack2, mColor);
+			//	screen.DrawQuadReverse(mAttackPosition[1], mAttackRadius[1] * mAtackBairitu, 0, 0, 140, 140, mAsi, mColor);
+			//}
+			//else if (mIsAttack[0] == true) {
+			//	screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 160, 160, mAttack1, mColor);
+			//	screen.DrawQuadReverse(mAttackPosition[0], mAttackRadius[0] * mAtackBairitu, 0, 0, 140, 140, mKobusi, mColor);
+			//}
 		}
 
 
@@ -876,7 +784,7 @@ void Player::Draw(Screen& screen) {
 		//立っている時
 		if (((!Key::IsPress(DIK_RIGHT) && !Key::IsPress(DIK_LEFT)) &&
 			(!Controller::IsStickDirection(0, Controller::lsdRIGHT) && !Controller::IsStickDirection(0, Controller::lsdLEFT))) &&
-			!mIsRolling && !mIsAttack[0] && mVelocity.y == 0) {
+			!mIsRolling && !mIsAttack && mVelocity.y == 0) {
 			if (mDirection == RIGHT) {
 				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
 			}
@@ -888,7 +796,7 @@ void Player::Draw(Screen& screen) {
 			mJumpAnimeCount = 0;
 		}
 		//移動
-		if (Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+		if (Key::IsPress(DIK_RIGHT) && Key::IsPress(DIK_LEFT) && mIsRolling == false && !mIsAttack && mVelocity.y == 0) {
 			if (mDirection == RIGHT) {
 				screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 12, 4, mTextureFrame, mPlayer_right, mColor, 0, 1);
 			}
@@ -898,14 +806,14 @@ void Player::Draw(Screen& screen) {
 			mIsJump = false;
 		}
 		else if ((Key::IsPress(DIK_RIGHT) || Controller::IsStickDirection(0, Controller::lsdRIGHT)) &&
-			mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+			mIsRolling == false && !mIsAttack && mVelocity.y == 0) {
 			mIsJump = false;
 			mJumpAnimeCount = 0;
 			screen.DrawAnime(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//右移動
 			mIsJump = false;
 		}
 		else if ((Key::IsPress(DIK_LEFT) || Controller::IsStickDirection(0, Controller::lsdLEFT)) &&
-			mIsRolling == false && !mIsAttack[0] && mVelocity.y == 0) {
+			mIsRolling == false && !mIsAttack && mVelocity.y == 0) {
 			mIsJump = false;
 			mJumpAnimeCount = 0;
 			screen.DrawAnimeReverse(mPosition, mRadius, mPlayerSrcX, 140, 140, 4, 4, mTextureFrame, mDash, mColor, 0, 1);//左移動
