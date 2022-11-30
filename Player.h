@@ -287,6 +287,9 @@ private:
 	int mTaoreta;
 	int mGameOverCount;
 	int mGameOverSrcX;
+	Vec2 mDoragonPosition;
+	int mDoragonSrcX;
+	bool mIsDoragon;
 
 	//“–‚½‚Á‚½Œã‚ÌƒJƒEƒ“ƒg
 	bool mIsWallCount;

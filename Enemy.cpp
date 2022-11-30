@@ -3193,10 +3193,10 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 	if (mIsGameClear && mIsGround) {
 		mGameClearCount++;
-		screen.DrawAnime(mPosition, mRadius, mGameClearSrcX, 170, 170, 8, 6, mTextureFrame, mTaoreru, mColor, 0, 0);
-		screen.DrawAnimeReverse({ mPosition.x + mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, mWing2SrcX, 200, 200, 7, 6, mTextureFrame, mWing2, mColor, 0, 0);
+		screen.DrawAnime(mPosition, mRadius, mGameClearSrcX, 170, 170, 8, 7, mTextureFrame, mTaoreru, mColor, 0, 0);
+		screen.DrawAnimeReverse({ mPosition.x + mRadius * 1.7f,mPosition.y - mRadius * 1.2f }, mRadius * 1.5f, mWing2SrcX, 200, 200, 7, 8, mTextureFrame, mWing2, mColor, 0, 0);
 	}
-	if (mGameClearCount >= 48) {
+	if (mGameClearCount >= 56) {
 		screen.DrawQuad(mPosition, mRadius, 0, 0, 170, 170, mTaoreta, mColor);
 	}
 
