@@ -50,7 +50,7 @@ Enemy::Enemy(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 		mAttackRadius[i] = 16;
 	}
 	for (int i = 0; i < kMaxAttack; i++){
-		mIsHit = false;
+		mIsHit[i] = false;
 		mIsGuardHit[i] = false;
 		mKnockBack[i] = false;
 	}
@@ -2663,7 +2663,7 @@ void Enemy::Collision(Player& player) {
 
 				mColor = 0xFFFF00FF;
 				//ヒットフラグを立てる
-				if (mIsHit == false) {
+				if (mIsHit[2 - player.GetAttackCount()] == false) {
 					mHitPoint -= kAttackValue[2 - player.GetAttackCount()];
 					mIsHit[2 - player.GetAttackCount()] = true;
 				}
