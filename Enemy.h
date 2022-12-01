@@ -573,6 +573,7 @@ private:
 	int mWing2SrcX;
 	int mWing2;
 	int mKyanseru;
+	int mHadouSrcX;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;

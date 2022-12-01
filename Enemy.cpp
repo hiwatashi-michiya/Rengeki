@@ -291,6 +291,7 @@ void Enemy::ResetAll() {
 	mIsSpecialAttack = false;
 	mSpecialAttackRadius = 100;
 	mAttackDirection = ENEMYRIGHT;
+	mHadouSrcX = 0;
 	////////////////////　ここから必殺技　////////////////////
 	mIsFallingStar = false;
 	mIsFallingComplete = false;
@@ -363,6 +364,10 @@ void Enemy::Update(Title& title, Stage &stage, Player &player, Particle& particl
 	//デバッグ用・体力を減らす
 	if (Key::IsTrigger(DIK_Q)) {
 		mHitPoint -= 20;
+	}
+
+	if (Key::IsPress(DIK_E)) {
+		mPosition.x = 1280;
 	}
 
 	if (mIsInvincible == true){
@@ -1864,10 +1869,11 @@ void Enemy::SpecialAttack(Player& player,Particle& particle) {
 				mStepFrame = mStepCoolTime[2];
 			}
 
-			if (mSpecialAttackFrame >= 390){
+			if (mSpecialAttackFrame >= 320){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
 				mSpecialAttackParticle.Reset();
+				mHadouSrcX = 0;
 				//次のステップの速さを設定
 				mStepFrame = mStepCoolTime[2];
 			}
@@ -3112,17 +3118,17 @@ void Enemy::Draw(Screen& screen, Player& player) {
 				}
 				else {
 					screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
-					screen.DrawQuadReverse(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, 0, 0, 140, 140, mHadou, WHITE);
+					screen.DrawAnimeReverse(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, mHadouSrcX, 140, 140, 6, 6, mTextureFrame, mHadou, WHITE, 0, 0);
 				}
 			
 			}
 			if (mAttackDirection == ENEMYRIGHT) {
 				if (mSpecialAttackFrame <= 290) {
-					screen.DrawQuadReverse(mPosition, mRadius, 0, 0, 140, 140, mAttack4_1, mColor);
+					screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4_1, mColor);
 				}
 				else {
 					screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mAttack4, mColor);
-					screen.DrawQuad(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, 0, 0, 140, 140, mHadou, WHITE);
+					screen.DrawAnime(mSpecialAttackPosition, mSpecialAttackRadius * 1.2f, mHadouSrcX, 140, 140, 6, 6, mTextureFrame, mHadou, WHITE, 0, 0);
 				}
 			}
 		}
