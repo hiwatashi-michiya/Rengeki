@@ -78,17 +78,23 @@ public:
 	inline float GetPlayerRadius() { return mRadius; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ìæ“¾
-	inline Vec2 GetAttackPosition() { return mAttackPosition; }
+	inline Vec2 GetAttackPosition(int i) { return mAttackPosition[i]; }
 
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ì”¼Œa‚Ìæ“¾
-	inline float GetAttackRadius() { return mAttackRadius; }
+	inline float GetAttackRadius(int i) { return mAttackRadius[i]; }
 
 	//UŒ‚‚µ‚Ä‚¢‚é‚©æ“¾
-	inline bool GetIsAttack() { return mIsAttack; }
+	inline bool GetIsAttack(int i) { return mIsAttack[i]; }
+
+	//UŒ‚‰ñ”‚Ìæ“¾
+	inline int GetAttackCount() { return mAttackCount; }
 
 	//UŒ‚‚ğó‚¯‚Ä‚¢‚é‚©æ“¾
 	inline bool GetIsHit(int i) { return mIsHit[i]; }
 	inline bool GetIsOldHit(int i) { return mIsOldHit[i]; }
+
+	//UŒ‚ŠÔ‚Ìæ“¾
+	inline int GetAttackTimer() { return mAttackTimer; }
 
 	//ƒvƒŒƒCƒ„[‚ÌÀ•Wæ“¾iŠOÏ‚Ég—p‚·‚éj
 	inline Vec2 GetPlayerPosition() { return mPosition; }
@@ -101,7 +107,7 @@ private:
 
 
 	//“®‚«
-	void Move(Title & title, Enemy& enemy);
+	void Move(Title& title, Enemy& enemy);
 
 	//“–‚½‚è”»’è
 	void Collision(Title& title, Stage& stage, Enemy& enemy);
@@ -162,7 +168,7 @@ private:
 	//”í’eŒã‚É•Ç‚É“–‚½‚Á‚½‚©
 	bool mIsWallHit;
 	bool mIsOldWallHit;
-	
+
 	//•Ç“–‚½‚Á‚½Œã‚Ì–³“GŠÔ
 	int mNoHitCount;
 	bool mIsNoHit;
@@ -182,20 +188,17 @@ private:
 	void RoundTranslation(Enemy& enemy);
 
 	//----------“®‚«ŠÖŒW----------//
-	//ƒL[ || ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éƒtƒŒ[ƒ€
-	int mPushFrame;
-	//UŒ‚‚ğ‚µ‚Ä‚¢‚é‚©
-	bool mIsWeekAttack;
-	bool mIsStrongAttack;
-	bool mIsAttack;
+	//---UŒ‚---//
+	//UŒ‚‰ñ”
+	int mAttackCount;
+	//UŒ‚‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ì”»’è
+	bool mIsAttack[kMaxAttack];
+	//UŒ‚‚Ì•`‰æŠÔ
+	int mAttackTimer;
 	//UŒ‚‚Ì“–‚½‚è”»’è‚ÌÀ•W
-	Vec2 mWeekAttackPosition;
-	Vec2 mStrongAttackPosition;
-	Vec2 mAttackPosition;
+	Vec2 mAttackPosition[kMaxAttack];
 	//UŒ‚‚Ì“–‚½‚è”»’è‚Ì”¼Œa
-	float mWeekAttackRadius;
-	float mStrongAttackRadius;
-	float mAttackRadius;
+	float mAttackRadius[kMaxAttack];
 	//UŒ‚ŠÖ”
 	void Attack();
 	//ƒp[ƒeƒBƒNƒ‹
@@ -293,6 +296,4 @@ private:
 	bool mIsHitCount;
 	int mPlayerHpFlame;
 };
-
-
 

@@ -72,7 +72,7 @@ public:
 
 	//ゲームクリアか取得する
 	inline bool GetIsGameClear() { return mIsGameClear; }
-	
+
 	//ポジションリセット
 	inline void ResetPosition() { mPosition.x = 1280.0f; mPosition.y = 800.0f; }
 
@@ -101,7 +101,7 @@ public:
 	inline float GetRoundEasingt() { return mRoundEasingt; }
 
 	////////////////////　ここから攻撃の当たり判定取得関数　////////////////////
-	
+
 
 	//-----弱攻撃-----//
 
@@ -135,7 +135,7 @@ public:
 	inline float GetSpecialAttackColorAlphat() { return mSpecialAttackColorAlphat; }
 
 	//-----星砕流・落下星-----//
-	
+
 	//左側攻撃の座標
 	inline Vec2 GetLeftFallingStarPosition(int i) { return mLeftFallingStarPosition[i]; }
 	//右側攻撃の座標
@@ -157,8 +157,8 @@ public:
 	inline bool GetIsEasingMust() { return mIsEasingMust; }
 	inline bool GetIsOldEasingMust() { return mIsOldEasingMust; }
 	//攻撃を受けるようになったか
-	inline bool GetStarDropDamage() { return mIsStarDropDamage;}
-	inline bool GetOldStarDropDamage() { return mIsOldStarDropDamage;}
+	inline bool GetStarDropDamage() { return mIsStarDropDamage; }
+	inline bool GetOldStarDropDamage() { return mIsOldStarDropDamage; }
 
 
 	//攻撃を受けているか
@@ -363,7 +363,7 @@ private:
 	void Teleport();
 
 	////////////////////　ここから弱攻撃　////////////////////
-	
+
 	//攻撃回数
 	int mAttackCount;
 	//攻撃開始しているかどうか
@@ -384,7 +384,7 @@ private:
 	int mAttackSE[kEnemyMaxAttack];
 
 	////////////////////　ここから強攻撃　////////////////////
-	
+
 	//一回攻撃したかどうか
 	bool mIsSpecialAttackOnce;
 	//攻撃が始まったかどうか
@@ -573,9 +573,9 @@ private:
 	int mWing2SrcX;
 	int mWing2;
 	int mKyanseru;
+	int mHadouSrcX;
 
 	//第二形態フラグ（勝手に）
 	bool mIsRound2;
 };
-
 
