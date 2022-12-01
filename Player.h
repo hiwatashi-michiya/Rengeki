@@ -56,7 +56,7 @@ public:
 	void Draw(Screen& screen);
 
 	//体力等のUI描画
-	void DrawUI();
+	void DrawUI(Screen& screen);
 
 	//ポジションリセット
 	void ResetPosition() { mPosition.x = 0.0f; mPosition.y = 800.0f; }
@@ -290,11 +290,17 @@ private:
 	Vec2 mDoragonPosition;
 	int mDoragonSrcX;
 	bool mIsDoragon;
+	int mPlayerFlame;
+	int mPlayerFrameSrcX;
+	int mPlayerFrameSrcX2;
+	int mPlayerAnimeFrame;
 
 	//当たった後のカウント
 	bool mIsWallCount;
 	bool mIsHitCount;
 	int mPlayerHpFlame;
+	int mPlayerHpFlameAnime;
+	int mPlayerHpFlameAnime2;
 };
 
 
