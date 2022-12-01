@@ -370,7 +370,7 @@ void Enemy::Update(Title& title, Stage& stage, Player& player, Particle& particl
 		mPosition.x = 1280;
 	}
 
-	if (mIsInvincible == true) {
+	if (mIsInvincible == true){
 		mColor = 0x0000FF60;
 	}
 	else {
@@ -1869,7 +1869,7 @@ void Enemy::SpecialAttack(Player& player, Particle& particle) {
 				mStepFrame = mStepCoolTime[2];
 			}
 
-			if (mSpecialAttackFrame >= 320) {
+			if (mSpecialAttackFrame >= 390){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
 				mSpecialAttackParticle.Reset();

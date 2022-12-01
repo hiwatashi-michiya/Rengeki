@@ -400,7 +400,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			player.Draw(screen);
 			enemy.Draw(screen, player);
 			enemy.FrontDraw();
-			player.DrawUI();
+			player.DrawUI(screen);
 			stage.FrontDraw(screen);
 
 			enemy.BlackDraw();

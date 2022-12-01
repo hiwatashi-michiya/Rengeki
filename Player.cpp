@@ -84,6 +84,10 @@ Player::Player(Vec2 mPosition, Vec2 mVelocity, float mRadius)
 	mDoragonPosition = {};
 	mDoragonSrcX = 0;
 	mIsDoragon = false;
+	mPlayerFrameSrcX = 0;
+	mPlayerFrameSrcX2 = 0;
+	mPlayerFlame = 0;
+	mPlayerAnimeFrame = 0;
 
 	//////////// SE /////////////////
 	mAttackSE[0] = Novice::LoadAudio("./Resources/SE/punch1.wav");
@@ -170,6 +174,10 @@ void Player::ResetAll() {
 	mDoragonPosition = {};
 	mDoragonSrcX = 0;
 	mIsDoragon = false;
+	mPlayerFrameSrcX = 0;
+	mPlayerFrameSrcX2 = 0;
+	mPlayerFlame = 0;
+	mPlayerAnimeFrame = 0;
 }
 
 void Player::Update(Title& title, Stage& stage, Enemy& enemy) {
@@ -816,6 +824,8 @@ void Player::Draw(Screen& screen) {
 		mTaoreru = Novice::LoadTexture("./Resources/Player/taoreru.png");
 		mTaoreta = Novice::LoadTexture("./Resources/Player/taoreta.png");
 		mPlayerHpFlame = Novice::LoadTexture("./Resources/UI/PlayerHpFlame.png");
+		mPlayerHpFlameAnime = Novice::LoadTexture("./Resources/UI/PlayerHpFlame2.png");
+		mPlayerHpFlameAnime2 = Novice::LoadTexture("./Resources/UI/PlayerHpFlame3.png");
 		mIsLoadTexture = true;
 	}
 
@@ -1010,7 +1020,10 @@ void Player::Draw(Screen& screen) {
 
 }
 
-void Player::DrawUI() {
+void Player::DrawUI(Screen& screen) {
+
+	mPlayerFlame++;
+
 
 	//‘Ì—Í•`‰æ
 	int a = mHitPointMax - mHitPoint;
@@ -1018,15 +1031,42 @@ void Player::DrawUI() {
 	//’x‚ê‚ÄŒ¸‚é‘Ì—Í
 	Novice::DrawBox(90, 36, mDelayHp * (300 / mHitPointMax), 23, 0.0f, 0x606060FF, kFillModeSolid);
 
-	if (a < 50) {
+	
+
+
+	if (a < 50){
 		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, GREEN, kFillModeSolid);
+		screen.DrawRectAngleUI({ 220,61 }, 400, 100, mPlayerFrameSrcX, 0, 2000, 500, mPlayerHpFlame, WHITE);
+		mPlayerAnimeFrame = 5;
 	}
 	else if (a < 70) {
 		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, 0xFFFF00FF, kFillModeSolid);
+		screen.DrawRectAngleUI({ 220,61 }, 400, 100, mPlayerFrameSrcX, 0, 2000, 500, mPlayerHpFlame, WHITE);
+		screen.DrawRectAngleUI({ 220,61 }, 400, 100, mPlayerFrameSrcX, 0, 2000, 500, mPlayerHpFlameAnime2, WHITE);
+		mPlayerAnimeFrame = 7;
 	}
 	else {
 		Novice::DrawBox(90, 36, mHitPoint * (300 / mHitPointMax), 23, 0.0f, RED, kFillModeSolid);
+		screen.DrawRectAngleUI({ 220,61 }, 400, 100, mPlayerFrameSrcX, 0, 2000, 500, mPlayerHpFlame, WHITE);
+		screen.DrawRectAngleUI({ 220,61 }, 400, 100, mPlayerFrameSrcX, 0, 2000, 500, mPlayerHpFlameAnime, WHITE);
+		mPlayerAnimeFrame = 9;
 	}
 
-	Novice::DrawQuad(20, 10, 420, 10, 20, 110, 420, 110, 0, 0, 2000, 500, mPlayerHpFlame, WHITE);
+	if (mPlayerFlame % mPlayerAnimeFrame == 0 && mPlayerFlame != 0) {
+		mPlayerFrameSrcX += 2000;
+	}
+	if (mPlayerFlame % 5 == 0 && mPlayerFlame != 0) {
+		mPlayerFrameSrcX2 += 2000;
+	}
+	if (mPlayerFrameSrcX >= 8000) {
+		mPlayerFrameSrcX = 0;
+	}
+
+	if (mPlayerFrameSrcX2 >= 10000) {
+		mPlayerFrameSrcX2 = 0;
+	}
+
+	
+
+	/*Novice::DrawQuad(20, 10, 420, 10, 20, 110, 420, 110, 0, 0, 2000, 500, mPlayerHpFlame, WHITE);*/
 }
