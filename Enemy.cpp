@@ -2129,7 +2129,7 @@ void Enemy::StarDrop(Player& player, Particle& particle) {
 					if (mEnergyEasingt[i] == 1.0f) {
 
 						if (mIsStartAttack == false) {
-							mPowerRadius += 4.0f;
+							mPowerRadius += 3.5f;
 							if (220 <= mPowerRadius) {
 								mPowerStartRadius = mPowerRadius;
 								mIsStartAttack = true;
