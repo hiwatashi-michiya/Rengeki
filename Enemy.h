@@ -18,8 +18,8 @@ const int kEnemyMaxJump = 2;
 
 //ノックバックの距離
 const Vec2 kKnockBackLength[3] = {
-	{2,8},
-	{5,15},
+	{2,5},
+	{4,10},
 	{50,28}
 };
 

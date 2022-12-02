@@ -72,7 +72,7 @@ void Screen::ZoomUpdate(Stage& stage, Player& Player, Enemy& Enemy) {
 		if (StartRoundEasing == true){
 			ZoomEasingt += 0.01f;
 			ZoomEasingt = Clamp(ZoomEasingt, 0.0f, 1.0f);
-			Zoom = EasingMove(StartZoom, 1.0f, easeOutCirc(ZoomEasingt));
+			Zoom = EasingMove(StartZoom, 1.0f, easeOutSine(ZoomEasingt));
 			if (ZoomEasingt == 1.0f){
 				StartRoundEasing = false;
 			}
