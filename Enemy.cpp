@@ -3135,7 +3135,7 @@ void Enemy::Draw(Screen& screen, Player& player) {
 
 
 		//¯‚ÌŽ´
-		if (mFrame >= 180 && !mIsStartAttack) {
+		if (mFrame >= 180 && !mIsStartAttack && !mIsAllBreak) {
 			screen.DrawQuad(mPosition, mRadius, 0, 0, 140, 140, mEnerge, mColor);
 		}
 		if (mFrame >= 180 && !mIsAllBreak) {
