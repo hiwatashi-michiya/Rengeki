@@ -20,6 +20,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, kWindowWidth, kWindowHeight);
 
+	Novice::SetWindowMode(kFullscreen);
+
 	//乱数生成
 	unsigned int kCurrentTime = time(nullptr);
 
@@ -95,6 +97,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		
+
 		switch (scene)
 		{
 		case TITLE:

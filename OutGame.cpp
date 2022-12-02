@@ -93,12 +93,14 @@ void GameClear::Update() {
 
 	mScale += 0.01f;
 	if (mScale >= 1.5f){
+		mSelectAlphat = 0.0f;
 		mScale = 1.0f;
 	}
 
 	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
 	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
 	if (mSelectAlphat == 1.0f){
+		mScale = 1.0f;
 		mSelectAlphat = 0.0f;
 	}
 
@@ -236,12 +238,14 @@ void GameOver::Update() {
 
 	mScale += 0.01f;
 	if (mScale >= 1.5f) {
+		mSelectAlphat = 0.0f;
 		mScale = 1.0f;
 	}
 
 	mSelectAlphat = EasingClamp(0.02f, mSelectAlphat);
 	mSelectColor = ColorEasingMove(WHITE, 0xFFFFFF00, easeOutCirc(mSelectAlphat));
 	if (mSelectAlphat == 1.0f) {
+		mScale = 1.0f;
 		mSelectAlphat = 0.0f;
 	}
 
