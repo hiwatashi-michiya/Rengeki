@@ -361,15 +361,6 @@ void Enemy::ResetAll() {
 
 void Enemy::Update(Title& title, Stage& stage, Player& player, Particle& particle) {
 
-	//デバッグ用・体力を減らす
-	if (Key::IsTrigger(DIK_Q)) {
-		mHitPoint -= 20;
-	}
-
-	if (Key::IsPress(DIK_E)) {
-		mPosition.x = 1280;
-	}
-
 	if (mIsInvincible == true){
 		mColor = 0x0000FF60;
 	}
@@ -1869,7 +1860,7 @@ void Enemy::SpecialAttack(Player& player, Particle& particle) {
 				mStepFrame = mStepCoolTime[2];
 			}
 
-			if (mSpecialAttackFrame >= 390){
+			if (mSpecialAttackFrame >= 330){
 				mIsSpecialAttackStart = false;
 				mIsSpecialAttack = false;
 				mSpecialAttackParticle.Reset();
